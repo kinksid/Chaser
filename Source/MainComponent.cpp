@@ -123,8 +123,13 @@ void MainContentComponent::parseXml(juce::File f)
 
 void MainContentComponent::resized()
 {
+    
     float scale = 0.84;
-    float h = ( scale  * getHeight() ) / 1080.0 ; // adjust the height
-    previewWindow->setBoundsRelative(0.01 , 0.01, scale , h );
-    openOutput->setBoundsRelative(0.01, h + 0.02, 0.15, 0.04);
+    
+    // adjust the heightt
+    float wProp = getWidth() / 1920.0;
+    float h = (wProp * 1080.0 ) / getHeight();
+    
+    previewWindow->setBoundsRelative(0.01 , 0.01, scale , h * scale);
+    openOutput->setBoundsRelative(0.01, h * scale + 0.02, 0.15, 0.04);
 }
