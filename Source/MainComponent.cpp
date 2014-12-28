@@ -19,6 +19,9 @@ MainContentComponent::MainContentComponent()
     openOutput->setButtonText("Open ASS XML file");
     openOutput->addListener( this );
     addAndMakeVisible(openOutput);
+    
+    previewWindow = new Preview();
+    addAndMakeVisible( previewWindow );
     setSize (1024, 768);
 }
 
@@ -44,6 +47,9 @@ void MainContentComponent::buttonClicked(juce::Button *b)
                 //set the window name
                 getParentComponent()->setName(preset->getStringAttribute("name"));
                 
+                //clear previous slice
+                previewWindow->clearSlices();
+                
                 forEachXmlChildElement( *preset, presetNode )
                 {
                     if ( presetNode != nullptr && presetNode->hasTagName("screen") )
@@ -56,17 +62,44 @@ void MainContentComponent::buttonClicked(juce::Button *b)
                                 {
                                     if ( slicesNode != nullptr && slicesNode->hasTagName("Slice") )
                                     {
-                                        forEachXmlChildElement( *slicesNode, SliceNode)
+                                        String name;
+                                        bool enabled = slicesNode->getBoolAttribute("isEnabled");
+                                        int type;
+                                        double l;
+                                        double t;
+                                        double r;
+                                        double b;
+                                        
+                                        forEachXmlChildElement( *slicesNode, sliceNode)
                                         {
-                                            if ( SliceNode != nullptr && SliceNode->hasTagName("rect") )
+                                            if ( sliceNode != nullptr )
                                             {
-                                                float l = SliceNode->getDoubleAttribute( "l" );
-                                                float t = SliceNode->getDoubleAttribute( "t" );
-                                                float r = SliceNode->getDoubleAttribute( "r" );
-                                                float b = SliceNode->getDoubleAttribute( "b" );
-                                                Rectangle<float> rectangle = Rectangle<float> (l, t, r - l, b - t );
-                                                rects.add( rectangle );
+
+                                                if ( sliceNode->hasTagName("name") )
+                                                {
+                                                    name = sliceNode->getStringAttribute("value");
+                                                }
+                                                
+                                                if ( sliceNode->hasTagName("type") )
+                                                {
+                                                    type = sliceNode->getIntAttribute("value");
+                                                }
+                                                
+                                                if ( sliceNode->hasTagName("rect") )
+                                                {
+                                                    l = sliceNode->getDoubleAttribute( "l" );
+                                                    t = sliceNode->getDoubleAttribute( "t" );
+                                                    r = sliceNode->getDoubleAttribute( "r" );
+                                                    b = sliceNode->getDoubleAttribute( "b" );
+                                                }
                                             }
+                                        }
+                                        
+                                        //type 0 means no crops
+                                        if ( name != "" && type == 0 )
+                                        {
+                                            SliceButton* sliceButton = new SliceButton( name, enabled, l, t, r, b);
+                                            previewWindow->addSlice( sliceButton );
                                         }
                                     }
                                 }
@@ -75,11 +108,15 @@ void MainContentComponent::buttonClicked(juce::Button *b)
                     }
                 }
             }
+            
+            
         }
     }
 }
 
 void MainContentComponent::resized()
 {
-    openOutput->setBoundsRelative(0.01, 0.01, 0.2, 0.05);
+    float h = ( 0.98  * getHeight() ) / 1080.0 ;
+    previewWindow->setBoundsRelative(0.01 , 0.01, 0.98 , h );
+    openOutput->setBoundsRelative(0.01, h + 0.02, 0.2, 0.05);
 }

@@ -10,6 +10,8 @@
 #define MAINCOMPONENT_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "Preview.h"
+#include "SliceButton.h"
 
 
 //==============================================================================
@@ -31,7 +33,8 @@ private:
     
     ScopedPointer<Button> openOutput;
     ScopedPointer<LookAndFeel> laf;
-    RectangleList<float> rects;
+    Array<SliceButton*> slices;
+    ScopedPointer<Preview> previewWindow;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
