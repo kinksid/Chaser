@@ -28,9 +28,12 @@ public:
 
     void resized();
     void buttonClicked( Button* b );
+    
+    void parseXml ( File f );
 
 private:
     
+    File activeFile;
     ScopedPointer<Button> openOutput;
     ScopedPointer<LookAndFeel> laf;
     Array<SliceButton*> slices;

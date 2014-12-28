@@ -32,15 +32,25 @@ void Preview::paint (Graphics& g)
        drawing code..
     */
 
-    g.fillAll (Colours::darkgrey);   // clear the background
+    g.fillAll (Colours::black);   // clear the background
 
-    g.setColour (Colours::grey);
+    g.setColour (Colours::lightblue);
     g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 
     g.setColour (Colours::lightblue);
     g.setFont (14.0f);
     g.drawText ("Preview", getLocalBounds(),
                 Justification::centred, true);   // draw some placeholder text
+}
+
+void Preview::addSlice(SliceButton *slice)
+{
+    SliceButton* newButton = slice;
+    slices.add(newButton);
+    if ( newButton->enabled )
+        addAndMakeVisible( newButton );
+    else
+        addChildComponent( newButton );
 }
 
 void Preview::resized()
@@ -51,7 +61,6 @@ void Preview::resized()
     for ( int i = 0; i < slices.size(); i++ )
     {
         slices[i]->setBoundsRelative(slices[i]->proportionalX, slices[i]->proportionalY, slices[i]->proportionalW, slices[i]->proportionalH);
-
     }
 
 }

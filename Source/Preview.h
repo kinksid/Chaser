@@ -30,16 +30,8 @@ public:
     {
         slices.clear();
     }
-    void addSlice( SliceButton* slice )
-    {
-        SliceButton* newButton = slice;
-        slices.add(newButton);
-        if ( newButton->enabled )
-            addAndMakeVisible( newButton );
-        else
-            addChildComponent( newButton );
-        resized();
-    }
+    void addSlice( SliceButton* slice );
+
     
 
 private:
