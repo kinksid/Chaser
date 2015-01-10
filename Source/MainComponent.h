@@ -13,6 +13,7 @@
 #include "Preview.h"
 #include "Slice.h"
 #include "SliceList.h"
+#include "Sequencer.h"
 
 
 //==============================================================================
@@ -47,6 +48,7 @@ private:
     
     ScopedPointer<Preview> previewWindow;
     ScopedPointer<SliceList> sliceList;
+    ScopedPointer<Sequencer> sequencer;
     
     ScopedPointer<Button> update;
     

@@ -16,7 +16,7 @@ MainContentComponent::MainContentComponent()
     setLookAndFeel(laf);
     
     openOutput = new TextButton ("OpenOutput");
-    openOutput->setButtonText("Open ASS XML file");
+    openOutput->setButtonText("Load");
     openOutput->addListener( this );
     addAndMakeVisible(openOutput);
     
@@ -31,6 +31,10 @@ MainContentComponent::MainContentComponent()
     sliceList = new SliceList();
     addAndMakeVisible(sliceList);
     sliceList->addChangeListener(this);
+    
+    sequencer = new Sequencer();
+    addAndMakeVisible(sequencer);
+    sequencer->addChangeListener(this);
     
     setSize (1024, 768);
     
@@ -65,8 +69,25 @@ void MainContentComponent::buttonClicked(juce::Button *b)
     
     if ( b == update )
     {
+        if ( activeFile.exists() )
+            parseXml( activeFile );
+    }
+}
 
-        
+
+void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
+{
+    if ( source == sliceList )
+    {
+        for ( int i = 0; i < slices.size(); i++ )
+        {
+            previewWindow->update(slices[i], i );
+        }
+    }
+    
+    if ( source == sequencer )
+    {
+        step = sequencer->activeButton;
     }
 }
 
@@ -166,16 +187,6 @@ void MainContentComponent::parseXml(juce::File f)
     }
 }
 
-void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
-{
-    if ( source == sliceList )
-    {
-        for ( int i = 0; i < slices.size(); i++ )
-        {
-            previewWindow->update(slices[i], i );
-        }
-    }
-}
 
 void MainContentComponent::resized()
 {
@@ -185,9 +196,11 @@ void MainContentComponent::resized()
     // adjust the heightt
     float wProp = getWidth() / 1920.0;
     float h = (wProp * 1080.0 ) / getHeight();
+    Rectangle <int> rect = getBounds();
     
-    previewWindow->setBoundsRelative(0.01 , 0.01, scale , h * scale);
-    sliceList->setBoundsRelative( scale + 0.02, 0.01, 1.0 - scale - 0.03, h * scale);
-    openOutput->setBoundsRelative(0.01, h * scale + 0.02, 0.15, 0.04);
-    update->setBoundsRelative(0.01, h * scale + 0.07, 0.15, 0.04);
+    previewWindow->setBoundsRelative( 0.01 , 0.01, scale , h * scale );
+    sliceList->setBoundsRelative( scale + 0.02, 0.01, 1.0 - scale - 0.03, h * scale - 0.05);
+    openOutput->setBoundsRelative( scale + 0.02, h * scale - 0.03, (1.0 - scale - 0.03 ) / 2.0 - 0.005 , 0.04);
+    update->setBoundsRelative( scale + (1.0 - scale  ) / 2.0 + 0.01, h * scale -0.03, (1.0 - scale - 0.03 ) / 2.0 -0.005 , 0.04);
+    sequencer->setBoundsRelative( 0.01, h * scale + 0.02, scale, 0.1);
 }

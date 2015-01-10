@@ -16,7 +16,7 @@
 //==============================================================================
 /*
 */
-class Sequencer    : public Component
+class Sequencer    : public Component, public Button::Listener, public Timer, public ChangeBroadcaster
 {
 public:
     Sequencer();
@@ -24,8 +24,17 @@ public:
 
     void paint (Graphics&);
     void resized();
+    
+    virtual void buttonClicked (Button*);
+    virtual void buttonStateChanged (Button*);
+    
+    virtual void timerCallback();
+    
+    int activeButton;
 
 private:
+    OwnedArray<Button> stepper;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Sequencer)
 };
 

@@ -6,7 +6,6 @@
               companyEmail="joris@hybridvisuals.nl">
   <MAINGROUP id="cFMW0p" name="Chaser">
     <GROUP id="{6A6FFF85-7097-63A1-1439-46EFB4CC7C8A}" name="Source">
-      <FILE id="jOVm0y" name="Slice.h" compile="0" resource="0" file="Source/Slice.h"/>
       <FILE id="LUvmwf" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="FXhUXW" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
@@ -15,10 +14,13 @@
       <FILE id="abt0aR" name="Preview.h" compile="0" resource="0" file="Source/Preview.h"/>
       <FILE id="I2bm3h" name="Sequencer.cpp" compile="1" resource="0" file="Source/Sequencer.cpp"/>
       <FILE id="uKwl6d" name="Sequencer.h" compile="0" resource="0" file="Source/Sequencer.h"/>
+      <FILE id="jOVm0y" name="Slice.h" compile="0" resource="0" file="Source/Slice.h"/>
       <FILE id="YU2578" name="SliceButton.cpp" compile="1" resource="0" file="Source/SliceButton.cpp"/>
       <FILE id="B8sLwi" name="SliceButton.h" compile="0" resource="0" file="Source/SliceButton.h"/>
       <FILE id="xF3c4l" name="SliceList.cpp" compile="1" resource="0" file="Source/SliceList.cpp"/>
       <FILE id="gAorDp" name="SliceList.h" compile="0" resource="0" file="Source/SliceList.h"/>
+      <FILE id="raqOhp" name="XmlSequence.cpp" compile="1" resource="0" file="Source/XmlSequence.cpp"/>
+      <FILE id="NCF4qg" name="XmlSequence.h" compile="0" resource="0" file="Source/XmlSequence.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
