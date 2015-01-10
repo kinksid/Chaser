@@ -26,16 +26,16 @@ public:
     void paint (Graphics&);
     void resized();
     
-    void clearSlices()
-    {
-        slices.clear();
-    }
-    void addSlice( SliceButton* slice );
+    
+    void update(Slice* slice, int i );
+    
+    void clearSlices();
+    void addSlice( Slice* slice);
 
     
 
 private:
-    OwnedArray<SliceButton> slices;
+    OwnedArray<SliceButton> sliceButtons;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Preview)
 };
 

@@ -12,6 +12,7 @@
 #define SLICEBUTTON_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "Slice.h"
 
 //==============================================================================
 /*
@@ -19,7 +20,8 @@
 class SliceButton    : public TextButton
 {
 public:
-    SliceButton( String n, bool enable, double l, double t, double r, double b );
+    SliceButton ( String n, bool enable, double l, double t, double r, double b );
+    SliceButton ( Slice* s );
     ~SliceButton();
     
     double proportionalX;
@@ -27,9 +29,13 @@ public:
     double proportionalW;
     double proportionalH;
     bool enabled;
+    String name;
+    
+    void update();
 
 private:
-    String name;
+    
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SliceButton)
 };
 

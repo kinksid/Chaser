@@ -21,16 +21,11 @@ Preview::Preview()
 
 Preview::~Preview()
 {
+    clearSlices();
 }
 
 void Preview::paint (Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
-
-       You should replace everything in this method with your own
-       drawing code..
-    */
 
     g.fillAll (Colours::black);   // clear the background
 
@@ -43,24 +38,34 @@ void Preview::paint (Graphics& g)
                 Justification::centred, true);   // draw some placeholder text
 }
 
-void Preview::addSlice(SliceButton *slice)
+void Preview::addSlice( Slice* slice )
 {
-    SliceButton* newButton = slice;
-    slices.add(newButton);
+    SliceButton* newButton = new SliceButton ( slice );
+    sliceButtons.add( newButton );
+
     if ( newButton->enabled )
         addAndMakeVisible( newButton );
     else
         addChildComponent( newButton );
 }
 
+void Preview::clearSlices()
+{
+    sliceButtons.clear();
+}
+
+void Preview::update(Slice* slice, int i)
+{
+    sliceButtons[i]->setVisible( slice->enabled );
+}
+
 void Preview::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
     
-    for ( int i = 0; i < slices.size(); i++ )
+    for ( int i = 0; i < sliceButtons.size(); i++ )
     {
-        slices[i]->setBoundsRelative(slices[i]->proportionalX, slices[i]->proportionalY, slices[i]->proportionalW, slices[i]->proportionalH);
+        sliceButtons[i]->setBoundsRelative(sliceButtons[i]->proportionalX, sliceButtons[i]->proportionalY, sliceButtons[i]->proportionalW, sliceButtons[i]->proportionalH);
     }
 
 }
+

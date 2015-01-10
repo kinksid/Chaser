@@ -11,7 +11,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Preview.h"
-#include "SliceButton.h"
+#include "Slice.h"
+#include "SliceList.h"
 
 
 //==============================================================================
@@ -19,7 +20,7 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainContentComponent   : public Component, public Button::Listener
+class MainContentComponent   : public Component, public Button::Listener, public ChangeListener
 {
 public:
     //==============================================================================
@@ -29,15 +30,25 @@ public:
     void resized();
     void buttonClicked( Button* b );
     
+    virtual void changeListenerCallback (ChangeBroadcaster* source);
+    
     void parseXml ( File f );
+    
+    
 
 private:
     
-    File activeFile;
-    ScopedPointer<Button> openOutput;
     ScopedPointer<LookAndFeel> laf;
-    Array<SliceButton*> slices;
+    
+    ScopedPointer<Button> openOutput;
+    File activeFile;
+    
+    OwnedArray<Slice> slices;
+    
     ScopedPointer<Preview> previewWindow;
+    ScopedPointer<SliceList> sliceList;
+    
+    ScopedPointer<Button> update;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
