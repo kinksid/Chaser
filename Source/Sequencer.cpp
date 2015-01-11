@@ -33,7 +33,13 @@ Sequencer::Sequencer()
     
     activeButton = 0;
     stepper[0]->setToggleState(true, sendNotification);
-    //startTimer( 200 );
+    
+    //play/pause button
+    play = new TextButton ( "Play" );
+    play->setClickingTogglesState ( true );
+    play->addListener(this);
+    addAndMakeVisible( play );
+    
 
 }
 
@@ -50,9 +56,26 @@ void Sequencer::paint (Graphics& g)
 
 void Sequencer::buttonClicked (Button* b)
 {
-    activeButton = stepper.indexOf( b );
-    if( b->getToggleState() )
-        sendChangeMessage();
+    if ( b == play )
+    {
+        if ( play->getToggleState() )
+        {
+            play->setButtonText("Pause");
+            startTimer(200);
+        }
+        else
+        {
+            play->setButtonText("Play");
+            stopTimer();
+        }
+    }
+    
+    else
+    {
+        activeButton = stepper.indexOf( b );
+        if( b->getToggleState() )
+            sendChangeMessage();
+    }
 }
 
 void Sequencer::buttonStateChanged (Button* b)
@@ -69,11 +92,12 @@ void Sequencer::timerCallback()
 
 void Sequencer::resized()
 {
+    float w = 1.0 / 17.0;
     for(int i = 0; i < stepper.size(); i++ )
     {
-        float w = 1.0 / 16.0;
+        
         stepper[i]->setBoundsRelative( i * w, 0.0, w , 1.0 );
     }
     
-
+    play->setBoundsRelative(1.0 - w * 0.9, 0.0, w * 0.9, 1.0);
 }

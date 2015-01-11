@@ -39,13 +39,20 @@ MainContentComponent::MainContentComponent()
     
     xmlSequence = new XmlSequence();
     
+    //load the slices from the previous xml
+    if ( xmlSequence->getFile().exists() )
+    {
+        activeFile = xmlSequence->getFile();
+        parseXml( activeFile );
+        //update the view for the first step
+        previewWindow->setSlices( xmlSequence->getStep( 0, 0 ) );
+    }
+    else
+    {
+        xmlSequence->createFreshXml();
+    }
+    
     setSize (1024, 768);
-    
-    //while we're testing just always open the same test file
-    activeFile = File ( "/Users/hybrid/Documents/Resolume Arena 4/presets/screensetup/MidTest.xml" );
-    parseXml( activeFile );
-    
-    
 }
 
 MainContentComponent::~MainContentComponent()
@@ -53,6 +60,7 @@ MainContentComponent::~MainContentComponent()
     slices.clear();
     previewWindow = nullptr;
     sliceList = nullptr;
+    xmlSequence = nullptr;
     
 }
 
@@ -93,7 +101,7 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
         //the sequencer has been set to a new step
         //so read out the values for this step and update the preview
         int step = sequencer->activeButton;
-        previewWindow->setSlices( xmlSequence->getStep( step ) );
+        previewWindow->setSlices( xmlSequence->getStep( 0, step ) );
         
     }
     
@@ -102,11 +110,12 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
         //a slice has been toggled in the preview
         //so get all the active slices and update the xml
         int step = sequencer->activeButton;
-        xmlSequence->setStep( step, previewWindow->getSlices() );
+        xmlSequence->setStep( 0, step, previewWindow->getSlices() );
+        xmlSequence->save();
     }
 }
 
-void MainContentComponent::parseXml(juce::File f)
+void MainContentComponent::parseXml(File f)
 {
     if ( !f.exists() )
     {
@@ -189,13 +198,16 @@ void MainContentComponent::parseXml(juce::File f)
             //update the previewWindow and sliceList
             sliceList->clearSlices();
             previewWindow->clearSlices();
+            xmlSequence->clearSlices();
             for ( int i = 0; i < slices.size(); i++ )
             {
                 sliceList->addSlice( slices[i] );
                 previewWindow->addSlice( slices[i] );
-                
+                xmlSequence->addSlice ( slices[i] );
             }
+            
             previewWindow->resized();
+            xmlSequence->setFile( f );
             
             
         }

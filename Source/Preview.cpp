@@ -26,9 +26,7 @@ Preview::~Preview()
 
 void Preview::buttonClicked(Button* b)
 {
-
-            sendChangeMessage();
-
+    sendChangeMessage();
 }
 
 void Preview::setSlices(Array<int> activeSlices)
@@ -42,8 +40,11 @@ void Preview::setSlices(Array<int> activeSlices)
     //turn on the ones that should be on
     for ( int i = 0; i < activeSlices.size(); i++ )
     {
-        DBG(activeSlices[i]);
-        sliceButtons[activeSlices[i]]->setToggleState(true, dontSendNotification);
+        //it could be that the xml we have loaded has more slices than the current button layout
+        //for instance because it has been changed in Resolume
+        //so here we make sure we aren't trying to change a buttonstate that no longer exists
+        if ( i < sliceButtons.size() )
+            sliceButtons[activeSlices[i]]->setToggleState(true, dontSendNotification);
     }
     
 }
@@ -55,7 +56,6 @@ Array<int> Preview::getSlices()
     {
         if ( sliceButtons[i]->getToggleState() )
         {
-            DBG(i);
             activeSlices.add(i);
         }
     }
