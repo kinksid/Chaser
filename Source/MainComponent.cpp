@@ -27,6 +27,7 @@ MainContentComponent::MainContentComponent()
     
     previewWindow = new Preview();
     addAndMakeVisible( previewWindow );
+    previewWindow->addChangeListener(this);
     
     sliceList = new SliceList();
     addAndMakeVisible(sliceList);
@@ -35,6 +36,8 @@ MainContentComponent::MainContentComponent()
     sequencer = new Sequencer();
     addAndMakeVisible(sequencer);
     sequencer->addChangeListener(this);
+    
+    xmlSequence = new XmlSequence();
     
     setSize (1024, 768);
     
@@ -87,7 +90,19 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
     
     if ( source == sequencer )
     {
-        step = sequencer->activeButton;
+        //the sequencer has been set to a new step
+        //so read out the values for this step and update the preview
+        int step = sequencer->activeButton;
+        previewWindow->setSlices( xmlSequence->getStep( step ) );
+        
+    }
+    
+    if ( source == previewWindow )
+    {
+        //a slice has been toggled in the preview
+        //so get all the active slices and update the xml
+        int step = sequencer->activeButton;
+        xmlSequence->setStep( step, previewWindow->getSlices() );
     }
 }
 

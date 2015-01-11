@@ -24,23 +24,49 @@ Preview::~Preview()
     clearSlices();
 }
 
-void Preview::paint (Graphics& g)
+void Preview::buttonClicked(Button* b)
 {
 
-    g.fillAll (Colours::black);   // clear the background
+            sendChangeMessage();
 
-    g.setColour (Colours::lightblue);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+}
 
-    g.setColour (Colours::lightblue);
-    g.setFont (14.0f);
-    g.drawText ("Preview", getLocalBounds(),
-                Justification::centred, true);   // draw some placeholder text
+void Preview::setSlices(Array<int> activeSlices)
+{
+    //turn all the slices off
+    for ( int i = 0; i < sliceButtons.size(); i++ )
+    {
+        sliceButtons[i]->setToggleState( false, dontSendNotification );
+    }
+    
+    //turn on the ones that should be on
+    for ( int i = 0; i < activeSlices.size(); i++ )
+    {
+        DBG(activeSlices[i]);
+        sliceButtons[activeSlices[i]]->setToggleState(true, dontSendNotification);
+    }
+    
+}
+
+Array<int> Preview::getSlices()
+{
+    Array<int> activeSlices;
+    for ( int i = 0; i < sliceButtons.size(); i++ )
+    {
+        if ( sliceButtons[i]->getToggleState() )
+        {
+            DBG(i);
+            activeSlices.add(i);
+        }
+    }
+    
+    return activeSlices;
 }
 
 void Preview::addSlice( Slice* slice )
 {
     SliceButton* newButton = new SliceButton ( slice );
+    newButton->addListener(this);
     sliceButtons.add( newButton );
 
     if ( newButton->enabled )
@@ -57,6 +83,20 @@ void Preview::clearSlices()
 void Preview::update(Slice* slice, int i)
 {
     sliceButtons[i]->setVisible( slice->enabled );
+}
+
+void Preview::paint (Graphics& g)
+{
+    
+    g.fillAll (Colours::black);   // clear the background
+    
+    g.setColour (Colours::lightblue);
+    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+    
+    g.setColour (Colours::lightblue);
+    g.setFont (14.0f);
+    g.drawText ("Preview", getLocalBounds(),
+                Justification::centred, true);   // draw some placeholder text
 }
 
 void Preview::resized()

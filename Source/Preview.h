@@ -17,7 +17,7 @@
 //==============================================================================
 /*
 */
-class Preview    : public Component
+class Preview    : public Component, public Button::Listener, public ChangeBroadcaster
 {
 public:
     Preview();
@@ -26,11 +26,16 @@ public:
     void paint (Graphics&);
     void resized();
     
+    virtual void buttonClicked (Button*);
     
     void update(Slice* slice, int i );
     
     void clearSlices();
     void addSlice( Slice* slice);
+    
+    void setSlices ( Array<int> activeSlices );
+    Array<int> getSlices ();
+    
 
     
 

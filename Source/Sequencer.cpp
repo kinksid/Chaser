@@ -33,7 +33,7 @@ Sequencer::Sequencer()
     
     activeButton = 0;
     stepper[0]->setToggleState(true, sendNotification);
-    startTimer( 200 );
+    //startTimer( 200 );
 
 }
 
