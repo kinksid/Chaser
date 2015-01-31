@@ -7,8 +7,6 @@ Builds/MacOSX/Chaser.xcodeproj/project.xcworkspace/xcshareddata/Chaser.xccheckou
 Builds/MacOSX/Chaser.xcodeproj/project.xcworkspace/xcuserdata/hybrid.xcuserdatad/UserInterfaceState.xcuserstate
 Builds/MacOSX/Chaser.xcodeproj/xcuserdata/hybrid.xcuserdatad/xcschemes/Chaser.xcscheme
 Builds/MacOSX/Chaser.xcodeproj/xcuserdata/hybrid.xcuserdatad/xcschemes/xcschememanagement.plist
-JuceLibraryCode/AppConfig.h
-JuceLibraryCode/ReadMe.txt
 JuceLibraryCode/modules/juce_audio_basics/juce_audio_basics.h
 JuceLibraryCode/modules/juce_audio_devices/juce_audio_devices.h
 JuceLibraryCode/modules/juce_audio_formats/juce_audio_formats.h
