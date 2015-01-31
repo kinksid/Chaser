@@ -52,7 +52,7 @@ private:
     ScopedPointer<Sequencer> sequencer;
     ScopedPointer<XmlSequence> xmlSequence;
     
-    ScopedPointer<Button> update;
+    //ScopedPointer<Button> update;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)

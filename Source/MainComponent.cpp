@@ -12,7 +12,7 @@
 //==============================================================================
 MainContentComponent::MainContentComponent()
 {
-    laf = new LookAndFeel_V3;
+    laf = new LookAndFeel_V1;
     setLookAndFeel(laf);
     
     openOutput = new TextButton ("OpenOutput");
@@ -20,10 +20,10 @@ MainContentComponent::MainContentComponent()
     openOutput->addListener( this );
     addAndMakeVisible(openOutput);
     
-    update = new TextButton ("Update");
-    update->setButtonText("Update");
-    update->addListener( this );
-    addAndMakeVisible(update);
+//    update = new TextButton ("Update");
+//    update->setButtonText("Update");
+//    update->addListener( this );
+//    addAndMakeVisible(update);
     
     previewWindow = new Preview();
     addAndMakeVisible( previewWindow );
@@ -46,13 +46,16 @@ MainContentComponent::MainContentComponent()
         parseXml( activeFile );
         //update the view for the first step
         previewWindow->setSlices( xmlSequence->getStep( 0, 0 ) );
+		sequencer->setSequenceNames ( xmlSequence->getSequenceNames() );
     }
     else
     {
         xmlSequence->createFreshXml();
     }
     
-    setSize (1024, 768);
+
+    
+    setSize (1024, 600);
 }
 
 MainContentComponent::~MainContentComponent()
@@ -78,11 +81,11 @@ void MainContentComponent::buttonClicked(juce::Button *b)
         }
     }
     
-    if ( b == update )
-    {
-        if ( activeFile.exists() )
-            parseXml( activeFile );
-    }
+//    if ( b == update )
+//    {
+//        if ( activeFile.exists() )
+//            parseXml( activeFile );
+//    }
 }
 
 
@@ -98,10 +101,16 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
     
     if ( source == sequencer )
     {
-        //the sequencer has been set to a new step
+        //the sequencer has been set to a new step or sequence
         //so read out the values for this step and update the preview
         int step = sequencer->activeButton;
-        previewWindow->setSlices( xmlSequence->getStep( 0, step ) );
+		int sequence = sequencer->activeSequence;
+        previewWindow->setSlices( xmlSequence->getStep( sequence, step ) );
+		
+		//save the sequence names to xml
+		xmlSequence->setSequenceNames( sequencer->getSequenceNames() );
+		xmlSequence->save();
+		
         
     }
     
@@ -110,7 +119,8 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
         //a slice has been toggled in the preview
         //so get all the active slices and update the xml
         int step = sequencer->activeButton;
-        xmlSequence->setStep( 0, step, previewWindow->getSlices() );
+		int sequence = sequencer->activeSequence;
+        xmlSequence->setStep( sequence, step, previewWindow->getSlices() );
         xmlSequence->save();
     }
 }
@@ -227,7 +237,6 @@ void MainContentComponent::resized()
     
     previewWindow->setBoundsRelative( 0.01 , 0.01, scale , h * scale );
     sliceList->setBoundsRelative( scale + 0.02, 0.01, 1.0 - scale - 0.03, h * scale - 0.05);
-    openOutput->setBoundsRelative( scale + 0.02, h * scale - 0.03, (1.0 - scale - 0.03 ) / 2.0 - 0.005 , 0.04);
-    update->setBoundsRelative( scale + (1.0 - scale  ) / 2.0 + 0.01, h * scale -0.03, (1.0 - scale - 0.03 ) / 2.0 -0.005 , 0.04);
-    sequencer->setBoundsRelative( 0.01, h * scale + 0.02, scale, 0.1);
+    openOutput->setBoundsRelative( scale + 0.02, h * scale - 0.035, (1.0 - scale - 0.03 ) - 0.005 , 0.04);
+    sequencer->setBoundsRelative( 0.01, h * scale + 0.02, 0.98, 0.15);
 }

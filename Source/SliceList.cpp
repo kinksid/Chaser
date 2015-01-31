@@ -31,7 +31,7 @@ SliceList::~SliceList()
 
 void SliceList::paint (Graphics& g)
 {
-    g.fillAll (Colours::lightgrey);   // clear the background
+    g.fillAll (Colours::darkgrey);   // clear the background
 
     g.setColour (Colours::grey);
     g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
@@ -86,9 +86,9 @@ void SliceList::paintListBoxItem (int rowNumber, Graphics& g, int width, int hei
     
     if ( rowIsSelected )
     {
-        g.setColour(Colours::darkblue);
+        g.setColour(Colours::lightgrey);
         g.fillRect(rect);
-        g.setColour(Colours::white);
+        g.setColour(Colours::black);
     }
     
     else

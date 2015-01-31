@@ -6,6 +6,12 @@
               companyEmail="joris@hybridvisuals.nl">
   <MAINGROUP id="cFMW0p" name="Chaser">
     <GROUP id="{6A6FFF85-7097-63A1-1439-46EFB4CC7C8A}" name="Source">
+      <GROUP id="{88757B7B-82EB-6E35-F2AE-6CD7FE11630B}" name="buttons">
+        <FILE id="nlEqXv" name="next.svg" compile="0" resource="1" file="Source/buttons/next.svg"/>
+        <FILE id="RPZmlx" name="pause.svg" compile="0" resource="1" file="Source/buttons/pause.svg"/>
+        <FILE id="iOs9w4" name="play.svg" compile="0" resource="1" file="Source/buttons/play.svg"/>
+        <FILE id="a3fRRI" name="previous.svg" compile="0" resource="1" file="Source/buttons/previous.svg"/>
+      </GROUP>
       <FILE id="LUvmwf" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="FXhUXW" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
@@ -28,8 +34,8 @@
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
                        isDebug="1" optimisation="1" targetName="Chaser"/>
-        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
-                       isDebug="0" optimisation="2" targetName="Chaser"/>
+        <CONFIGURATION name="Release" osxSDK="10.9 SDK" osxCompatibility="10.6 SDK"
+                       osxArchitecture="64BitIntel" isDebug="0" optimisation="2" targetName="Chaser"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../JUCE/modules"/>

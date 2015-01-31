@@ -11,13 +11,20 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Sequencer.h"
 
+
 //==============================================================================
 Sequencer::Sequencer()
 {
-    //create 16 buttons for the step sequencer
+    sequenceLaf = new LookAndFeel_V1();
+	
+    
     for ( int i = 0; i < 16; i++ )
     {
+        //create 16 buttons for the step sequencer
         Button* b = new TextButton( String (i + 1) );
+        b->setLookAndFeel(sequenceLaf);
+        b->setColour(TextButton::buttonColourId, Colours::darkgrey);
+        b->setColour(TextButton::buttonOnColourId, Colours::lightgrey);
         b->setRadioGroupId(1);
         b->setClickingTogglesState(true);
         if ( i == 0 )
@@ -29,16 +36,58 @@ Sequencer::Sequencer()
         b->addListener(this);
         addAndMakeVisible(b);
         stepper.add(b);
+        
+        //fill the sequence names array with default names
+        String seqName = "Sequence " + String ( i+1 );
+        sequenceNames.add(seqName);
     }
     
     activeButton = 0;
+	activeSequence = 0;
     stepper[0]->setToggleState(true, sendNotification);
-    
-    //play/pause button
-    play = new TextButton ( "Play" );
-    play->setClickingTogglesState ( true );
+
+    //drawable svg buttons
+    ScopedPointer<XmlElement> drawPlayXml (XmlDocument::parse (BinaryData::play_svg));
+    ScopedPointer<XmlElement> drawPauseXml (XmlDocument::parse (BinaryData::pause_svg));
+    ScopedPointer<XmlElement> drawNextXml (XmlDocument::parse (BinaryData::next_svg));
+    ScopedPointer<XmlElement> drawPrevXml (XmlDocument::parse (BinaryData::previous_svg));
+
+    ScopedPointer<Drawable>  drawPlay = Drawable::createFromSVG (*drawPlayXml);
+    ScopedPointer<Drawable>  drawPause = Drawable::createFromSVG (*drawPauseXml);
+    play = new DrawableButton("play", DrawableButton::ButtonStyle::ImageFitted );
+    play->setColour(DrawableButton::backgroundOnColourId, Colours::transparentBlack);
+    play->setImages(drawPlay, drawPlay, drawPause, drawPlay, drawPause);
+    play->setEdgeIndent(12);
+    play->setClickingTogglesState(true);
+    addAndMakeVisible(play);
     play->addListener(this);
-    addAndMakeVisible( play );
+
+    ScopedPointer<Drawable> drawNext = Drawable::createFromSVG (*drawNextXml);
+    next = new DrawableButton("next", DrawableButton::ButtonStyle::ImageFitted );
+    next->setImages(drawNext);
+    next->setEdgeIndent(10);
+    addAndMakeVisible(next);
+    next->addListener(this);
+
+    ScopedPointer<Drawable> drawPrev = Drawable::createFromSVG (*drawPrevXml);
+    previous = new DrawableButton("previous", DrawableButton::ButtonStyle::ImageFitted );
+    previous->setImages(drawPrev);
+    previous->setEdgeIndent(10);
+    addAndMakeVisible(previous);
+    previous->addListener(this);
+    
+    //sequence name label
+    sequenceName = new Label("sequencename");
+    sequenceName->setText(sequenceNames[activeSequence], dontSendNotification);
+    sequenceName->setEditable(true);
+	sequenceName->addListener(this);
+    
+    sequenceName->setColour(Label::outlineColourId, Colours::lightgrey);
+    sequenceName->setColour(Label::backgroundColourId, Colours::darkgrey);
+    sequenceName->setColour(Label::textColourId, Colours::whitesmoke);
+    
+    addAndMakeVisible(sequenceName);
+
     
 
 }
@@ -58,17 +107,29 @@ void Sequencer::buttonClicked (Button* b)
 {
     if ( b == play )
     {
-        if ( play->getToggleState() )
-        {
-            play->setButtonText("Pause");
+        if ( b->getToggleState())
             startTimer(200);
-        }
         else
-        {
-            play->setButtonText("Play");
             stopTimer();
-        }
     }
+	
+	else if ( b == previous )
+	{
+		activeSequence--;
+		if ( activeSequence < 0 )
+			activeSequence = 15;
+		sequenceName->setText(sequenceNames[activeSequence], dontSendNotification);
+		sendChangeMessage();
+	}
+	
+	else if ( b == next )
+	{
+		activeSequence++;
+		if ( activeSequence > 15 )
+			activeSequence = 0;
+		sequenceName->setText(sequenceNames[activeSequence], dontSendNotification);
+		sendChangeMessage();
+	}
     
     else
     {
@@ -76,6 +137,12 @@ void Sequencer::buttonClicked (Button* b)
         if( b->getToggleState() )
             sendChangeMessage();
     }
+}
+
+void Sequencer::labelTextChanged (Label* labelThatHasChanged)
+{
+	sequenceNames.set(activeSequence, labelThatHasChanged->getText());
+	sendChangeMessage();
 }
 
 void Sequencer::buttonStateChanged (Button* b)
@@ -92,12 +159,19 @@ void Sequencer::timerCallback()
 
 void Sequencer::resized()
 {
-    float w = 1.0 / 17.0;
+    float w = (0.84 / 0.98) / 16.0; //so the 16 buttons align perfectly with the preview window
     for(int i = 0; i < stepper.size(); i++ )
     {
         
         stepper[i]->setBoundsRelative( i * w, 0.0, w , 1.0 );
     }
     
-    play->setBoundsRelative(1.0 - w * 0.9, 0.0, w * 0.9, 1.0);
+    previous->setBoundsRelative(1.0-w*2.7, 0.2, w * 0.9, 0.8 );
+    play->setBoundsRelative(1.0-w*1.8, 0.2, w * 0.9, 0.8 );
+    next->setBoundsRelative(1.0-w*0.9, 0.2, w * 0.9, 0.8 );
+    
+
+    sequenceName->setBoundsRelative(1.0-w*2.65, 0.05, w * 2.6, 0.24);
+    
+
 }

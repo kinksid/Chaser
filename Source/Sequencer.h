@@ -16,7 +16,7 @@
 //==============================================================================
 /*
 */
-class Sequencer    : public Component, public Button::Listener, public Timer, public ChangeBroadcaster
+class Sequencer    : public Component, public Button::Listener, public Label::Listener, public Timer, public ChangeBroadcaster
 {
 public:
     Sequencer();
@@ -27,14 +27,35 @@ public:
     
     virtual void buttonClicked (Button*);
     virtual void buttonStateChanged (Button*);
+	
+	virtual void labelTextChanged (Label* labelThatHasChanged);
     
     virtual void timerCallback();
     
     int activeButton;
+    int activeSequence;
+	
+	void setSequenceNames( StringArray seqNames )
+	{
+		sequenceNames = seqNames;
+		//update the label
+		sequenceName->setText(sequenceNames[activeSequence], dontSendNotification );
+	}
+	
+	StringArray getSequenceNames()
+	{
+		return sequenceNames;
+	}
 
 private:
     OwnedArray<Button> stepper;
-    ScopedPointer<Button> play;
+    ScopedPointer<DrawableButton> play;
+    ScopedPointer<DrawableButton> next;
+    ScopedPointer<DrawableButton> previous;
+    
+    ScopedPointer<LookAndFeel_V1> sequenceLaf;
+    ScopedPointer<Label> sequenceName;
+    StringArray sequenceNames;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Sequencer)
 };

@@ -27,6 +27,9 @@ public:
     void clearSlices();
     void addSlice ( Slice* slices );
     Array<Slice> getSlices();
+	
+	StringArray getSequenceNames();
+	void setSequenceNames ( StringArray names );
     
     void setFile ( File f );
     File getFile();
@@ -42,6 +45,7 @@ private:
     ScopedPointer<XmlElement> chaserData;
     XmlElement* sequenceData;
     XmlElement* positionData;
+	StringArray sequenceNames;
 //    OwnedArray<XmlElement> slices;
 //    OwnedArray<XmlElement> sequences;
 //    OwnedArray<OwnedArray<XmlElement>> steps;

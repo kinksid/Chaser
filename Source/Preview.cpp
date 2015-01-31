@@ -16,7 +16,7 @@ Preview::Preview()
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
-
+    sliceLaf = new SliceLookAndFeel();
 }
 
 Preview::~Preview()
@@ -66,6 +66,12 @@ Array<int> Preview::getSlices()
 void Preview::addSlice( Slice* slice )
 {
     SliceButton* newButton = new SliceButton ( slice );
+    
+    newButton->setLookAndFeel(sliceLaf);
+    newButton->setColour(TextButton::buttonColourId, Colours::darkgrey);
+    newButton->setColour(TextButton::buttonOnColourId, Colours::whitesmoke);
+    newButton->setColour(TextButton::textColourOffId, Colours::whitesmoke);
+    newButton->setColour(TextButton::textColourOnId, Colours::black);
     newButton->addListener(this);
     sliceButtons.add( newButton );
 

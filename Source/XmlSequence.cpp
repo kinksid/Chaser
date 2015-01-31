@@ -13,6 +13,7 @@
 
 XmlSequence::XmlSequence()
 {
+    positionData = nullptr;
     load();
 }
 
@@ -30,6 +31,7 @@ void XmlSequence::setStep(int sequence, int step, Array<int> activeSlices)
     //add child elements for each active slice in this step
     for ( int i = 0; i < activeSlices.size(); i++ )
     {
+        
         //DBG("Added to XML: "+ String(i));
         XmlElement* slice = new XmlElement( "slice" );
         slice->setAttribute("nr", activeSlices[i]);
@@ -52,8 +54,37 @@ Array<int> XmlSequence::getStep(int sequence, int step)
     return activeSlices;
 }
 
+StringArray XmlSequence::getSequenceNames()
+{
+	StringArray names;
+	if ( sequenceData->getNumChildElements() > 0 )
+	{
+		forEachXmlChildElement(*sequenceData, sequence)
+		{
+			names.add(sequence->getStringAttribute("name"));
+		}
+	}
+	
+	return names;
+}
+
+void XmlSequence::setSequenceNames(juce::StringArray names)
+{
+	if ( sequenceData->getNumChildElements() > 0 )
+	{
+		int i = 0;
+		forEachXmlChildElement(*sequenceData, sequence)
+		{
+			sequence->setAttribute("name", names[i]);
+			i++;
+		}
+	}
+
+}
+
 void XmlSequence::addSlice(Slice* slice)
 {
+    
     if ( positionData == nullptr )
     {
         positionData = new XmlElement("positionData");
@@ -74,7 +105,9 @@ void XmlSequence::addSlice(Slice* slice)
 void XmlSequence::clearSlices()
 {
     if ( positionData != nullptr )
+    {
         positionData->deleteAllChildElements();
+    }
 }
 
 void XmlSequence::createFreshXml()
@@ -94,6 +127,7 @@ void XmlSequence::createFreshXml()
     {
         XmlElement* sequence = new XmlElement ("sequence");
         sequence->setAttribute("nr", i);
+		sequence->setAttribute("name", "Sequence " + String(i + 1));
         sequenceData->addChildElement(sequence);
         
         //each with 16 steps
@@ -187,8 +221,8 @@ void XmlSequence::load()
 File XmlSequence::getXmlFile()
 {
     //get the file chaserData.xml, for now we'll use the userDocs
-    File appDir = File::getSpecialLocation(File::userDocumentsDirectory);
-    File xmlFile = appDir.getChildFile("Chaser/chaserdata.xml");
+    File docDir = File::getSpecialLocation( File::userDocumentsDirectory );
+    File xmlFile = docDir.getChildFile("Chaser/chaserdata.xml");
     return xmlFile;
 }
 
