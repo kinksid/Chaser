@@ -36,6 +36,10 @@ MainContentComponent::MainContentComponent()
     sequencer = new Sequencer();
     addAndMakeVisible(sequencer);
     sequencer->addChangeListener(this);
+	
+	copier = new Copier();
+	addAndMakeVisible(copier);
+	copier->addChangeListener(this);
     
     xmlSequence = new XmlSequence();
     
@@ -53,7 +57,7 @@ MainContentComponent::MainContentComponent()
         xmlSequence->createFreshXml();
     }
     
-
+	
     
     setSize (1024, 600);
 }
@@ -101,12 +105,14 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
     
     if ( source == sequencer )
     {
+		//this means either 1:
         //the sequencer has been set to a new step or sequence
         //so read out the values for this step and update the preview
         int step = sequencer->activeButton;
 		int sequence = sequencer->activeSequence;
         previewWindow->setSlices( xmlSequence->getStep( sequence, step ) );
 		
+		//or 2: the sequence name has been changed
 		//save the sequence names to xml
 		xmlSequence->setSequenceNames( sequencer->getSequenceNames() );
 		xmlSequence->save();
@@ -123,6 +129,23 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
         xmlSequence->setStep( sequence, step, previewWindow->getSlices() );
         xmlSequence->save();
     }
+	
+	if ( source == copier )
+	{
+		int multiplier = copier->clickedButton->getButtonText().getTrailingIntValue();
+	
+		int step = sequencer->activeButton;
+		int sequence = sequencer->activeSequence;
+		
+		for ( int i = multiplier; i < 16; i += multiplier )
+		{
+			int nextStep = step + i;
+			if ( nextStep >= 16 )
+				nextStep -= 16;
+			xmlSequence->setStep( sequence, nextStep, previewWindow->getSlices() );
+			xmlSequence->save();
+		}
+	}
 }
 
 void MainContentComponent::parseXml(File f)
@@ -238,5 +261,6 @@ void MainContentComponent::resized()
     previewWindow->setBoundsRelative( 0.01 , 0.01, scale , h * scale );
     sliceList->setBoundsRelative( scale + 0.02, 0.01, 1.0 - scale - 0.03, h * scale - 0.05);
     openOutput->setBoundsRelative( scale + 0.02, h * scale - 0.035, (1.0 - scale - 0.03 ) - 0.005 , 0.04);
-    sequencer->setBoundsRelative( 0.01, h * scale + 0.02, 0.98, 0.15);
+    sequencer->setBoundsRelative( 0.06, h * scale + 0.02, 0.93, 1.0 - h * scale - 0.04);
+	copier->setBoundsRelative(0.01, h * scale + 0.02, 0.045, 1.0 - h * scale - 0.04);
 }

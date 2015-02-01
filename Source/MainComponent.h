@@ -15,6 +15,7 @@
 #include "SliceList.h"
 #include "Sequencer.h"
 #include "XmlSequence.h"
+#include "Copier.h"
 
 
 //==============================================================================
@@ -51,6 +52,7 @@ private:
     ScopedPointer<SliceList> sliceList;
     ScopedPointer<Sequencer> sequencer;
     ScopedPointer<XmlSequence> xmlSequence;
+	ScopedPointer<Copier> copier;
     
     //ScopedPointer<Button> update;
     

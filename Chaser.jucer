@@ -12,6 +12,8 @@
         <FILE id="iOs9w4" name="play.svg" compile="0" resource="1" file="Source/buttons/play.svg"/>
         <FILE id="a3fRRI" name="previous.svg" compile="0" resource="1" file="Source/buttons/previous.svg"/>
       </GROUP>
+      <FILE id="feROqu" name="Copier.cpp" compile="1" resource="0" file="Source/Copier.cpp"/>
+      <FILE id="KuVhh1" name="Copier.h" compile="0" resource="0" file="Source/Copier.h"/>
       <FILE id="LUvmwf" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="FXhUXW" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>

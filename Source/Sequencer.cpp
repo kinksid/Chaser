@@ -119,7 +119,7 @@ void Sequencer::buttonClicked (Button* b)
 		if ( activeSequence < 0 )
 			activeSequence = 15;
 		sequenceName->setText(sequenceNames[activeSequence], dontSendNotification);
-		sendChangeMessage();
+		stepper[0]->triggerClick();
 	}
 	
 	else if ( b == next )
@@ -128,7 +128,7 @@ void Sequencer::buttonClicked (Button* b)
 		if ( activeSequence > 15 )
 			activeSequence = 0;
 		sequenceName->setText(sequenceNames[activeSequence], dontSendNotification);
-		sendChangeMessage();
+		stepper[0]->triggerClick();
 	}
     
     else
@@ -159,7 +159,7 @@ void Sequencer::timerCallback()
 
 void Sequencer::resized()
 {
-    float w = (0.84 / 0.98) / 16.0; //so the 16 buttons align perfectly with the preview window
+    float w = (0.835 / 0.98) / 16.0; //so the 16 buttons align perfectly with the preview window
     for(int i = 0; i < stepper.size(); i++ )
     {
         
