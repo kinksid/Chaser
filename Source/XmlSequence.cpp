@@ -48,7 +48,7 @@ Array<int> XmlSequence::getStep(int sequence, int step)
     //read out the the list of ints associated with this step
     for ( int i = 0; i < currentStep->getNumChildElements(); i++ )
     {
-        //DBG("Read from XML: " + String(currentStep->getChildElement(i)->getTagName().getIntValue()));
+		//DBG("Read from XML: " + String(currentStep->getChildElement(i)->getTagName().getIntValue()));
         activeSlices.add( currentStep->getChildElement(i)->getIntAttribute("nr") );
     }
     return activeSlices;
@@ -102,12 +102,26 @@ void XmlSequence::addSlice(Slice* slice)
 
 }
 
+void XmlSequence::updateSlice(Slice *slice, int i )
+{
+	XmlElement* sliceXml = positionData->getChildElement(i);
+	if ( sliceXml != nullptr )
+	{
+		sliceXml->setAttribute("name", slice->name);
+		sliceXml->setAttribute("enable", (int) slice->enabled );
+		sliceXml->setAttribute("l", slice->proportionalX);
+		sliceXml->setAttribute("t", slice->proportionalY);
+		sliceXml->setAttribute("r", slice->proportionalX + slice->proportionalW);
+		sliceXml->setAttribute("b", slice->proportionalY + slice->proportionalH);
+	}
+	
+}
+
 void XmlSequence::clearSlices()
 {
-    if ( positionData != nullptr )
-    {
-        positionData->deleteAllChildElements();
-    }
+	chaserData->deleteAllChildElementsWithTagName("positionData");
+	positionData = new XmlElement ("positionData");
+	chaserData->addChildElement(positionData);
 }
 
 void XmlSequence::createFreshXml()
@@ -204,11 +218,14 @@ void XmlSequence::load()
                 
             }
         }
-        
+		
         positionData = chaserData->getChildByName( "positionData");
         if ( positionData != nullptr)
         {
             forEachXmlChildElement(*positionData, slice);
+			{
+				
+			}
         }
     }
     

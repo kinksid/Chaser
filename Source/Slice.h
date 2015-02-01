@@ -16,6 +16,8 @@
 class Slice
 {
 public:
+	
+	
     Slice( String n, bool enable, double l, double t, double r, double b )
     {
         name = n;
@@ -27,7 +29,8 @@ public:
         proportionalW = r - l;
         proportionalH = b - t;
     }
-    
+	
+    Slice(){}
     ~Slice()
     {
         

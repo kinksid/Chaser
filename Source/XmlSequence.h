@@ -23,9 +23,11 @@ public:
     
     void setStep ( int sequence, int step, Array<int> activeSlices );
     Array<int> getStep ( int sequence, int step );
-    
+
+	
     void clearSlices();
-    void addSlice ( Slice* slices );
+    void addSlice ( Slice* slice );
+	void updateSlice ( Slice* slice, int i);
     Array<Slice> getSlices();
 	
 	StringArray getSequenceNames();

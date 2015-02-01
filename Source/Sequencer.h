@@ -35,17 +35,10 @@ public:
     int activeButton;
     int activeSequence;
 	
-	void setSequenceNames( StringArray seqNames )
-	{
-		sequenceNames = seqNames;
-		//update the label
-		sequenceName->setText(sequenceNames[activeSequence], dontSendNotification );
-	}
-	
-	StringArray getSequenceNames()
-	{
-		return sequenceNames;
-	}
+	void setSequenceNames( StringArray seqNames );
+	void setDefaultSequenceNames();
+	StringArray getSequenceNames();
+
 
 private:
     OwnedArray<Button> stepper;

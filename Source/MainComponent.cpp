@@ -46,8 +46,8 @@ MainContentComponent::MainContentComponent()
     //load the slices from the previous xml
     if ( xmlSequence->getFile().exists() )
     {
-        activeFile = xmlSequence->getFile();
-        parseXml( activeFile );
+		activeFile = xmlSequence->getFile();
+        parseXml( xmlSequence->getFile() );
         //update the view for the first step
         previewWindow->setSlices( xmlSequence->getStep( 0, 0 ) );
 		sequencer->setSequenceNames ( xmlSequence->getSequenceNames() );
@@ -80,8 +80,7 @@ void MainContentComponent::buttonClicked(juce::Button *b)
         if ( fc.browseForFileToOpen() );
         {
             File f = fc.getResult();
-            activeFile = f;
-            parseXml( activeFile );
+            parseXml( f );
         }
     }
     
@@ -99,6 +98,7 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
     {
         for ( int i = 0; i < slices.size(); i++ )
         {
+			xmlSequence->updateSlice (slices[i], i);
             previewWindow->update(slices[i], i );
         }
     }
@@ -159,6 +159,16 @@ void MainContentComponent::parseXml(File f)
     {
         DBG("Loading: " + f.getFullPathName() );
         XmlDocument xmlDoc ( f );
+		
+		//check if we're loading a new file or the same file
+		//if it's new, clear the xml and create a fresh one
+		bool loadingSameFile = (f == activeFile);
+		if ( !loadingSameFile )
+		{
+			xmlSequence->createFreshXml();
+		}
+		
+		
         ScopedPointer<XmlElement> preset (XmlDocument::parse ( f ));
         
         //traverse the whole fucking tree
@@ -227,20 +237,61 @@ void MainContentComponent::parseXml(File f)
                     }
                 }
             }
-            
+			
+			//if we're loading the same file, get the enabled states from the chaserxml
+			if ( loadingSameFile )
+			{
+				Array<Slice> prevSlices = xmlSequence->getSlices() ;
+				for ( int i = 0; i < prevSlices.size(); i++ )
+				{
+	
+					if ( i < slices.size() )
+					{
+						slices[i]->enabled = prevSlices[i].enabled;
+						
+					}
+					
+
+				}
+			}
+			
             //update the previewWindow and sliceList
             sliceList->clearSlices();
             previewWindow->clearSlices();
             xmlSequence->clearSlices();
+			
+			
             for ( int i = 0; i < slices.size(); i++ )
             {
                 sliceList->addSlice( slices[i] );
                 previewWindow->addSlice( slices[i] );
                 xmlSequence->addSlice ( slices[i] );
             }
+			
+
             
             previewWindow->resized();
+			
+			//set the previewWindow to the correct step
+			
+			//if we're not loading the same file, reset the sequencer
+			if ( !loadingSameFile )
+			{
+				sequencer->activeButton = 0;
+				sequencer->activeSequence = 0;
+				sequencer->setDefaultSequenceNames();
+			}
+			
+			int step = sequencer->activeButton;
+			int sequence = sequencer->activeSequence;
+			previewWindow->setSlices( xmlSequence->getStep( sequence, step) );
+
+			//store the last used file in xml and save it
             xmlSequence->setFile( f );
+			xmlSequence->save();
+			
+			//update the activefile var
+			activeFile = f;
             
             
         }

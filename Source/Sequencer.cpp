@@ -37,11 +37,11 @@ Sequencer::Sequencer()
         addAndMakeVisible(b);
         stepper.add(b);
         
-        //fill the sequence names array with default names
-        String seqName = "Sequence " + String ( i+1 );
-        sequenceNames.add(seqName);
+
     }
-    
+	
+	
+	
     activeButton = 0;
 	activeSequence = 0;
     stepper[0]->setToggleState(true, sendNotification);
@@ -87,6 +87,8 @@ Sequencer::Sequencer()
     sequenceName->setColour(Label::textColourId, Colours::whitesmoke);
     
     addAndMakeVisible(sequenceName);
+	
+	setDefaultSequenceNames();
 
     
 
@@ -95,6 +97,32 @@ Sequencer::Sequencer()
 Sequencer::~Sequencer()
 {
     
+}
+
+void Sequencer::setSequenceNames(juce::StringArray seqNames)
+{
+	sequenceNames = seqNames;
+	//update the label
+	sequenceName->setText(sequenceNames[activeSequence], dontSendNotification );
+}
+
+StringArray Sequencer::getSequenceNames()
+{
+	return sequenceNames;
+}
+
+void Sequencer::setDefaultSequenceNames()
+{
+	sequenceNames.clear();
+	for ( int i = 0; i < 16; i++ )
+	{
+		//fill the sequence names array with default names
+		String seqName = "Sequence " + String ( i+1 );
+		sequenceNames.add(seqName);
+	}
+	
+	//update the label
+	sequenceName->setText(sequenceNames[activeSequence], dontSendNotification);
 }
 
 void Sequencer::paint (Graphics& g)

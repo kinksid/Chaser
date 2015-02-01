@@ -43,7 +43,7 @@ void Preview::setSlices(Array<int> activeSlices)
         //it could be that the xml we have loaded has more slices than the current button layout
         //for instance because it has been changed in Resolume
         //so here we make sure we aren't trying to change a buttonstate that no longer exists
-        if ( i < sliceButtons.size() )
+        if ( activeSlices[i] < sliceButtons.size() )
             sliceButtons[activeSlices[i]]->setToggleState(true, dontSendNotification);
     }
     
