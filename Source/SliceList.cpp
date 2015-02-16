@@ -86,7 +86,8 @@ void SliceList::paintListBoxItem (int rowNumber, Graphics& g, int width, int hei
     
     if ( rowIsSelected )
     {
-        g.setColour(Colours::lightgrey);
+		
+        g.setColour(claf.getOutlineColour().withMultipliedSaturation (0.3f));
         g.fillRect(rect);
         g.setColour(Colours::black);
     }

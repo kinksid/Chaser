@@ -16,6 +16,8 @@
 #include "Sequencer.h"
 #include "XmlSequence.h"
 #include "Copier.h"
+#include "ColourLookAndFeel.h"
+
 
 
 //==============================================================================
@@ -41,7 +43,7 @@ public:
 
 private:
     
-    ScopedPointer<LookAndFeel> laf;
+    ScopedPointer<ColourLookAndFeel> laf;
     
     ScopedPointer<Button> openOutput;
     File activeFile;

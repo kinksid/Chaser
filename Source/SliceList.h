@@ -13,6 +13,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Slice.h"
+#include "ColourLookAndFeel.h"
 
 //==============================================================================
 /*
@@ -37,6 +38,7 @@ public:
 private:
     OwnedArray<Slice> slices;
     ListBox sliceList;
+	ColourLookAndFeel claf;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SliceList)
 };

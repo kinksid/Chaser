@@ -13,17 +13,20 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "SliceButton.h"
+#include "ColourLookAndFeel.h"
+
 
 //==============================================================================
 /*
 */
 
-class SliceLookAndFeel : public LookAndFeel_V1
+class SliceLookAndFeel : public ColourLookAndFeel
 {
 public:
     
     SliceLookAndFeel(){}
     ~SliceLookAndFeel(){}
+	
     //override the button drawing function
     void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
                                                bool isMouseOverButton, bool isButtonDown)
@@ -53,7 +56,7 @@ public:
         g.setColour (bc);
         g.fillPath (p);
         
-        g.setColour (bc.contrasting().withAlpha ((isMouseOverButton) ? 0.6f : 0.4f));
+		g.setColour (getOutlineColour().withAlpha ((isMouseOverButton) ? 1.0f : 0.8f));
         g.strokePath (p, PathStrokeType ((isMouseOverButton) ? 2.0f : 1.4f));
     }
     

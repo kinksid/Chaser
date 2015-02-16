@@ -15,16 +15,16 @@
 //==============================================================================
 Sequencer::Sequencer()
 {
-    sequenceLaf = new LookAndFeel_V1();
+	//sequenceLaf = new LookAndFeel_V1();
 	
     
     for ( int i = 0; i < 16; i++ )
     {
         //create 16 buttons for the step sequencer
         Button* b = new TextButton( String (i + 1) );
-        b->setLookAndFeel(sequenceLaf);
+		//b->setLookAndFeel(sequenceLaf);
         b->setColour(TextButton::buttonColourId, Colours::darkgrey);
-        b->setColour(TextButton::buttonOnColourId, Colours::lightgrey);
+        b->setColour(TextButton::buttonOnColourId, claf.getOutlineColour());
         b->setRadioGroupId(1);
         b->setClickingTogglesState(true);
         if ( i == 0 )

@@ -12,11 +12,12 @@
 //==============================================================================
 MainContentComponent::MainContentComponent()
 {
-    laf = new LookAndFeel_V1;
+	laf = new ColourLookAndFeel();
     setLookAndFeel(laf);
     
     openOutput = new TextButton ("OpenOutput");
     openOutput->setButtonText("Load");
+	openOutput->setColour(TextButton::buttonColourId, laf->getOutlineColour());
     openOutput->addListener( this );
     addAndMakeVisible(openOutput);
     

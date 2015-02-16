@@ -69,7 +69,7 @@ void Preview::addSlice( Slice* slice )
     
     newButton->setLookAndFeel(sliceLaf);
     newButton->setColour(TextButton::buttonColourId, Colours::darkgrey);
-    newButton->setColour(TextButton::buttonOnColourId, Colours::whitesmoke);
+    newButton->setColour(TextButton::buttonOnColourId, sliceLaf->getOutlineColour());
     newButton->setColour(TextButton::textColourOffId, Colours::whitesmoke);
     newButton->setColour(TextButton::textColourOnId, Colours::black);
     newButton->addListener(this);

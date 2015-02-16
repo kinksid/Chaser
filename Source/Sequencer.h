@@ -12,6 +12,7 @@
 #define SEQUENCER_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "ColourLookAndFeel.h"
 
 //==============================================================================
 /*
@@ -46,9 +47,11 @@ private:
     ScopedPointer<DrawableButton> next;
     ScopedPointer<DrawableButton> previous;
     
-    ScopedPointer<LookAndFeel_V1> sequenceLaf;
+	//ScopedPointer<LookAndFeel_V1> sequenceLaf;
     ScopedPointer<Label> sequenceName;
     StringArray sequenceNames;
+	
+	ColourLookAndFeel claf;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Sequencer)
 };
