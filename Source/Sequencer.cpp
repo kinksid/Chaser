@@ -82,7 +82,7 @@ Sequencer::Sequencer()
     sequenceName->setEditable(true);
 	sequenceName->addListener(this);
     
-    sequenceName->setColour(Label::outlineColourId, Colours::lightgrey);
+    sequenceName->setColour(Label::outlineColourId, claf.getOutlineColour());
     sequenceName->setColour(Label::backgroundColourId, Colours::darkgrey);
     sequenceName->setColour(Label::textColourId, Colours::whitesmoke);
     

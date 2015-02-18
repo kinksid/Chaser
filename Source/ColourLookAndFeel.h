@@ -63,7 +63,7 @@ public:
 	}
 	
 private:
-	Colour outlineColour = Colours::Colours::khaki;
+	Colour outlineColour = Colours::khaki;
 	
 };
 

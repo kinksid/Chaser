@@ -96,10 +96,10 @@ void Preview::paint (Graphics& g)
     
     g.fillAll (Colours::black);   // clear the background
     
-    g.setColour (Colours::lightblue);
+    g.setColour (sliceLaf->getOutlineColour());
     g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
     
-    g.setColour (Colours::lightblue);
+    g.setColour (sliceLaf->getOutlineColour());
     g.setFont (14.0f);
     g.drawText ("Preview", getLocalBounds(),
                 Justification::centred, true);   // draw some placeholder text
