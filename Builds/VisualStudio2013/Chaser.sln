@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2013
+Project("{29E2157A-934E-1C7C-829C-8542F9F7F4DC}") = "Chaser", "Chaser.vcxproj", "{5BBD7AF8-D73A-673F-30F6-E81C2DC55268}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5BBD7AF8-D73A-673F-30F6-E81C2DC55268}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5BBD7AF8-D73A-673F-30F6-E81C2DC55268}.Debug|Win32.Build.0 = Debug|Win32
+		{5BBD7AF8-D73A-673F-30F6-E81C2DC55268}.Release|Win32.ActiveCfg = Release|Win32
+		{5BBD7AF8-D73A-673F-30F6-E81C2DC55268}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
