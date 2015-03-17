@@ -34,7 +34,7 @@ void XmlSequence::setStep(int sequence, int step, Array<int> activeSlices)
         
         //DBG("Added to XML: "+ String(i));
         XmlElement* slice = new XmlElement( "slice" );
-        slice->setAttribute("nr", activeSlices[i]);
+        slice->addTextElement  (String( activeSlices[i]));
         currentStep->addChildElement(slice);
     }
 }
@@ -48,8 +48,7 @@ Array<int> XmlSequence::getStep(int sequence, int step)
     //read out the the list of ints associated with this step
     for ( int i = 0; i < currentStep->getNumChildElements(); i++ )
     {
-		//DBG("Read from XML: " + String(currentStep->getChildElement(i)->getTagName().getIntValue()));
-        activeSlices.add( currentStep->getChildElement(i)->getIntAttribute("nr") );
+        activeSlices.add( currentStep->getChildElement(i)->getAllSubText().getIntValue() );
     }
     return activeSlices;
 }
@@ -80,6 +79,15 @@ void XmlSequence::setSequenceNames(juce::StringArray names)
 		}
 	}
 
+}
+
+void XmlSequence::setNumberOfSteps( int sequenceNumber, int numberOfSteps )
+{
+	if( sequenceData->getNumChildElements() > sequenceNumber )
+	{
+		XmlElement* sequence = sequenceData->getChildElement( sequenceNumber );
+		sequence->setAttribute( "maxsteps", numberOfSteps );
+	}
 }
 
 void XmlSequence::addSlice(Slice* slice)
@@ -142,6 +150,7 @@ void XmlSequence::createFreshXml()
         XmlElement* sequence = new XmlElement ("sequence");
         sequence->setAttribute("nr", i);
 		sequence->setAttribute("name", "Sequence " + String(i + 1));
+		sequence->setAttribute( "maxsteps", 16 );
         sequenceData->addChildElement(sequence);
         
         //each with 16 steps

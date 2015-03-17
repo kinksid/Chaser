@@ -37,7 +37,7 @@ public:
     int activeSequence;
 	
 	void setSequenceNames( StringArray seqNames );
-	void setDefaultSequenceNames();
+	void setDefaultSequences();
 	StringArray getSequenceNames();
 
 
@@ -46,8 +46,12 @@ private:
     ScopedPointer<DrawableButton> play;
     ScopedPointer<DrawableButton> next;
     ScopedPointer<DrawableButton> previous;
+
+	ScopedPointer<Button> lessSteps;
+	ScopedPointer<Button> moreSteps;
+
     
-	//ScopedPointer<LookAndFeel_V1> sequenceLaf;
+	Array<int> numberOfSteps;
     ScopedPointer<Label> sequenceName;
     StringArray sequenceNames;
 	

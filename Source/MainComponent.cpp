@@ -280,7 +280,7 @@ void MainContentComponent::parseXml(File f)
 			{
 				sequencer->activeButton = 0;
 				sequencer->activeSequence = 0;
-				sequencer->setDefaultSequenceNames();
+				sequencer->setDefaultSequences();
 			}
 			
 			int step = sequencer->activeButton;

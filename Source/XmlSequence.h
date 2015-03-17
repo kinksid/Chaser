@@ -32,6 +32,9 @@ public:
 	
 	StringArray getSequenceNames();
 	void setSequenceNames ( StringArray names );
+
+	void setNumberOfSteps( int sequenceNumber, int numberOfSteps );
+
     
     void setFile ( File f );
     File getFile();

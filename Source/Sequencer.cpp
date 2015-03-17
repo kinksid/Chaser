@@ -15,14 +15,11 @@
 //==============================================================================
 Sequencer::Sequencer()
 {
-	//sequenceLaf = new LookAndFeel_V1();
-	
-    
+
     for ( int i = 0; i < 16; i++ )
     {
         //create 16 buttons for the step sequencer
         Button* b = new TextButton( String (i + 1) );
-		//b->setLookAndFeel(sequenceLaf);
         b->setColour(TextButton::buttonColourId, Colours::darkgrey);
         b->setColour(TextButton::buttonOnColourId, claf.getOutlineColour());
         b->setRadioGroupId(1);
@@ -36,12 +33,15 @@ Sequencer::Sequencer()
         b->addListener(this);
         addAndMakeVisible(b);
         stepper.add(b);
-        
-
     }
+
+	for( int i = 0; i < 16; i++ )
+	{
+		
+	}
 	
 	
-	
+	//set the active vars and turn on the first step
     activeButton = 0;
 	activeSequence = 0;
     stepper[0]->setToggleState(true, sendNotification);
@@ -75,6 +75,14 @@ Sequencer::Sequencer()
     previous->setEdgeIndent(10);
     addAndMakeVisible(previous);
     previous->addListener(this);
+
+	//buttons to add and remove steps
+	lessSteps = new TextButton( "less" );
+	lessSteps->addListener( this );
+	addAndMakeVisible( lessSteps );
+	moreSteps = new TextButton( "more" );
+	moreSteps->addListener( this );
+	addAndMakeVisible( moreSteps );
     
     //sequence name label
     sequenceName = new Label("sequencename");
@@ -88,10 +96,7 @@ Sequencer::Sequencer()
     
     addAndMakeVisible(sequenceName);
 	
-	setDefaultSequenceNames();
-
-    
-
+	setDefaultSequences();
 }
 
 Sequencer::~Sequencer()
@@ -111,7 +116,7 @@ StringArray Sequencer::getSequenceNames()
 	return sequenceNames;
 }
 
-void Sequencer::setDefaultSequenceNames()
+void Sequencer::setDefaultSequences()
 {
 	sequenceNames.clear();
 	for ( int i = 0; i < 16; i++ )
@@ -119,6 +124,9 @@ void Sequencer::setDefaultSequenceNames()
 		//fill the sequence names array with default names
 		String seqName = "Sequence " + String ( i+1 );
 		sequenceNames.add(seqName);
+
+		//set each sequence to be 16 steps
+		numberOfSteps.add( 16 );
 	}
 	
 	//update the label
@@ -143,10 +151,17 @@ void Sequencer::buttonClicked (Button* b)
 	
 	else if ( b == previous )
 	{
-		activeSequence--;
-		if ( activeSequence < 0 )
-			activeSequence = 15;
-		sequenceName->setText(sequenceNames[activeSequence], dontSendNotification);
+		//only change the sequence when the first step is active
+	
+		if( activeButton == 0 )
+		{
+			activeSequence--;
+			if( activeSequence < 0 )
+				activeSequence = 15;
+			sequenceName->setText( sequenceNames[ activeSequence ], dontSendNotification );
+			resized();
+		}
+		//always set the step to be the first step
 		stepper[0]->triggerClick();
 	}
 	
@@ -156,7 +171,26 @@ void Sequencer::buttonClicked (Button* b)
 		if ( activeSequence > 15 )
 			activeSequence = 0;
 		sequenceName->setText(sequenceNames[activeSequence], dontSendNotification);
+		resized();
 		stepper[0]->triggerClick();
+	}
+
+	else if( b == lessSteps && numberOfSteps[activeSequence] > 1 )
+	{
+		//decrease the number of steps in the active sequence
+		numberOfSteps.set( activeSequence, numberOfSteps[ activeSequence ] - 1 );
+		resized();
+		//if we were on a button that is no longer in range, trigger the previous step
+		if( activeButton > numberOfSteps[ activeSequence ] - 1 )
+			stepper[ numberOfSteps[ activeSequence ] -1 ]->triggerClick();
+		
+	}
+
+	else if( b == moreSteps && numberOfSteps[ activeSequence ] < 16 )
+	{
+		//increase the number of steps in the active sequence
+		numberOfSteps.set( activeSequence, numberOfSteps[ activeSequence ] + 1 );
+		resized();
 	}
     
     else
@@ -181,25 +215,33 @@ void Sequencer::buttonStateChanged (Button* b)
 void Sequencer::timerCallback()
 {
     activeButton++;
-    activeButton = fmod(activeButton, 16);
+    activeButton = fmod( activeButton, numberOfSteps[activeSequence] );
     stepper[activeButton]->triggerClick();
 }
 
 void Sequencer::resized()
 {
-    float w = (0.835 / 0.98) / 16.0; //so the 16 buttons align perfectly with the preview window
-    for(int i = 0; i < stepper.size(); i++ )
+	
+	float w = (1.0 / float( numberOfSteps[ activeSequence ]) * 0.855); //the magic number math is there so the 16 buttons align perfectly with the preview window
+    for(int i = 0; i < stepper.size() ; i++ )
     {
-        
-        stepper[i]->setBoundsRelative( i * w, 0.0, w , 1.0 );
+		if( i < numberOfSteps[ activeSequence ] )
+		{
+			stepper[ i ]->setVisible( true );
+			stepper[ i ]->setBoundsRelative( i * w, 0.0, w, 1.0 );
+		}
+		else
+			stepper[ i ]->setVisible( false );
     }
-    
-    previous->setBoundsRelative(1.0-w*2.7, 0.2, w * 0.9, 0.8 );
-    play->setBoundsRelative(1.0-w*1.8, 0.2, w * 0.9, 0.8 );
-    next->setBoundsRelative(1.0-w*0.9, 0.2, w * 0.9, 0.8 );
-    
 
-    sequenceName->setBoundsRelative(1.0-w*2.65, 0.05, w * 2.6, 0.24);
+	float sequenceControlButtonWidth = 0.0532526;
+	previous->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 2.7, 0.2, sequenceControlButtonWidth * 0.9, 0.8 );
+	play->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 1.8, 0.2, sequenceControlButtonWidth * 0.9, 0.8 );
+	next->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 0.9, 0.2, sequenceControlButtonWidth * 0.9, 0.8 );
     
+	
+	sequenceName->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 2.65, 0.05, sequenceControlButtonWidth * 2.6, 0.24 );
 
+	lessSteps->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 2.7, 0.8, sequenceControlButtonWidth *  1.35, 0.15 );
+	moreSteps->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 1.4, 0.8, sequenceControlButtonWidth *  1.35, 0.15 );
 }
