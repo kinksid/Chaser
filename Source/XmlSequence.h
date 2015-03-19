@@ -18,7 +18,7 @@
 class XmlSequence
 {
 public:
-    XmlSequence();
+    XmlSequence( String version );
     ~XmlSequence();
     
     void setStep ( int sequence, int step, Array<int> activeSlices );
@@ -36,25 +36,27 @@ public:
 	void setNumberOfSteps( int sequenceNumber, int numberOfSteps );
 	Array<int> getSequenceLengths();
 
+	String getVersion();
+	void setVersion ( String version );
     
     void setFile ( File f );
     File getFile();
 
-    void createFreshXml();
-    
-    
+    void createFreshXml( String version );
+	bool versionCheck ( String savedVersion, String thisVersion );
+	Array<int> subDivideString ( String s);
+	
     void save();
     void load();
     File getXmlFile();
     
 private:
+	String versionThreshold;
     ScopedPointer<XmlElement> chaserData;
     XmlElement* sequenceData;
     XmlElement* positionData;
 	StringArray sequenceNames;
-//    OwnedArray<XmlElement> slices;
-//    OwnedArray<XmlElement> sequences;
-//    OwnedArray<OwnedArray<XmlElement>> steps;
+
 };
 
 

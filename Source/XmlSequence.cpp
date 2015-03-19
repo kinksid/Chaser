@@ -11,9 +11,10 @@
 #include "XmlSequence.h"
 
 
-XmlSequence::XmlSequence()
+XmlSequence::XmlSequence( String version )
 {
     positionData = nullptr;
+	versionThreshold = version;
     load();
 }
 
@@ -141,13 +142,26 @@ void XmlSequence::clearSlices()
 	chaserData->addChildElement(positionData);
 }
 
-void XmlSequence::createFreshXml()
+String XmlSequence::getVersion()
+{
+	if ( chaserData != nullptr)
+		return chaserData->getStringAttribute("version");
+	else
+		return String();
+}
+
+void XmlSequence::setVersion(juce::String version)
+{
+	chaserData->setAttribute("version", version );
+}
+
+void XmlSequence::createFreshXml( String version )
 {
     
     //master element
     chaserData = new XmlElement ("chaserData");
-    
-    
+	chaserData->setAttribute("version", version );
+	
     //sequencing data
     //this is where we store which slices are active in each step of each sequence
     sequenceData = new XmlElement ("sequenceData");
@@ -171,10 +185,7 @@ void XmlSequence::createFreshXml()
         }
     }
     
-    clearSlices();
-
-    
-    
+    clearSlices(); 
 }
 
 Array<Slice> XmlSequence::getSlices()
@@ -217,39 +228,79 @@ File XmlSequence::getFile()
     return File(chaserData->getStringAttribute("file"));
 }
 
+Array<int> XmlSequence::subDivideString(juce::String s)
+{
+	Array<int> returnIntArray;
+	StringArray vArray;
+	vArray.addTokens ( s, ".", "\"");
+	for (int i=0; i<vArray.size(); i++)
+	{
+		returnIntArray.add(vArray[i].getIntValue());
+	}
+	return returnIntArray;
+	
+}
+
+bool XmlSequence::versionCheck(juce::String savedVersion, juce::String thisVersion)
+{
+	//if the savedversion string is empty, it's always out of date
+	if ( savedVersion.isEmpty() )
+		return false;
+	
+	//versions always have three components so break them up to individual parts
+	Array<int> savedVersionInts = subDivideString ( savedVersion );
+	Array<int> thisVersionInts = subDivideString ( thisVersion );
+	
+	//check each level
+	//if they all match or are newer, we're good to go
+	if ( savedVersionInts[0] >= thisVersionInts[0] )
+		if ( savedVersionInts[1] >= thisVersionInts[1] )
+			if ( savedVersionInts[2] >= thisVersionInts[2] )
+				return true;
+	
+	return false;
+}
+
+
 void XmlSequence::load()
 {
-    
-    //read everything out of the XML file, if it exists
-    File f = getXmlFile();
-    if (f.exists())
-    {
-        //read in the xml data
-        XmlDocument dataDoc ( f );
-        chaserData = dataDoc.getDocumentElement();
-        sequenceData = chaserData->getChildByName("sequenceData");
-       
-        forEachXmlChildElement(*sequenceData, sequence)
-        {
-            forEachXmlChildElement(*sequence, step)
-            {
-                
-            }
-        }
+	
+	//read everything out of the XML file, if it exists
+	File f = getXmlFile();
+	if (f.exists())
+	{
+		//read in the xml data
+		XmlDocument dataDoc ( f );
+		chaserData = dataDoc.getDocumentElement();
+		sequenceData = chaserData->getChildByName("sequenceData");
 		
-        positionData = chaserData->getChildByName( "positionData");
-        if ( positionData != nullptr)
-        {
-            forEachXmlChildElement(*positionData, slice);
+		if ( versionCheck( getVersion(), versionThreshold ) )
+		{
+			forEachXmlChildElement(*sequenceData, sequence)
 			{
-				
+				forEachXmlChildElement(*sequence, step)
+				{
+					
+				}
 			}
-        }
-    }
+			
+			positionData = chaserData->getChildByName( "positionData");
+			if ( positionData != nullptr)
+			{
+				forEachXmlChildElement(*positionData, slice);
+				{
+					
+				}
+			}
+		}
+		
+		else
+			createFreshXml( getVersion() );
+	}
     
     else //create everything from scratch
     {
-        createFreshXml();
+        createFreshXml( getVersion() );
     }
 }
 

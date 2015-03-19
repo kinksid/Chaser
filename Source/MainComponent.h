@@ -50,8 +50,8 @@ public:
 	virtual void copierClicked ( int m );
 	
     void parseXml ( File f );
-    
-    
+
+	
 
 private:
 	
@@ -72,6 +72,8 @@ private:
     ScopedPointer<Sequencer> sequencer;
     ScopedPointer<XmlSequence> xmlSequence;
 	ScopedPointer<Copier> copier;
+	
+	String version;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)

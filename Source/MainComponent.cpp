@@ -14,6 +14,8 @@ MainContentComponent::MainContentComponent()
 {
 	laf = new ColourLookAndFeel();
     setLookAndFeel(laf);
+	
+	version = ProjectInfo::versionString;
     
     openOutput = new TextButton ("OpenOutput");
     openOutput->setButtonText("Load");
@@ -37,30 +39,35 @@ MainContentComponent::MainContentComponent()
 	addAndMakeVisible(copier);
 	copier->addListener(this);
     
-    xmlSequence = new XmlSequence();
+	
 	
 	//init the model vars
 	currentSequence = 0;
 	currentStep = 0;
 	currentSequenceLength = 16;
-    
-    //load the slices from the previous xml
-    if ( xmlSequence->getFile().exists() )
-    {
-		activeFile = xmlSequence->getFile();
-        parseXml( xmlSequence->getFile() );
-		
-		//update the view for the first step
-		activeSlices = xmlSequence->getStep( currentSequence, currentStep );
-        previewWindow->setSlices( activeSlices );
-		sequencer->setSequenceNames ( xmlSequence->getSequenceNames() );
-		sequencer->setSequenceLengths ( xmlSequence->getSequenceLengths() );
-		currentSequenceLength = xmlSequence->getSequenceLengths()[ currentSequence ];
-    }
-    else
-    {
-        xmlSequence->createFreshXml();
-    }
+	
+	//create a sequence and set the oldest version it will correctly load
+	xmlSequence = new XmlSequence( "0.0.1" );
+	
+	//load the slices from the xml if they exist
+	Array<Slice> slices = xmlSequence->getSlices();
+	for ( int i = 0; i < slices.size(); i++ )
+	{
+		Slice* s = new Slice ( slices[i] );
+		previewWindow->addSlice(s);
+		sliceList->addSlice( s );
+	}
+	
+	//update the view for the first step
+	activeSlices = xmlSequence->getStep( currentSequence, currentStep );
+	previewWindow->setSlices( activeSlices );
+	sequencer->setSequenceNames ( xmlSequence->getSequenceNames() );
+	sequencer->setSequenceLengths ( xmlSequence->getSequenceLengths() );
+	currentSequenceLength = xmlSequence->getSequenceLengths()[ currentSequence ];
+
+	//update the version number and save
+	xmlSequence->setVersion( version );
+	xmlSequence->save();
 	
     setSize (1024, 600);
 }
@@ -73,6 +80,8 @@ MainContentComponent::~MainContentComponent()
     xmlSequence = nullptr;
     
 }
+
+
 
 void MainContentComponent::buttonClicked(juce::Button *b)
 {
@@ -176,7 +185,7 @@ void MainContentComponent::parseXml(File f)
 		bool loadingSameFile = (f == activeFile);
 		if ( !loadingSameFile )
 		{
-			xmlSequence->createFreshXml();
+			xmlSequence->createFreshXml( version );
 		}
 
         ScopedPointer<XmlElement> preset (XmlDocument::parse ( f ));
