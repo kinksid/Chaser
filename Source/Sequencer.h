@@ -37,7 +37,6 @@ public:
 	
 	void setSequenceNames( StringArray seqNames );
 	void setDefaultSequences();
-//	StringArray getSequenceNames();
 
 	class Listener
 	{

@@ -28,7 +28,7 @@ MainContentComponent::MainContentComponent()
     
     previewWindow = new Preview();
     addAndMakeVisible( previewWindow );
-    previewWindow->addChangeListener(this);
+	previewWindow->addListener(this);
     
     sliceList = new SliceList();
     addAndMakeVisible(sliceList);
@@ -54,16 +54,14 @@ MainContentComponent::MainContentComponent()
 		activeFile = xmlSequence->getFile();
         parseXml( xmlSequence->getFile() );
         //update the view for the first step
-        previewWindow->setSlices( xmlSequence->getStep( currentSequence, currentStep ) );
+		activeSlices = xmlSequence->getStep( currentSequence, currentStep );
+        previewWindow->setSlices( activeSlices );
 		sequencer->setSequenceNames ( xmlSequence->getSequenceNames() );
     }
     else
     {
         xmlSequence->createFreshXml();
     }
-    
-
-	
 	
     setSize (1024, 600);
 }
@@ -89,12 +87,6 @@ void MainContentComponent::buttonClicked(juce::Button *b)
             parseXml( f );
         }
     }
-    
-//    if ( b == update )
-//    {
-//        if ( activeFile.exists() )
-//            parseXml( activeFile );
-//    }
 }
 
 
@@ -108,27 +100,7 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
             previewWindow->update(slices[i], i );
         }
     }
-	
-	/*
-    if ( source == sequencer )
-    {
-		//this means either 1:
-	 
-		
-		//or 2:
-        
-    }
-	 
-	 */
-    
-    if ( source == previewWindow )
-    {
-        //a slice has been toggled in the preview
-        //so get all the active slices and update the xml
-        xmlSequence->setStep( currentSequence, currentStep, previewWindow->getSlices() );
-        xmlSequence->save();
-    }
-	
+
 	if ( source == copier )
 	{
 		int multiplier = copier->clickedButton->getButtonText().getTrailingIntValue();
@@ -138,10 +110,17 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
 			int nextStep = currentStep + i;
 			if ( nextStep >= 16 )
 				nextStep -= 16;
-			xmlSequence->setStep( currentSequence, nextStep, previewWindow->getSlices() );
+			xmlSequence->setStep( currentSequence, nextStep, activeSlices );
 			xmlSequence->save();
 		}
 	}
+}
+
+void MainContentComponent::sliceClicked( Array<int> activeSlices_)
+{
+	activeSlices = activeSlices_;
+	xmlSequence->setStep( currentSequence, currentStep, activeSlices );
+	xmlSequence->save();
 }
 
 void MainContentComponent::stepSelected(int step)
@@ -149,7 +128,8 @@ void MainContentComponent::stepSelected(int step)
 	//the sequencer has been set to a new step or sequence
 	//so read out the values for this step and update the preview
 	currentStep = step;
-	previewWindow->setSlices( xmlSequence->getStep( currentSequence, currentStep ) );
+	activeSlices = xmlSequence->getStep( currentSequence, currentStep );
+	previewWindow->setSlices( activeSlices );
 }
 
 void MainContentComponent::sequenceNameChanged( String newName )
@@ -162,6 +142,9 @@ void MainContentComponent::sequenceNameChanged( String newName )
 
 void MainContentComponent::sequenceSelected(int sequence)
 {
+	//when the sequence is changed
+	//the first step is always triggered as well
+	//so the preview state is updated by this click
 	currentSequence = sequence;
 }
 

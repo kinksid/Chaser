@@ -25,7 +25,7 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainContentComponent   : public Component, public Button::Listener, public ChangeListener, public Sequencer::Listener
+class MainContentComponent   : public Component, public Button::Listener, public ChangeListener, public Sequencer::Listener, public Preview::Listener
 {
 public:
     //==============================================================================
@@ -42,6 +42,9 @@ public:
 	virtual void sequenceNameChanged ( String newName );
 	virtual void sequenceSelected ( int sequence );
 	
+	//preview listener methods
+	virtual void sliceClicked ( Array<int> activeSlices );
+	
     void parseXml ( File f );
     
     
@@ -50,6 +53,7 @@ private:
 	
 	int currentStep;
 	int currentSequence;
+	Array<int> activeSlices;
 	
     ScopedPointer<ColourLookAndFeel> laf;
     
@@ -63,8 +67,6 @@ private:
     ScopedPointer<Sequencer> sequencer;
     ScopedPointer<XmlSequence> xmlSequence;
 	ScopedPointer<Copier> copier;
-    
-    //ScopedPointer<Button> update;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)

@@ -26,7 +26,19 @@ Preview::~Preview()
 
 void Preview::buttonClicked(Button* b)
 {
-    sendChangeMessage();
+	//create an int array of all the slices that are active
+	Array<int> activeSlices;
+	for ( int i = 0; i < sliceButtons.size(); i++ )
+	{
+		if ( sliceButtons[i]->getToggleState() )
+		{
+			activeSlices.add(i);
+		}
+	}
+	//let the listeners know
+	Component::BailOutChecker checker (this);
+	if (! checker.shouldBailOut())
+		previewListeners.callChecked ( checker, &Listener::sliceClicked, activeSlices );
 }
 
 void Preview::setSlices(Array<int> activeSlices)
@@ -47,20 +59,6 @@ void Preview::setSlices(Array<int> activeSlices)
             sliceButtons[activeSlices[i]]->setToggleState(true, dontSendNotification);
     }
     
-}
-
-Array<int> Preview::getSlices()
-{
-    Array<int> activeSlices;
-    for ( int i = 0; i < sliceButtons.size(); i++ )
-    {
-        if ( sliceButtons[i]->getToggleState() )
-        {
-            activeSlices.add(i);
-        }
-    }
-    
-    return activeSlices;
 }
 
 void Preview::addSlice( Slice* slice )

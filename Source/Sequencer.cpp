@@ -111,13 +111,6 @@ void Sequencer::setSequenceNames(juce::StringArray seqNames)
 	sequenceName->setText(sequenceNames[activeSequence], dontSendNotification );
 }
 
-/*
-StringArray Sequencer::getSequenceNames()
-{
-	return sequenceNames;
-}
- */
-
 void Sequencer::setDefaultSequences()
 {
 	sequenceNames.clear();

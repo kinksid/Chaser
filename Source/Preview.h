@@ -63,7 +63,7 @@ public:
 };
 
 
-class Preview    : public Component, public Button::Listener, public ChangeBroadcaster
+class Preview    : public Component, public Button::Listener
 {
 public:
     Preview();
@@ -80,14 +80,25 @@ public:
     void addSlice( Slice* slice);
     
     void setSlices ( Array<int> activeSlices );
-    Array<int> getSlices ();
-    
+	
+	class Listener
+	{
+		
+	public:
+		virtual ~Listener() {}
+		virtual void sliceClicked ( Array<int> ) = 0;
+		
+	};
+	
+	void addListener ( Listener* const l ) { previewListeners.add ( l ); }
+	void removeListener ( Listener* const l ) { previewListeners.remove (l ); }
 
     
 
 private:
     OwnedArray<SliceButton> sliceButtons;
     ScopedPointer<SliceLookAndFeel> sliceLaf;
+	ListenerList<Listener> previewListeners;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Preview)
 };
 
