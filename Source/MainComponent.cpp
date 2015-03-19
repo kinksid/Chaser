@@ -20,12 +20,7 @@ MainContentComponent::MainContentComponent()
 	openOutput->setColour(TextButton::buttonColourId, laf->getOutlineColour());
     openOutput->addListener( this );
     addAndMakeVisible(openOutput);
-    
-//    update = new TextButton ("Update");
-//    update->setButtonText("Update");
-//    update->addListener( this );
-//    addAndMakeVisible(update);
-    
+        
     previewWindow = new Preview();
     addAndMakeVisible( previewWindow );
 	previewWindow->addListener(this);
@@ -40,7 +35,7 @@ MainContentComponent::MainContentComponent()
 	
 	copier = new Copier();
 	addAndMakeVisible(copier);
-	copier->addChangeListener(this);
+	copier->addListener(this);
     
     xmlSequence = new XmlSequence();
 	
@@ -100,19 +95,18 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
             previewWindow->update(slices[i], i );
         }
     }
+}
 
-	if ( source == copier )
+void MainContentComponent::copierClicked(int multiplier)
+{
+	
+	for ( int i = multiplier; i < 16; i += multiplier )
 	{
-		int multiplier = copier->clickedButton->getButtonText().getTrailingIntValue();
-		
-		for ( int i = multiplier; i < 16; i += multiplier )
-		{
-			int nextStep = currentStep + i;
-			if ( nextStep >= 16 )
-				nextStep -= 16;
-			xmlSequence->setStep( currentSequence, nextStep, activeSlices );
-			xmlSequence->save();
-		}
+		int nextStep = currentStep + i;
+		if ( nextStep >= 16 )
+			nextStep -= 16;
+		xmlSequence->setStep( currentSequence, nextStep, activeSlices );
+		xmlSequence->save();
 	}
 }
 

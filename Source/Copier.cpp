@@ -32,8 +32,11 @@ Copier::~Copier()
 
 void Copier::buttonClicked(Button* b)
 {
-	clickedButton = b;
-	sendChangeMessage();
+	int multiplier = pow(2,buttons.indexOf( b ));
+	//let the listeners know
+	Component::BailOutChecker checker (this);
+	if (! checker.shouldBailOut())
+		listeners.callChecked ( checker, &Listener::copierClicked, multiplier );
 }
 
 void Copier::paint (Graphics& g)

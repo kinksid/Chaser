@@ -25,7 +25,7 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainContentComponent   : public Component, public Button::Listener, public ChangeListener, public Sequencer::Listener, public Preview::Listener
+class MainContentComponent   : public Component, public Button::Listener, public ChangeListener, public Sequencer::Listener, public Preview::Listener, public Copier::Listener
 {
 public:
     //==============================================================================
@@ -44,6 +44,9 @@ public:
 	
 	//preview listener methods
 	virtual void sliceClicked ( Array<int> activeSlices );
+	
+	//copier listener methods
+	virtual void copierClicked ( int m );
 	
     void parseXml ( File f );
     
