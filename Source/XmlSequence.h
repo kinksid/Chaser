@@ -32,7 +32,9 @@ public:
 	
 	StringArray getSequenceNames();
 	void setSequenceName ( int sequenceNumber, String name );
+	
 	void setNumberOfSteps( int sequenceNumber, int numberOfSteps );
+	Array<int> getSequenceLengths();
 
     
     void setFile ( File f );

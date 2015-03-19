@@ -85,6 +85,20 @@ void XmlSequence::setNumberOfSteps( int sequenceNumber, int numberOfSteps )
 	}
 }
 
+Array<int> XmlSequence::getSequenceLengths()
+{
+	Array<int> lengths;
+	if ( sequenceData->getNumChildElements() > 0 )
+	{
+		forEachXmlChildElement(*sequenceData, sequence)
+		{
+			lengths.add(sequence->getIntAttribute("maxsteps"));
+		}
+	}
+	
+	return lengths;
+}
+
 void XmlSequence::addSlice(Slice* slice)
 {
     

@@ -77,10 +77,10 @@ Sequencer::Sequencer()
     previous->addListener(this);
 
 	//buttons to add and remove steps
-	lessSteps = new TextButton( "less" );
+	lessSteps = new TextButton( "-" );
 	lessSteps->addListener( this );
 	addAndMakeVisible( lessSteps );
-	moreSteps = new TextButton( "more" );
+	moreSteps = new TextButton( "+" );
 	moreSteps->addListener( this );
 	addAndMakeVisible( moreSteps );
     
@@ -102,6 +102,15 @@ Sequencer::Sequencer()
 Sequencer::~Sequencer()
 {
     
+}
+
+void Sequencer::setSequenceLengths(Array<int> lengths)
+{
+	for ( int i = 0; i < lengths.size(); i++ )
+	{
+		if ( i < numberOfSteps.size() )
+			numberOfSteps.set( i, lengths[i] );
+	}
 }
 
 void Sequencer::setSequenceNames(juce::StringArray seqNames)
@@ -182,22 +191,29 @@ void Sequencer::buttonClicked (Button* b)
 	}
 	
 
-	else if( b == lessSteps && numberOfSteps[activeSequence] > 1 )
+	else if ( b == lessSteps || b == moreSteps )
 	{
-		//decrease the number of steps in the active sequence
-		numberOfSteps.set( activeSequence, numberOfSteps[ activeSequence ] - 1 );
-		resized();
-		//if we were on a button that is no longer in range, trigger the previous step
-		if( activeButton > numberOfSteps[ activeSequence ] - 1 )
-			stepper[ numberOfSteps[ activeSequence ] -1 ]->triggerClick();
-		
-	}
+		if( b == lessSteps && numberOfSteps[activeSequence] > 1 )
+		{
+			//decrease the number of steps in the active sequence
+			numberOfSteps.set( activeSequence, numberOfSteps[ activeSequence ] - 1 );
+			
+			//if we were on a button that is no longer in range, trigger the previous step
+			if( activeButton > numberOfSteps[ activeSequence ] - 1 )
+				stepper[ numberOfSteps[ activeSequence ] -1 ]->triggerClick();
+		}
 
-	else if( b == moreSteps && numberOfSteps[ activeSequence ] < 16 )
-	{
-		//increase the number of steps in the active sequence
-		numberOfSteps.set( activeSequence, numberOfSteps[ activeSequence ] + 1 );
+		else if( b == moreSteps && numberOfSteps[ activeSequence ] < 16 )
+		{
+			//increase the number of steps in the active sequence
+			numberOfSteps.set( activeSequence, numberOfSteps[ activeSequence ] + 1 );
+		}
+		
 		resized();
+		//let the listeners know
+		Component::BailOutChecker checker (this);
+		if (! checker.shouldBailOut())
+			listeners.callChecked ( checker, &Listener::sequenceLengthChanged, numberOfSteps[ activeSequence ] );
 	}
     
     else
@@ -250,13 +266,13 @@ void Sequencer::resized()
     }
 
 	float sequenceControlButtonWidth = 0.0532526;
-	previous->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 2.7, 0.2, sequenceControlButtonWidth * 0.9, 0.8 );
-	play->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 1.8, 0.2, sequenceControlButtonWidth * 0.9, 0.8 );
-	next->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 0.9, 0.2, sequenceControlButtonWidth * 0.9, 0.8 );
+	previous->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 2.7, 0.225, sequenceControlButtonWidth * 0.9, 0.6 );
+	play->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 1.8, 0.225, sequenceControlButtonWidth * 0.9, 0.6 );
+	next->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 0.9, 0.225, sequenceControlButtonWidth * 0.9, 0.6 );
     
 	
 	sequenceName->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 2.65, 0.05, sequenceControlButtonWidth * 2.6, 0.24 );
 
-	lessSteps->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 2.7, 0.8, sequenceControlButtonWidth *  1.35, 0.15 );
-	moreSteps->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 1.4, 0.8, sequenceControlButtonWidth *  1.35, 0.15 );
+	lessSteps->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 2.7, 0.75, sequenceControlButtonWidth *  1.35, 0.2 );
+	moreSteps->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 1.4, 0.75, sequenceControlButtonWidth *  1.35, 0.2 );
 }

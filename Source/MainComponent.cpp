@@ -20,7 +20,7 @@ MainContentComponent::MainContentComponent()
 	openOutput->setColour(TextButton::buttonColourId, laf->getOutlineColour());
     openOutput->addListener( this );
     addAndMakeVisible(openOutput);
-        
+	
     previewWindow = new Preview();
     addAndMakeVisible( previewWindow );
 	previewWindow->addListener(this);
@@ -42,16 +42,20 @@ MainContentComponent::MainContentComponent()
 	//init the model vars
 	currentSequence = 0;
 	currentStep = 0;
+	currentSequenceLength = 16;
     
     //load the slices from the previous xml
     if ( xmlSequence->getFile().exists() )
     {
 		activeFile = xmlSequence->getFile();
         parseXml( xmlSequence->getFile() );
-        //update the view for the first step
+		
+		//update the view for the first step
 		activeSlices = xmlSequence->getStep( currentSequence, currentStep );
         previewWindow->setSlices( activeSlices );
 		sequencer->setSequenceNames ( xmlSequence->getSequenceNames() );
+		sequencer->setSequenceLengths ( xmlSequence->getSequenceLengths() );
+		currentSequenceLength = xmlSequence->getSequenceLengths()[ currentSequence ];
     }
     else
     {
@@ -100,11 +104,11 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
 void MainContentComponent::copierClicked(int multiplier)
 {
 	
-	for ( int i = multiplier; i < 16; i += multiplier )
+	for ( int i = multiplier; i < currentSequenceLength; i += multiplier )
 	{
 		int nextStep = currentStep + i;
-		if ( nextStep >= 16 )
-			nextStep -= 16;
+		if ( nextStep >= currentSequenceLength )
+			nextStep -= currentSequenceLength;
 		xmlSequence->setStep( currentSequence, nextStep, activeSlices );
 		xmlSequence->save();
 	}
@@ -142,6 +146,18 @@ void MainContentComponent::sequenceSelected(int sequence)
 	currentSequence = sequence;
 }
 
+void MainContentComponent::sequenceLengthChanged(int newSequenceLength)
+{
+	//this means the current sequence has been made shorter or longer
+	//update the model var
+	currentSequenceLength = newSequenceLength;
+	
+	//save it to xml
+	xmlSequence->setNumberOfSteps( currentSequence, currentSequenceLength);
+	xmlSequence->save();
+	
+}
+
 
 void MainContentComponent::parseXml(File f)
 {
@@ -162,8 +178,7 @@ void MainContentComponent::parseXml(File f)
 		{
 			xmlSequence->createFreshXml();
 		}
-		
-		
+
         ScopedPointer<XmlElement> preset (XmlDocument::parse ( f ));
         
         //traverse the whole fucking tree
@@ -239,14 +254,8 @@ void MainContentComponent::parseXml(File f)
 				Array<Slice> prevSlices = xmlSequence->getSlices() ;
 				for ( int i = 0; i < prevSlices.size(); i++ )
 				{
-	
 					if ( i < slices.size() )
-					{
 						slices[i]->enabled = prevSlices[i].enabled;
-						
-					}
-					
-
 				}
 			}
 			
@@ -255,7 +264,6 @@ void MainContentComponent::parseXml(File f)
             previewWindow->clearSlices();
             xmlSequence->clearSlices();
 			
-			
             for ( int i = 0; i < slices.size(); i++ )
             {
                 sliceList->addSlice( slices[i] );
@@ -263,18 +271,15 @@ void MainContentComponent::parseXml(File f)
                 xmlSequence->addSlice ( slices[i] );
             }
 			
-
-            
             previewWindow->resized();
-			
-			//set the previewWindow to the correct step
-			
+
 			//if we're not loading the same file, reset the sequencer
 			if ( !loadingSameFile )
 			{
 				sequencer->setDefaultSequences();
 			}
 			
+			//set the previewWindow to the correct step
 			previewWindow->setSlices( xmlSequence->getStep( currentSequence, currentStep) );
 
 			//store the last used file in xml and save it
@@ -283,8 +288,7 @@ void MainContentComponent::parseXml(File f)
 			
 			//update the activefile var
 			activeFile = f;
-            
-            
+  
         }
     }
 }

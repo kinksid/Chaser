@@ -41,6 +41,7 @@ public:
 	virtual void stepSelected ( int step );
 	virtual void sequenceNameChanged ( String newName );
 	virtual void sequenceSelected ( int sequence );
+	virtual void sequenceLengthChanged ( int newSequenceLength );
 	
 	//preview listener methods
 	virtual void sliceClicked ( Array<int> activeSlices );
@@ -56,6 +57,7 @@ private:
 	
 	int currentStep;
 	int currentSequence;
+	int currentSequenceLength;
 	Array<int> activeSlices;
 	
     ScopedPointer<ColourLookAndFeel> laf;

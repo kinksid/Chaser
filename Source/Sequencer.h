@@ -34,7 +34,7 @@ public:
     virtual void timerCallback();
     
 
-	
+	void setSequenceLengths ( Array<int> lengths );
 	void setSequenceNames( StringArray seqNames );
 	void setDefaultSequences();
 
@@ -46,7 +46,7 @@ public:
 		virtual void stepSelected ( int step ) = 0;
 		virtual void sequenceNameChanged ( String newName ) = 0;
 		virtual void sequenceSelected ( int sequence ) = 0;
-		
+		virtual void sequenceLengthChanged ( int newSequenceLength ) = 0;
 	};
 	
 	void addListener ( Listener* const l ) { listeners.add ( l ); }
