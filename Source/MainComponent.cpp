@@ -36,13 +36,17 @@ MainContentComponent::MainContentComponent()
     
     sequencer = new Sequencer();
     addAndMakeVisible(sequencer);
-    sequencer->addChangeListener(this);
+    sequencer->addListener(this);
 	
 	copier = new Copier();
 	addAndMakeVisible(copier);
 	copier->addChangeListener(this);
     
     xmlSequence = new XmlSequence();
+	
+	//init the model vars
+	currentSequence = 0;
+	currentStep = 0;
     
     //load the slices from the previous xml
     if ( xmlSequence->getFile().exists() )
@@ -50,7 +54,7 @@ MainContentComponent::MainContentComponent()
 		activeFile = xmlSequence->getFile();
         parseXml( xmlSequence->getFile() );
         //update the view for the first step
-        previewWindow->setSlices( xmlSequence->getStep( 0, 0 ) );
+        previewWindow->setSlices( xmlSequence->getStep( currentSequence, currentStep ) );
 		sequencer->setSequenceNames ( xmlSequence->getSequenceNames() );
     }
     else
@@ -58,8 +62,9 @@ MainContentComponent::MainContentComponent()
         xmlSequence->createFreshXml();
     }
     
+
 	
-    
+	
     setSize (1024, 600);
 }
 
@@ -103,51 +108,63 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
             previewWindow->update(slices[i], i );
         }
     }
-    
+	
+	/*
     if ( source == sequencer )
     {
 		//this means either 1:
-        //the sequencer has been set to a new step or sequence
-        //so read out the values for this step and update the preview
-        int step = sequencer->activeButton;
-		int sequence = sequencer->activeSequence;
-        previewWindow->setSlices( xmlSequence->getStep( sequence, step ) );
+	 
 		
-		//or 2: the sequence name has been changed
-		//save the sequence names to xml
-		xmlSequence->setSequenceNames( sequencer->getSequenceNames() );
-		xmlSequence->save();
-		
+		//or 2:
         
     }
+	 
+	 */
     
     if ( source == previewWindow )
     {
         //a slice has been toggled in the preview
         //so get all the active slices and update the xml
-        int step = sequencer->activeButton;
-		int sequence = sequencer->activeSequence;
-        xmlSequence->setStep( sequence, step, previewWindow->getSlices() );
+        xmlSequence->setStep( currentSequence, currentStep, previewWindow->getSlices() );
         xmlSequence->save();
     }
 	
 	if ( source == copier )
 	{
 		int multiplier = copier->clickedButton->getButtonText().getTrailingIntValue();
-	
-		int step = sequencer->activeButton;
-		int sequence = sequencer->activeSequence;
 		
 		for ( int i = multiplier; i < 16; i += multiplier )
 		{
-			int nextStep = step + i;
+			int nextStep = currentStep + i;
 			if ( nextStep >= 16 )
 				nextStep -= 16;
-			xmlSequence->setStep( sequence, nextStep, previewWindow->getSlices() );
+			xmlSequence->setStep( currentSequence, nextStep, previewWindow->getSlices() );
 			xmlSequence->save();
 		}
 	}
 }
+
+void MainContentComponent::stepSelected(int step)
+{
+	//the sequencer has been set to a new step or sequence
+	//so read out the values for this step and update the preview
+	currentStep = step;
+	previewWindow->setSlices( xmlSequence->getStep( currentSequence, currentStep ) );
+}
+
+void MainContentComponent::sequenceNameChanged( String newName )
+{
+	//the sequence name has been changed
+	//save the sequence name to xml
+	xmlSequence->setSequenceName( currentSequence, newName );
+	xmlSequence->save();
+}
+
+void MainContentComponent::sequenceSelected(int sequence)
+{
+	currentSequence = sequence;
+}
+
 
 void MainContentComponent::parseXml(File f)
 {
@@ -278,14 +295,10 @@ void MainContentComponent::parseXml(File f)
 			//if we're not loading the same file, reset the sequencer
 			if ( !loadingSameFile )
 			{
-				sequencer->activeButton = 0;
-				sequencer->activeSequence = 0;
 				sequencer->setDefaultSequences();
 			}
 			
-			int step = sequencer->activeButton;
-			int sequence = sequencer->activeSequence;
-			previewWindow->setSlices( xmlSequence->getStep( sequence, step) );
+			previewWindow->setSlices( xmlSequence->getStep( currentSequence, currentStep) );
 
 			//store the last used file in xml and save it
             xmlSequence->setFile( f );

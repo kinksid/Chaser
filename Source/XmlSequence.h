@@ -31,8 +31,7 @@ public:
     Array<Slice> getSlices();
 	
 	StringArray getSequenceNames();
-	void setSequenceNames ( StringArray names );
-
+	void setSequenceName ( int sequenceNumber, String name );
 	void setNumberOfSteps( int sequenceNumber, int numberOfSteps );
 
     

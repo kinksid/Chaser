@@ -25,7 +25,7 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainContentComponent   : public Component, public Button::Listener, public ChangeListener
+class MainContentComponent   : public Component, public Button::Listener, public ChangeListener, public Sequencer::Listener
 {
 public:
     //==============================================================================
@@ -36,13 +36,21 @@ public:
     void buttonClicked( Button* b );
     
     virtual void changeListenerCallback (ChangeBroadcaster* source);
-    
+	
+	//sequencer listener methods
+	virtual void stepSelected ( int step );
+	virtual void sequenceNameChanged ( String newName );
+	virtual void sequenceSelected ( int sequence );
+	
     void parseXml ( File f );
     
     
 
 private:
-    
+	
+	int currentStep;
+	int currentSequence;
+	
     ScopedPointer<ColourLookAndFeel> laf;
     
     ScopedPointer<Button> openOutput;

@@ -67,18 +67,13 @@ StringArray XmlSequence::getSequenceNames()
 	return names;
 }
 
-void XmlSequence::setSequenceNames(juce::StringArray names)
+void XmlSequence::setSequenceName( int sequenceNumber, String name)
 {
-	if ( sequenceData->getNumChildElements() > 0 )
+	if( sequenceData->getNumChildElements() > sequenceNumber )
 	{
-		int i = 0;
-		forEachXmlChildElement(*sequenceData, sequence)
-		{
-			sequence->setAttribute("name", names[i]);
-			i++;
-		}
+		XmlElement* sequence = sequenceData->getChildElement( sequenceNumber );
+		sequence->setAttribute("name", name );
 	}
-
 }
 
 void XmlSequence::setNumberOfSteps( int sequenceNumber, int numberOfSteps )

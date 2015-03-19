@@ -111,10 +111,12 @@ void Sequencer::setSequenceNames(juce::StringArray seqNames)
 	sequenceName->setText(sequenceNames[activeSequence], dontSendNotification );
 }
 
+/*
 StringArray Sequencer::getSequenceNames()
 {
 	return sequenceNames;
 }
+ */
 
 void Sequencer::setDefaultSequences()
 {
@@ -131,6 +133,9 @@ void Sequencer::setDefaultSequences()
 	
 	//update the label
 	sequenceName->setText(sequenceNames[activeSequence], dontSendNotification);
+	
+	activeSequence = 0;
+	activeButton = 0;
 }
 
 void Sequencer::paint (Graphics& g)
@@ -149,31 +154,40 @@ void Sequencer::buttonClicked (Button* b)
             stopTimer();
     }
 	
-	else if ( b == previous )
+	else if ( b == previous || b == next  )
 	{
-		//only change the sequence when the first step is active
-	
-		if( activeButton == 0 )
+		
+		if ( b == previous )
 		{
-			activeSequence--;
-			if( activeSequence < 0 )
-				activeSequence = 15;
-			sequenceName->setText( sequenceNames[ activeSequence ], dontSendNotification );
-			resized();
+			//only change the sequence when the first step is active
+			if( activeButton == 0 )
+			{
+				activeSequence--;
+				if( activeSequence < 0 )
+					activeSequence = 15;
+			}
 		}
+		
+		else if ( b == next )
+		{
+			activeSequence++;
+			if ( activeSequence > 15 )
+				activeSequence = 0;
+		}
+		
+		//update the sequence name and redraw the component
+		sequenceName->setText( sequenceNames[ activeSequence ], dontSendNotification );
+		resized();
+		
+		//let the listeners know
+		Component::BailOutChecker checker (this);
+		if (! checker.shouldBailOut())
+			listeners.callChecked ( checker, &Listener::sequenceSelected, activeSequence );
+		
 		//always set the step to be the first step
 		stepper[0]->triggerClick();
 	}
 	
-	else if ( b == next )
-	{
-		activeSequence++;
-		if ( activeSequence > 15 )
-			activeSequence = 0;
-		sequenceName->setText(sequenceNames[activeSequence], dontSendNotification);
-		resized();
-		stepper[0]->triggerClick();
-	}
 
 	else if( b == lessSteps && numberOfSteps[activeSequence] > 1 )
 	{
@@ -197,14 +211,22 @@ void Sequencer::buttonClicked (Button* b)
     {
         activeButton = stepper.indexOf( b );
         if( b->getToggleState() )
-            sendChangeMessage();
+		{
+			Component::BailOutChecker checker (this);
+			if (! checker.shouldBailOut())
+				listeners.callChecked ( checker, &Listener::stepSelected, activeButton );
+		}
     }
 }
 
 void Sequencer::labelTextChanged (Label* labelThatHasChanged)
 {
 	sequenceNames.set(activeSequence, labelThatHasChanged->getText());
-	sendChangeMessage();
+	
+	Component::BailOutChecker checker (this);
+	if (! checker.shouldBailOut())
+		listeners.callChecked ( checker, &Listener::sequenceNameChanged, labelThatHasChanged->getText() );
+	
 }
 
 void Sequencer::buttonStateChanged (Button* b)

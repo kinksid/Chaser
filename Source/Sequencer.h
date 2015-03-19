@@ -17,7 +17,7 @@
 //==============================================================================
 /*
 */
-class Sequencer    : public Component, public Button::Listener, public Label::Listener, public Timer, public ChangeBroadcaster
+class Sequencer    : public Component, public Button::Listener, public Label::Listener, public Timer//, public ChangeBroadcaster
 {
 public:
     Sequencer();
@@ -33,15 +33,31 @@ public:
     
     virtual void timerCallback();
     
-    int activeButton;
-    int activeSequence;
+
 	
 	void setSequenceNames( StringArray seqNames );
 	void setDefaultSequences();
-	StringArray getSequenceNames();
+//	StringArray getSequenceNames();
 
+	class Listener
+	{
+		
+	public:
+		virtual ~Listener() {}
+		virtual void stepSelected ( int step ) = 0;
+		virtual void sequenceNameChanged ( String newName ) = 0;
+		virtual void sequenceSelected ( int sequence ) = 0;
+		
+	};
+	
+	void addListener ( Listener* const l ) { listeners.add ( l ); }
+	void removeListener ( Listener* const l ) { listeners.remove (l ); }
+	
 
 private:
+	int activeButton;
+	int activeSequence;
+	
     OwnedArray<Button> stepper;
     ScopedPointer<DrawableButton> play;
     ScopedPointer<DrawableButton> next;
@@ -50,6 +66,7 @@ private:
 	ScopedPointer<Button> lessSteps;
 	ScopedPointer<Button> moreSteps;
 
+	ListenerList<Listener> listeners;
     
 	Array<int> numberOfSteps;
     ScopedPointer<Label> sequenceName;
