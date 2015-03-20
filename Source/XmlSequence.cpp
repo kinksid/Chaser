@@ -61,7 +61,7 @@ StringArray XmlSequence::getSequenceNames()
 	{
 		forEachXmlChildElement(*sequenceData, sequence)
 		{
-			names.add(sequence->getStringAttribute("name"));
+			names.add(sequence->getStringAttribute("name", "Unnamed Sequence"));
 		}
 	}
 	
@@ -93,7 +93,7 @@ Array<int> XmlSequence::getSequenceLengths()
 	{
 		forEachXmlChildElement(*sequenceData, sequence)
 		{
-			lengths.add(sequence->getIntAttribute("maxsteps"));
+			lengths.add(sequence->getIntAttribute("maxsteps", 16));
 		}
 	}
 	
@@ -196,7 +196,7 @@ Array<Slice> XmlSequence::getSlices()
         if ( positionData->getNumChildElements() > 0 )
         {
             forEachXmlChildElement(*positionData, slice)
-            sliceArray.add(Slice(slice->getStringAttribute("name"), (bool)slice->getIntAttribute("enable"), slice->getDoubleAttribute("l"), slice->getDoubleAttribute("t"), slice->getDoubleAttribute("r"), slice->getDoubleAttribute("b")));
+            sliceArray.add(Slice(slice->getStringAttribute("name", "Unnamed Slice"), (bool)slice->getIntAttribute("enable", false), slice->getDoubleAttribute("l", 0.0), slice->getDoubleAttribute("t", 0.0), slice->getDoubleAttribute("r", 0.0), slice->getDoubleAttribute("b", 0.0)));
         }
     }
     return sliceArray;
