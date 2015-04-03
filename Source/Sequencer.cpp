@@ -184,7 +184,7 @@ void Sequencer::buttonClicked (Button* b)
 		//let the listeners know
 		Component::BailOutChecker checker (this);
 		if (! checker.shouldBailOut())
-			listeners.callChecked ( checker, &Listener::sequenceSelected, activeSequence );
+			listeners.callChecked ( checker, &Sequencer::Listener::sequenceSelected, activeSequence );
 		
 		//always set the step to be the first step
 		stepper[0]->triggerClick();
@@ -213,7 +213,7 @@ void Sequencer::buttonClicked (Button* b)
 		//let the listeners know
 		Component::BailOutChecker checker (this);
 		if (! checker.shouldBailOut())
-			listeners.callChecked ( checker, &Listener::sequenceLengthChanged, numberOfSteps[ activeSequence ] );
+			listeners.callChecked ( checker, &Sequencer::Listener::sequenceLengthChanged, numberOfSteps[ activeSequence ] );
 	}
     
     else
@@ -223,7 +223,7 @@ void Sequencer::buttonClicked (Button* b)
 		{
 			Component::BailOutChecker checker (this);
 			if (! checker.shouldBailOut())
-				listeners.callChecked ( checker, &Listener::stepSelected, activeButton );
+				listeners.callChecked ( checker, &Sequencer::Listener::stepSelected, activeButton );
 		}
     }
 }
@@ -234,7 +234,7 @@ void Sequencer::labelTextChanged (Label* labelThatHasChanged)
 	
 	Component::BailOutChecker checker (this);
 	if (! checker.shouldBailOut())
-		listeners.callChecked ( checker, &Listener::sequenceNameChanged, labelThatHasChanged->getText() );
+		listeners.callChecked ( checker, &Sequencer::Listener::sequenceNameChanged, labelThatHasChanged->getText() );
 	
 }
 
