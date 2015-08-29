@@ -20,8 +20,8 @@ Sequencer::Sequencer()
     {
         //create 16 buttons for the step sequencer
         Button* b = new TextButton( String (i + 1) );
-        b->setColour(TextButton::buttonColourId, Colours::darkgrey);
-        b->setColour(TextButton::buttonOnColourId, claf.getOutlineColour());
+        b->setColour(TextButton::buttonColourId, claf.backgroundColour);
+        b->setColour(TextButton::buttonOnColourId, claf.primaryColour);
         b->setRadioGroupId(1);
         b->setClickingTogglesState(true);
         if ( i == 0 )
@@ -78,10 +78,12 @@ Sequencer::Sequencer()
 
 	//buttons to add and remove steps
 	lessSteps = new TextButton( "-" );
+	lessSteps->setColour(TextButton::buttonColourId, claf.backgroundColour);
 	lessSteps->addListener( this );
 	addAndMakeVisible( lessSteps );
 	moreSteps = new TextButton( "+" );
 	moreSteps->addListener( this );
+	moreSteps->setColour(TextButton::buttonColourId, claf.backgroundColour);
 	addAndMakeVisible( moreSteps );
     
     //sequence name label
@@ -90,9 +92,9 @@ Sequencer::Sequencer()
     sequenceName->setEditable(true);
 	sequenceName->addListener(this);
     
-    sequenceName->setColour(Label::outlineColourId, claf.getOutlineColour());
-    sequenceName->setColour(Label::backgroundColourId, Colours::darkgrey);
-    sequenceName->setColour(Label::textColourId, Colours::whitesmoke);
+    sequenceName->setColour(Label::outlineColourId, claf.outlineColour);
+    sequenceName->setColour(Label::backgroundColourId, claf.backgroundColour);
+    sequenceName->setColour(Label::textColourId, claf.textColour);
     
     addAndMakeVisible(sequenceName);
 	
@@ -123,6 +125,8 @@ void Sequencer::setSequenceNames(juce::StringArray seqNames)
 void Sequencer::setDefaultSequences()
 {
 	sequenceNames.clear();
+	numberOfSteps.clear();
+	
 	for ( int i = 0; i < 16; i++ )
 	{
 		//fill the sequence names array with default names
@@ -142,7 +146,7 @@ void Sequencer::setDefaultSequences()
 
 void Sequencer::paint (Graphics& g)
 {
-    g.setColour (Colours::grey);
+    g.setColour (claf.backgroundColour);
     g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 }
 

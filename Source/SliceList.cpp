@@ -31,9 +31,10 @@ SliceList::~SliceList()
 
 void SliceList::paint (Graphics& g)
 {
-    g.fillAll (Colours::darkgrey);   // clear the background
+	
+    g.fillAll (claf.backgroundColour);   // clear the background
 
-    g.setColour (Colours::grey);
+    g.setColour (claf.outlineColour);
     g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 
 
@@ -87,14 +88,15 @@ void SliceList::paintListBoxItem (int rowNumber, Graphics& g, int width, int hei
     if ( rowIsSelected )
     {
 		
-        g.setColour(claf.getOutlineColour().withMultipliedSaturation (0.3f));
+        g.setColour(claf.primaryColour);
         g.fillRect(rect);
-        g.setColour(Colours::black);
+        g.setColour(claf.textOnColour);
     }
     
     else
-        g.setColour(Colours::grey);
-    String text = slices[rowNumber]->name;
+        g.setColour(claf.textColour);
+	
+	String text = slices[rowNumber]->name;
     
     g.drawFittedText (text, 4 , 0, width - 4, height, Justification::centredLeft, true);
 }

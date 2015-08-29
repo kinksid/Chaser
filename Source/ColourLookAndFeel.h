@@ -29,8 +29,8 @@ public:
 		const int height = button.getHeight();
 		
 		const float indent = 2.0f;
-		const int cornerSize = jmin (roundToInt (width * 0.4f),
-									 roundToInt (height * 0.4f));
+		const int cornerSize = jmin (roundToInt (width * 0.1f),
+									 roundToInt (height * 0.1f));
 		
 		Path p;
 		p.addRoundedRectangle (indent, indent,
@@ -38,7 +38,7 @@ public:
 							   height - indent * 2.0f,
 							   (float) cornerSize);
 		
-		Colour bc (backgroundColour.withMultipliedSaturation (0.3f));
+		Colour bc (backgroundColour);
 		
 		if (isMouseOverButton)
 		{
@@ -53,17 +53,18 @@ public:
 		g.setColour (bc);
 		g.fillPath (p);
 		
-		g.setColour (outlineColour.withAlpha ((isMouseOverButton) ? 1.0f : 0.8f));
-		g.strokePath (p, PathStrokeType ((isMouseOverButton) ? 2.0f : 1.4f));
+		g.setColour (outlineColour.withMultipliedBrightness((isMouseOverButton) ? 1.2f : 1.0f));
+		g.strokePath (p, PathStrokeType ((isMouseOverButton) ? 2.0f : 1.0f));
 	}
+
+	Colour outlineColour = Colours::white;//Colour::fromRGB(0, 161, 255);
+	Colour backgroundColour = Colour::fromRGB(25, 171, 255);
+	Colour primaryColour = Colour::fromRGB(255, 146, 0);
+	Colour textColour = Colours::whitesmoke;
+	Colour textOnColour = Colours::whitesmoke;
 	
-	Colour getOutlineColour ()
-	{
-		return outlineColour;
-	}
-	
-private:
-	Colour outlineColour = Colours::khaki;
+	//Colour::fromRGB(0, 113, 255);
+	//178, 102, 0
 	
 };
 

@@ -19,7 +19,7 @@ MainContentComponent::MainContentComponent()
     
     openOutput = new TextButton ("OpenOutput");
     openOutput->setButtonText("Load");
-	openOutput->setColour(TextButton::buttonColourId, laf->getOutlineColour());
+	openOutput->setColour(TextButton::buttonColourId, laf->primaryColour);
     openOutput->addListener( this );
     addAndMakeVisible(openOutput);
 	

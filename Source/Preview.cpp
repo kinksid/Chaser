@@ -66,10 +66,10 @@ void Preview::addSlice( Slice* slice )
     SliceButton* newButton = new SliceButton ( slice );
     
     newButton->setLookAndFeel(sliceLaf);
-    newButton->setColour(TextButton::buttonColourId, Colours::darkgrey);
-    newButton->setColour(TextButton::buttonOnColourId, sliceLaf->getOutlineColour());
-    newButton->setColour(TextButton::textColourOffId, Colours::whitesmoke);
-    newButton->setColour(TextButton::textColourOnId, Colours::black);
+    newButton->setColour(TextButton::buttonColourId, sliceLaf->backgroundColour);
+    newButton->setColour(TextButton::buttonOnColourId, sliceLaf->primaryColour);
+    newButton->setColour(TextButton::textColourOffId, sliceLaf->textColour);
+    newButton->setColour(TextButton::textColourOnId, sliceLaf->textOnColour);
     newButton->addListener(this);
     sliceButtons.add( newButton );
 
@@ -94,10 +94,10 @@ void Preview::paint (Graphics& g)
     
     g.fillAll (Colours::black);   // clear the background
     
-    g.setColour (sliceLaf->getOutlineColour());
+    g.setColour (sliceLaf->outlineColour);
     g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
     
-    g.setColour (sliceLaf->getOutlineColour());
+    g.setColour (sliceLaf->outlineColour);
     g.setFont (14.0f);
     g.drawText ("Preview", getLocalBounds(),
                 Justification::centred, true);   // draw some placeholder text

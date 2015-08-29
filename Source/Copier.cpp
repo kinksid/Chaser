@@ -19,7 +19,8 @@ Copier::Copier()
 	{
 		TextButton* b = new TextButton(String(i));
 		b->setButtonText("x" + String(pow(2,i)));
-		b->setColour(TextButton::buttonColourId, Colours::darkgrey);
+		ColourLookAndFeel claf;
+		b->setColour(TextButton::buttonColourId, claf.backgroundColour);
 		b->addListener(this);
 		addAndMakeVisible(b);
 		buttons.add(b);
@@ -32,7 +33,7 @@ Copier::~Copier()
 
 void Copier::buttonClicked(Button* b)
 {
-	int multiplier = pow(2,buttons.indexOf( b ));
+	int multiplier = pow(2, buttons.indexOf( b ));
 	//let the listeners know
 	Component::BailOutChecker checker (this);
 	if (! checker.shouldBailOut())
@@ -41,7 +42,8 @@ void Copier::buttonClicked(Button* b)
 
 void Copier::paint (Graphics& g)
 {
-    g.setColour (Colours::grey);
+	ColourLookAndFeel claf;
+    g.setColour (claf.backgroundColour);
     g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 }
 

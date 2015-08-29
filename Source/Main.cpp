@@ -62,12 +62,13 @@ public:
     {
     public:
         MainWindow (String name)  : DocumentWindow (name,
-                                                    Colours::dimgrey,
+                                                    Colours::blue,
                                                     DocumentWindow::allButtons)
         {
             setUsingNativeTitleBar (true);
             setContentOwned (new MainContentComponent(), true);
-
+			ColourLookAndFeel claf;
+			setColour( backgroundColourId, claf.backgroundColour );
             centreWithSize (getWidth(), getHeight());
             setResizable(true, true);
             setVisible (true);

@@ -28,7 +28,7 @@ public:
     ~SliceLookAndFeel(){}
 	
     //override the button drawing function
-    void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
+    void drawButtonBackground (Graphics& g, Button& button, const Colour& backColour,
                                                bool isMouseOverButton, bool isButtonDown)
     {
         const int width = button.getWidth();
@@ -41,7 +41,7 @@ public:
                         width - indent * 2.0f,
                         height - indent * 2.0f);
         
-        Colour bc (backgroundColour.withMultipliedSaturation (0.3f));
+        Colour bc (backColour);
         
         if (isMouseOverButton)
         {
@@ -56,7 +56,7 @@ public:
         g.setColour (bc);
         g.fillPath (p);
         
-		g.setColour (getOutlineColour().withAlpha ((isMouseOverButton) ? 1.0f : 0.8f));
+		g.setColour ( primaryColour.withAlpha ((isMouseOverButton) ? 1.0f : 0.8f));
         g.strokePath (p, PathStrokeType ((isMouseOverButton) ? 2.0f : 1.4f));
     }
     
