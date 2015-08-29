@@ -142,6 +142,16 @@ void Sequencer::setDefaultSequences()
 	
 	activeSequence = 0;
 	activeButton = 0;
+	
+	//always set the step to be the first step
+	stepper[0]->triggerClick();
+	
+	//let the listeners know
+	Component::BailOutChecker checker (this);
+	if (! checker.shouldBailOut())
+		listeners.callChecked ( checker, &Sequencer::Listener::sequenceLengthChanged, numberOfSteps[ activeSequence ] );
+	
+	resized();
 }
 
 void Sequencer::paint (Graphics& g)
