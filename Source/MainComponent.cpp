@@ -18,10 +18,21 @@ MainContentComponent::MainContentComponent()
 	version = ProjectInfo::versionString;
     
     openOutput = new TextButton ("OpenOutput");
-    openOutput->setButtonText("Load");
+    openOutput->setButtonText("Load new A.O.");
 	openOutput->setColour(TextButton::buttonColourId, laf->primaryColour);
     openOutput->addListener( this );
     addAndMakeVisible(openOutput);
+	
+	saveXml = new TextButton ("SaveXML");
+	saveXml->setButtonText("Save Chaser");
+	saveXml->setColour(TextButton::buttonColourId, laf->primaryColour);
+	saveXml->addListener( this );
+	addAndMakeVisible(saveXml);
+	loadXml = new TextButton ("LoadXML");
+	loadXml->setButtonText("Load Chaser");
+	loadXml->setColour(TextButton::buttonColourId, laf->primaryColour);
+	loadXml->addListener( this );
+	addAndMakeVisible(loadXml);
 	
     previewWindow = new Preview();
     addAndMakeVisible( previewWindow );
@@ -39,8 +50,6 @@ MainContentComponent::MainContentComponent()
 	addAndMakeVisible(copier);
 	copier->addListener(this);
     
-	
-	
 	//init the model vars
 	currentSequence = 0;
 	currentStep = 0;
@@ -58,6 +67,10 @@ MainContentComponent::MainContentComponent()
 		sliceList->addSlice( s );
 	}
 	
+	//if we're loading a previously loaded assfile, set that as the activefile
+	if ( xmlSequence->getFile() != String().empty )
+		activeFile = xmlSequence->getFile();
+	
 	//update the view for the first step
 	activeSlices = xmlSequence->getStep( currentSequence, currentStep );
 	previewWindow->setSlices( activeSlices );
@@ -69,7 +82,7 @@ MainContentComponent::MainContentComponent()
 	xmlSequence->setVersion( version );
 	xmlSequence->save();
 	
-    setSize (1024, 600);
+    setSize (1280, 720);
 }
 
 MainContentComponent::~MainContentComponent()
@@ -78,7 +91,6 @@ MainContentComponent::~MainContentComponent()
     previewWindow = nullptr;
     sliceList = nullptr;
     xmlSequence = nullptr;
-    
 }
 
 
@@ -290,6 +302,7 @@ void MainContentComponent::parseXml(File f)
 			
 			//set the previewWindow to the correct step
 			previewWindow->setSlices( xmlSequence->getStep( currentSequence, currentStep) );
+			
 
 			//store the last used file in xml and save it
             xmlSequence->setFile( f );
@@ -297,7 +310,6 @@ void MainContentComponent::parseXml(File f)
 			
 			//update the activefile var
 			activeFile = f;
-  
         }
     }
 }
@@ -307,15 +319,19 @@ void MainContentComponent::resized()
 {
     
     float scale = 0.84;
+	float loadSaveWidth = ( 1.0 - scale - 0.01) * 0.5;
     
     // adjust the heightt
     float wProp = getWidth() / 1920.0;
     float h = (wProp * 1080.0 ) / getHeight();
-    Rectangle <int> rect = getBounds();
+	//Rectangle <int> rect = getBounds();
     
     previewWindow->setBoundsRelative( 0.01 , 0.01, scale , h * scale );
-    sliceList->setBoundsRelative( scale + 0.02, 0.01, 1.0 - scale - 0.03, h * scale - 0.05);
-    openOutput->setBoundsRelative( scale + 0.02, h * scale - 0.035, (1.0 - scale - 0.03 ) - 0.005 , 0.04);
+	openOutput->setBoundsRelative( scale + 0.02, 0.01, ( 1.0 - scale - 0.03 ) , 0.04);
+    sliceList->setBoundsRelative( scale + 0.02, 0.05, 1.0 - scale - 0.03, h * (scale - 0.04 )- 0.05);
+	
+	saveXml->setBoundsRelative( scale + 0.02, h * scale - 0.035, loadSaveWidth - 0.01 , 0.04);
+	loadXml->setBoundsRelative( scale + loadSaveWidth + 0.01, h * scale - 0.035, loadSaveWidth - 0.01 , 0.04);
     sequencer->setBoundsRelative( 0.06, h * scale + 0.02, 0.93, 1.0 - h * scale - 0.04);
 	copier->setBoundsRelative(0.01, h * scale + 0.02, 0.045, 1.0 - h * scale - 0.04);
 }

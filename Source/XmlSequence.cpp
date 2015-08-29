@@ -224,7 +224,6 @@ void XmlSequence::setFile( File f )
 
 File XmlSequence::getFile()
 {
-
     return File(chaserData->getStringAttribute("file"));
 }
 

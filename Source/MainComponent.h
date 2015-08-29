@@ -63,6 +63,8 @@ private:
     ScopedPointer<ColourLookAndFeel> laf;
     
     ScopedPointer<Button> openOutput;
+	ScopedPointer<Button> saveXml;
+	ScopedPointer<Button> loadXml;
     File activeFile;
     
     OwnedArray<Slice> slices;
