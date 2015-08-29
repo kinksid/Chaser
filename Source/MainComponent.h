@@ -25,7 +25,13 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainContentComponent   : public Component, public Button::Listener, public ChangeListener, public Sequencer::Listener, public Preview::Listener, public Copier::Listener
+class MainContentComponent   :  public Component,
+								public MenuBarModel,
+								public Button::Listener,
+								public ChangeListener,
+								public Sequencer::Listener,
+								public Preview::Listener,
+								public Copier::Listener
 {
 public:
     //==============================================================================
@@ -36,6 +42,13 @@ public:
     void buttonClicked( Button* b );
     
     virtual void changeListenerCallback (ChangeBroadcaster* source);
+	
+	//menubar methods
+	virtual StringArray getMenuBarNames();
+	virtual PopupMenu getMenuForIndex (int topLevelMenuIndex,
+									   const String& menuName);
+	virtual void menuItemSelected (int menuItemID,
+								   int topLevelMenuIndex);
 	
 	//sequencer listener methods
 	virtual void stepSelected ( int step );
@@ -54,6 +67,7 @@ public:
 	
 
 private:
+	ScopedPointer<MenuBarComponent> menuBar;
 	
 	int currentStep;
 	int currentSequence;

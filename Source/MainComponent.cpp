@@ -82,6 +82,11 @@ MainContentComponent::MainContentComponent()
 	xmlSequence->setVersion( version );
 	xmlSequence->save();
 	
+	//add a menu bar
+	menuBar = new MenuBarComponent (this);
+	addAndMakeVisible( menuBar );
+	//setMacMainMenu(this);
+	
     setSize (1280, 720);
 }
 
@@ -93,6 +98,32 @@ MainContentComponent::~MainContentComponent()
     xmlSequence = nullptr;
 }
 
+StringArray MainContentComponent::getMenuBarNames()
+{
+	const char* const names[] = { "File", nullptr };
+	return StringArray (names);
+}
+
+PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const juce::String &menuName)
+{
+	PopupMenu menu;
+	
+	if (menuIndex == 0)
+	{
+		menu.addItem(1, "Load");
+		menu.addItem(2, "Save");
+		menu.addItem(3, "Save as...");
+		menu.addSeparator();
+		menu.addItem(4, "Load new ASS file");
+	}
+
+	return menu;
+}
+
+void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuIndex)
+{
+	
+}
 
 
 void MainContentComponent::buttonClicked(juce::Button *b)
@@ -107,6 +138,9 @@ void MainContentComponent::buttonClicked(juce::Button *b)
             parseXml( f );
         }
     }
+	
+	else if ( b == saveXml )
+		xmlSequence->save();
 }
 
 
@@ -302,7 +336,6 @@ void MainContentComponent::parseXml(File f)
 			
 			//set the previewWindow to the correct step
 			previewWindow->setSlices( xmlSequence->getStep( currentSequence, currentStep) );
-			
 
 			//store the last used file in xml and save it
             xmlSequence->setFile( f );
@@ -324,14 +357,24 @@ void MainContentComponent::resized()
     // adjust the heightt
     float wProp = getWidth() / 1920.0;
     float h = (wProp * 1080.0 ) / getHeight();
-	//Rectangle <int> rect = getBounds();
-    
-    previewWindow->setBoundsRelative( 0.01 , 0.01, scale , h * scale );
-	openOutput->setBoundsRelative( scale + 0.02, 0.01, ( 1.0 - scale - 0.03 ) , 0.04);
+	
+	Rectangle<int> area (getLocalBounds());
+	float menuBarHeight = LookAndFeel::getDefaultLookAndFeel().getDefaultMenuBarHeight();
+	menuBar->setBounds (area.removeFromTop (menuBarHeight));
+	
+	AffineTransform scalePreview = AffineTransform::scale(0.84, (9.0 / 16.0) * 0.84 );
+	Rectangle<int> previewArea = Rectangle<int>{0,0,getWidth(),getWidth()};
+	previewArea = previewArea.transformedBy( scalePreview );
+	previewArea.setPosition(0.0, menuBarHeight);
+	previewArea = previewArea.reduced(5);
+		
+	
+    previewWindow->setBounds(previewArea);
+	//openOutput->setBoundsRelative( scale + 0.02, 0.01, ( 1.0 - scale - 0.03 ) , 0.04);
     sliceList->setBoundsRelative( scale + 0.02, 0.05, 1.0 - scale - 0.03, h * (scale - 0.04 )- 0.05);
 	
-	saveXml->setBoundsRelative( scale + 0.02, h * scale - 0.035, loadSaveWidth - 0.01 , 0.04);
-	loadXml->setBoundsRelative( scale + loadSaveWidth + 0.01, h * scale - 0.035, loadSaveWidth - 0.01 , 0.04);
+	//saveXml->setBoundsRelative( scale + 0.02, h * scale - 0.035, loadSaveWidth - 0.01 , 0.04);
+	//loadXml->setBoundsRelative( scale + loadSaveWidth + 0.01, h * scale - 0.035, loadSaveWidth - 0.01 , 0.04);
     sequencer->setBoundsRelative( 0.06, h * scale + 0.02, 0.93, 1.0 - h * scale - 0.04);
 	copier->setBoundsRelative(0.01, h * scale + 0.02, 0.045, 1.0 - h * scale - 0.04);
 }
