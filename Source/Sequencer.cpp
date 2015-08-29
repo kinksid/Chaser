@@ -124,6 +124,8 @@ void Sequencer::setSequenceNames(juce::StringArray seqNames)
 
 void Sequencer::setDefaultSequences()
 {
+	stopTimer();
+	
 	sequenceNames.clear();
 	numberOfSteps.clear();
 	
