@@ -15,14 +15,21 @@ XmlSequence::XmlSequence( String version )
 {
     positionData = nullptr;
 	versionThreshold = version;
-    load();
+    if (!loadDataFromXmlFile( getXmlFile() ))
+		createFreshXml( getVersion() );
 }
 
 XmlSequence::~XmlSequence()
 {
-
+	
 }
 
+void XmlSequence::addElement(juce::XmlElement *elementToAddTo, juce::String nameOfNewElement, juce::String valueOfNewElement)
+{
+	XmlElement* newElement = new XmlElement( nameOfNewElement );
+	newElement->addTextElement( valueOfNewElement );
+	elementToAddTo->addChildElement( newElement );
+}
 void XmlSequence::setStep(int sequence, int step, Array<int> activeSlices)
 {
 
@@ -34,9 +41,7 @@ void XmlSequence::setStep(int sequence, int step, Array<int> activeSlices)
     {
         
         //DBG("Added to XML: "+ String(i));
-        XmlElement* slice = new XmlElement( "slice" );
-        slice->addTextElement  (String( activeSlices[i]));
-        currentStep->addChildElement(slice);
+		addElement( currentStep, "slice", String( activeSlices[i]));
     }
 }
 
@@ -145,14 +150,19 @@ void XmlSequence::clearSlices()
 String XmlSequence::getVersion()
 {
 	if ( chaserData != nullptr)
-		return chaserData->getStringAttribute("version");
-	else
-		return String();
+		if ( chaserData->getChildByName("version") != nullptr)
+			return chaserData->getChildByName("version")->getAllSubText();
+	
+	return String();
 }
 
 void XmlSequence::setVersion(juce::String version)
 {
-	chaserData->setAttribute("version", version );
+	//delete the previous version
+	if (chaserData->getChildByName("version") != nullptr )
+		chaserData->removeChildElement(chaserData->getChildByName("version"), true);
+
+	addElement( chaserData, "version", version);
 }
 
 void XmlSequence::createFreshXml( String version )
@@ -160,7 +170,10 @@ void XmlSequence::createFreshXml( String version )
     
     //master element
     chaserData = new XmlElement ("chaserData");
-	chaserData->setAttribute("version", version );
+	XmlElement* versionData = new XmlElement("version");
+	versionData->addTextElement(version);
+	chaserData->addChildElement( versionData );
+
 	
     //sequencing data
     //this is where we store which slices are active in each step of each sequence
@@ -206,25 +219,52 @@ void XmlSequence::save()
 {
     //save everything into an XML file
     File f = getXmlFile();
-    if (! f.exists() )
-        f.create();
-    
-    if (chaserData->writeToFile(f, "") )
-        return;
-    else
-        DBG("SAVE ERROR!");
+	
+	
+	if ( f != File() )
+	{
+		if (! f.exists() )
+			f.create();
+		
+		
+		if (chaserData->writeToFile(f, "") )
+			return;
+		else
+		{
+			DBG("SAVE ERROR!");
+			AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
+											  "Sorry!",
+											  "Could not save data.",
+											  "Ok");
+		}
+	}
+	else
+	{
+		//prompt a save window?
+
+	}
+
+
+
 }
 
-void XmlSequence::setFile( File f )
+void XmlSequence::setAssFile( File f )
 {
-    String fileName = f.getFullPathName();
-    chaserData->setAttribute( "file", fileName );
+	addElement( chaserData, "file", f.getFullPathName() );
     save();
 }
 
-File XmlSequence::getFile()
+File XmlSequence::getAssFile()
 {
-    return File(chaserData->getStringAttribute("file"));
+	if ( chaserData!=nullptr )
+	{
+		if ( chaserData->getChildByName("file") != nullptr )
+		{
+			return File(chaserData->getChildByName("file")->getAllSubText());
+		}
+	}
+	
+	return File();
 }
 
 Array<int> XmlSequence::subDivideString(juce::String s)
@@ -261,11 +301,9 @@ bool XmlSequence::versionCheck(juce::String savedVersion, juce::String thisVersi
 }
 
 
-void XmlSequence::load()
+bool XmlSequence::loadDataFromXmlFile( File f )
 {
-	
 	//read everything out of the XML file, if it exists
-	File f = getXmlFile();
 	if (f.exists())
 	{
 		//read in the xml data
@@ -291,23 +329,60 @@ void XmlSequence::load()
 					
 				}
 			}
+			return true;
 		}
 		
 		else
-			createFreshXml( getVersion() );
+			return false;
 	}
+
     
     else //create everything from scratch
-    {
-        createFreshXml( getVersion() );
-    }
+		return false;
+}
+
+bool XmlSequence::loadXmlFile( File f )
+{
+	
+	if(loadDataFromXmlFile( f ))
+	{
+		setXmlFile( f );
+		return true;
+	}
+	else
+		return false;
+	
+}
+
+void XmlSequence::setXmlFile( File f )
+{
+	File docDir = File::getSpecialLocation( File::userDocumentsDirectory );
+	File prefFile = docDir.getChildFile("Chaser/preferences/preferences.xml");
+	if (!prefFile.exists())
+		prefFile.create();
+	
+	XmlElement* lastUsedFileData = new XmlElement("preferences");
+	addElement( lastUsedFileData, "lastusedfile", f.getFullPathName() );
+	
+	lastUsedFileData->writeToFile( prefFile, "");
+	delete lastUsedFileData;
 }
 
 File XmlSequence::getXmlFile()
 {
     //get the file chaserData.xml, for now we'll use the userDocs
-    File docDir = File::getSpecialLocation( File::userDocumentsDirectory );
-    File xmlFile = docDir.getChildFile("Chaser/chaserdata.xml");
-    return xmlFile;
+	File docDir = File::getSpecialLocation( File::userDocumentsDirectory );
+	File prefFile = docDir.getChildFile("Chaser/preferences/preferences.xml");
+	
+	if ( prefFile.exists())
+	{
+		XmlDocument lastUsedFile ( prefFile );
+		lastUsedFileData = lastUsedFile.getDocumentElement();
+		if (lastUsedFileData->getChildByName("lastusedfile") != nullptr )
+			return File (lastUsedFileData->getChildByName("lastusedfile")->getAllSubText());
+		else return File();
+	}
+
+	return File();
 }
 

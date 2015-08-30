@@ -39,7 +39,8 @@ MainContentComponent::MainContentComponent()
 	currentSequenceLength = 16;
 	
 	//create a sequence and set the oldest version it will correctly load
-	xmlSequence = new XmlSequence( "0.0.1" );
+	xmlSequence = new XmlSequence( "1.0.2" );
+	
 	
 	//load the slices from the xml if they exist
 	Array<Slice> slices = xmlSequence->getSlices();
@@ -49,11 +50,7 @@ MainContentComponent::MainContentComponent()
 		previewWindow->addSlice(s);
 		sliceList->addSlice( s );
 	}
-	
-	//if we're loading a previously loaded assfile, set that as the activefile
-	if ( xmlSequence->getFile() != String().empty )
-		activeFile = xmlSequence->getFile();
-	
+		
 	//update the view for the first step
 	activeSlices = xmlSequence->getStep( currentSequence, currentStep );
 	previewWindow->setSlices( activeSlices );
@@ -70,7 +67,10 @@ MainContentComponent::MainContentComponent()
 	addAndMakeVisible( menuBar );
 	//setMacMainMenu(this);
 	
+	getLookAndFeel().setUsingNativeAlertWindows(true);
     setSize (1280, 720);
+	
+	
 }
 
 MainContentComponent::~MainContentComponent()
@@ -147,11 +147,37 @@ void MainContentComponent::saveXml()
 void MainContentComponent::saveAsXml()
 {
 	//open a save dialog
+	File chaserLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Chaser/";
+	FileChooser fc ( "Save as...", chaserLocation, "*.xml", true );
+	if ( fc.browseForFileToSave(true) )
+	{
+		File f = fc.getResult();
+		
+		xmlSequence->setXmlFile( f );
+		xmlSequence->save();
+	}
 }
 
 void MainContentComponent::loadXml()
 {
 	//open a load dialog
+	File chaserLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Chaser/";
+	FileChooser fc ( "Pick a chaser file...", chaserLocation, "*.xml", true );
+	
+	if ( fc.browseForFileToOpen() )
+	{
+		File f = fc.getResult();
+	
+		if ( !xmlSequence->loadXmlFile( f ))
+		{
+			AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
+											  "Sorry!",
+											  "Couldn't load that file.",
+											  "Ok");
+		}
+		else
+			getTopLevelComponent()->setName(f.getFileNameWithoutExtension());
+	}
 }
 
 
@@ -240,7 +266,7 @@ void MainContentComponent::parseXml(File f)
 		
 		//check if we're loading a new file or the same file
 		//if it's new, clear the xml and create a fresh one
-		bool loadingSameFile = (f == activeFile);
+		bool loadingSameFile = (f == xmlSequence->getAssFile() );
 		if ( !loadingSameFile )
 		{
 			xmlSequence->createFreshXml( version );
@@ -349,12 +375,9 @@ void MainContentComponent::parseXml(File f)
 			//set the previewWindow to the correct step
 			previewWindow->setSlices( xmlSequence->getStep( currentSequence, currentStep) );
 
-			//store the last used file in xml and save it
-            xmlSequence->setFile( f );
+			//store the last used ass file in xml and save it
+            xmlSequence->setAssFile( f );
 			xmlSequence->save();
-			
-			//update the activefile var
-			activeFile = f;
         }
     }
 }
@@ -380,5 +403,9 @@ void MainContentComponent::resized()
 	Rectangle<int> bottomArea = area.removeFromBottom( area.getHeight() - previewArea.getHeight() );
 	copier->setBounds(bottomArea.removeFromLeft(75).reduced(5));
 	sequencer->setBounds(bottomArea.reduced(5));
+	
+	//set the name of the window
+	File f = xmlSequence->getXmlFile();
+	getTopLevelComponent()->setName(f.getFileNameWithoutExtension());
 	
 }

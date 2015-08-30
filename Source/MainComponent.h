@@ -78,8 +78,6 @@ private:
 	
     ScopedPointer<ColourLookAndFeel> laf;
     
-    File activeFile;
-    
     OwnedArray<Slice> slices;
     
     ScopedPointer<Preview> previewWindow;

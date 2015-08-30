@@ -39,23 +39,28 @@ public:
 	String getVersion();
 	void setVersion ( String version );
     
-    void setFile ( File f );
-    File getFile();
+    void setAssFile ( File f );
+    File getAssFile();
 
     void createFreshXml( String version );
 	bool versionCheck ( String savedVersion, String thisVersion );
 	Array<int> subDivideString ( String s);
 	
     void save();
-    void load();
+    bool loadDataFromXmlFile( File f );
+	bool loadXmlFile( File f );
     File getXmlFile();
+	void setXmlFile( File f );
     
 private:
 	String versionThreshold;
     ScopedPointer<XmlElement> chaserData;
+	ScopedPointer<XmlElement> lastUsedFileData;
     XmlElement* sequenceData;
     XmlElement* positionData;
 	StringArray sequenceNames;
+	
+	void addElement(XmlElement* elementToAddTo, String nameOfNewElement, String valueOfNewElement);
 
 };
 
