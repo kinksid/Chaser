@@ -27,7 +27,6 @@
 */
 class MainContentComponent   :  public Component,
 								public MenuBarModel,
-								public Button::Listener,
 								public ChangeListener,
 								public Sequencer::Listener,
 								public Preview::Listener,
@@ -39,8 +38,7 @@ public:
     ~MainContentComponent();
 
     void resized();
-    void buttonClicked( Button* b );
-    
+	
     virtual void changeListenerCallback (ChangeBroadcaster* source);
 	
 	//menubar methods
@@ -62,6 +60,10 @@ public:
 	//copier listener methods
 	virtual void copierClicked ( int m );
 	
+	void loadAssFile();
+	void saveXml();
+	void saveAsXml();
+	void loadXml();
     void parseXml ( File f );
 
 	
@@ -76,9 +78,6 @@ private:
 	
     ScopedPointer<ColourLookAndFeel> laf;
     
-    ScopedPointer<Button> openOutput;
-	ScopedPointer<Button> saveXml;
-	ScopedPointer<Button> loadXml;
     File activeFile;
     
     OwnedArray<Slice> slices;

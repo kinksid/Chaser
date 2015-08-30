@@ -16,23 +16,6 @@ MainContentComponent::MainContentComponent()
     setLookAndFeel(laf);
 	
 	version = ProjectInfo::versionString;
-    
-    openOutput = new TextButton ("OpenOutput");
-    openOutput->setButtonText("Load new A.O.");
-	openOutput->setColour(TextButton::buttonColourId, laf->primaryColour);
-    openOutput->addListener( this );
-    addAndMakeVisible(openOutput);
-	
-	saveXml = new TextButton ("SaveXML");
-	saveXml->setButtonText("Save Chaser");
-	saveXml->setColour(TextButton::buttonColourId, laf->primaryColour);
-	saveXml->addListener( this );
-	addAndMakeVisible(saveXml);
-	loadXml = new TextButton ("LoadXML");
-	loadXml->setButtonText("Load Chaser");
-	loadXml->setColour(TextButton::buttonColourId, laf->primaryColour);
-	loadXml->addListener( this );
-	addAndMakeVisible(loadXml);
 	
     previewWindow = new Preview();
     addAndMakeVisible( previewWindow );
@@ -122,26 +105,55 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const juce::Strin
 
 void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuIndex)
 {
-	
+	if ( topLevelMenuIndex == 0 )
+	{
+		switch ( menuItemID )
+		{
+			case 1:
+				loadXml();
+				break;
+			case 2:
+				saveXml();
+				break;
+			case 3:
+				saveAsXml();
+				break;
+			case 4:
+				loadAssFile();
+				break;
+			case 0:
+			default:
+				return;
+		}
+	}
 }
 
-
-void MainContentComponent::buttonClicked(juce::Button *b)
+void MainContentComponent::loadAssFile()
 {
-    if ( b == openOutput )
-    {
-        File presetsLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Resolume Arena 4/presets/screensetup/";
-        FileChooser fc ( "Pick an ASS file...", presetsLocation, "*.xml", true );
-        if ( fc.browseForFileToOpen() );
-        {
-            File f = fc.getResult();
-            parseXml( f );
-        }
-    }
-	
-	else if ( b == saveXml )
-		xmlSequence->save();
+	File presetsLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Resolume Arena 4/presets/screensetup/";
+	FileChooser fc ( "Pick an ASS file...", presetsLocation, "*.xml", true );
+	if ( fc.browseForFileToOpen() );
+	{
+		File f = fc.getResult();
+		parseXml( f );
+	}
 }
+
+void MainContentComponent::saveXml()
+{
+	xmlSequence->save();
+}
+
+void MainContentComponent::saveAsXml()
+{
+	//open a save dialog
+}
+
+void MainContentComponent::loadXml()
+{
+	//open a load dialog
+}
+
 
 
 void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
@@ -350,31 +362,23 @@ void MainContentComponent::parseXml(File f)
 
 void MainContentComponent::resized()
 {
-    
-    float scale = 0.84;
-	float loadSaveWidth = ( 1.0 - scale - 0.01) * 0.5;
-    
-    // adjust the heightt
-    float wProp = getWidth() / 1920.0;
-    float h = (wProp * 1080.0 ) / getHeight();
-	
+
 	Rectangle<int> area (getLocalBounds());
+	
 	float menuBarHeight = LookAndFeel::getDefaultLookAndFeel().getDefaultMenuBarHeight();
 	menuBar->setBounds (area.removeFromTop (menuBarHeight));
 	
-	AffineTransform scalePreview = AffineTransform::scale(0.84, (9.0 / 16.0) * 0.84 );
+	AffineTransform scalePreview = AffineTransform::scale(0.83, (9.0 / 16.0) * 0.83 );
 	Rectangle<int> previewArea = Rectangle<int>{0,0,getWidth(),getWidth()};
 	previewArea = previewArea.transformedBy( scalePreview );
 	previewArea.setPosition(0.0, menuBarHeight);
-	previewArea = previewArea.reduced(5);
-		
+    previewWindow->setBounds(previewArea.reduced(5));
 	
-    previewWindow->setBounds(previewArea);
-	//openOutput->setBoundsRelative( scale + 0.02, 0.01, ( 1.0 - scale - 0.03 ) , 0.04);
-    sliceList->setBoundsRelative( scale + 0.02, 0.05, 1.0 - scale - 0.03, h * (scale - 0.04 )- 0.05);
+	Rectangle<int> sliceArea = Rectangle<int> { previewArea.getWidth(), int(menuBarHeight), area.getWidth() - previewArea.getWidth(), previewArea.getHeight()};
+	sliceList->setBounds(sliceArea.reduced(5));
+
+	Rectangle<int> bottomArea = area.removeFromBottom( area.getHeight() - previewArea.getHeight() );
+	copier->setBounds(bottomArea.removeFromLeft(75).reduced(5));
+	sequencer->setBounds(bottomArea.reduced(5));
 	
-	//saveXml->setBoundsRelative( scale + 0.02, h * scale - 0.035, loadSaveWidth - 0.01 , 0.04);
-	//loadXml->setBoundsRelative( scale + loadSaveWidth + 0.01, h * scale - 0.035, loadSaveWidth - 0.01 , 0.04);
-    sequencer->setBoundsRelative( 0.06, h * scale + 0.02, 0.93, 1.0 - h * scale - 0.04);
-	copier->setBoundsRelative(0.01, h * scale + 0.02, 0.045, 1.0 - h * scale - 0.04);
 }

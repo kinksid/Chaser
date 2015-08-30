@@ -269,7 +269,7 @@ void Sequencer::timerCallback()
 void Sequencer::resized()
 {
 	
-	float w = (1.0 / float( numberOfSteps[ activeSequence ]) * 0.855); //the magic number math is there so the 16 buttons align perfectly with the preview window
+	float w = (1.0 / float( numberOfSteps[ activeSequence ]) * 0.817); //the magic number math is there so the 16 buttons align perfectly with the preview window
     for(int i = 0; i < stepper.size() ; i++ )
     {
 		if( i < numberOfSteps[ activeSequence ] )
@@ -281,7 +281,7 @@ void Sequencer::resized()
 			stepper[ i ]->setVisible( false );
     }
 
-	float sequenceControlButtonWidth = 0.0532526;
+	float sequenceControlButtonWidth = 0.0632526;
 	previous->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 2.7, 0.225, sequenceControlButtonWidth * 0.9, 0.6 );
 	play->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 1.8, 0.225, sequenceControlButtonWidth * 0.9, 0.6 );
 	next->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 0.9, 0.225, sequenceControlButtonWidth * 0.9, 0.6 );
