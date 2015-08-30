@@ -15,8 +15,6 @@ XmlSequence::XmlSequence( String version )
 {
     positionData = nullptr;
 	versionThreshold = version;
-    if (!loadDataFromXmlFile( getXmlFile() ))
-		createFreshXml( getVersion() );
 }
 
 XmlSequence::~XmlSequence()
@@ -301,7 +299,9 @@ bool XmlSequence::versionCheck(juce::String savedVersion, juce::String thisVersi
 }
 
 
-bool XmlSequence::loadDataFromXmlFile( File f )
+
+
+bool XmlSequence::loadXmlFile( File f )
 {
 	//read everything out of the XML file, if it exists
 	if (f.exists())
@@ -329,29 +329,17 @@ bool XmlSequence::loadDataFromXmlFile( File f )
 					
 				}
 			}
+			
+			setXmlFile( f );
 			return true;
 		}
 		
 		else
 			return false;
 	}
-
-    
-    else //create everything from scratch
-		return false;
-}
-
-bool XmlSequence::loadXmlFile( File f )
-{
 	
-	if(loadDataFromXmlFile( f ))
-	{
-		setXmlFile( f );
-		return true;
-	}
-	else
+	else //create everything from scratch
 		return false;
-	
 }
 
 void XmlSequence::setXmlFile( File f )

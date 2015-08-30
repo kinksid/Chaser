@@ -30,7 +30,7 @@ class MainContentComponent   :  public Component,
 								public ChangeListener,
 								public Sequencer::Listener,
 								public Preview::Listener,
-								public Copier::Listener
+								public Copier::Listener 
 {
 public:
     //==============================================================================
@@ -61,6 +61,7 @@ public:
 	virtual void copierClicked ( int m );
 	
 	void loadAssFile();
+	void reloadAssFile();
 	void saveXml();
 	void saveAsXml();
 	void loadXml();

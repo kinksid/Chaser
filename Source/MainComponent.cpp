@@ -39,16 +39,29 @@ MainContentComponent::MainContentComponent()
 	currentSequenceLength = 16;
 	
 	//create a sequence and set the oldest version it will correctly load
-	xmlSequence = new XmlSequence( "1.0.2" );
+	xmlSequence = new XmlSequence( version );
 	
+	//check if we had a file previously loaded
+	//if so, load that bad boy
+	//if not, ask to load a new one
+	if ( xmlSequence->getXmlFile() != File() )
+	{
+		if ( !xmlSequence->loadXmlFile( xmlSequence->getXmlFile() ) )
+		{
+			xmlSequence->createFreshXml( version );
+			saveAsXml();
+			loadAssFile();
+		}
+	}
 	
 	//load the slices from the xml if they exist
-	Array<Slice> slices = xmlSequence->getSlices();
-	for ( int i = 0; i < slices.size(); i++ )
+	Array<Slice> slicesInXml = xmlSequence->getSlices();
+	for ( int i = 0; i < slicesInXml.size(); i++ )
 	{
-		Slice* s = new Slice ( slices[i] );
-		previewWindow->addSlice(s);
+		Slice* s = new Slice ( slicesInXml[i] );
+		previewWindow->addSlice (s) ;
 		sliceList->addSlice( s );
+		slices.add(s);
 	}
 		
 	//update the view for the first step
@@ -93,11 +106,12 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const juce::Strin
 	
 	if (menuIndex == 0)
 	{
-		menu.addItem(1, "Load");
-		menu.addItem(2, "Save");
-		menu.addItem(3, "Save as...");
+		menu.addItem(1, "New");
+		menu.addItem(2, "Load");
+		menu.addItem(3, "Save");
+		menu.addItem(4, "Save as...");
 		menu.addSeparator();
-		menu.addItem(4, "Load new ASS file");
+		menu.addItem(5, "Reload ASS file");
 	}
 
 	return menu;
@@ -110,16 +124,20 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 		switch ( menuItemID )
 		{
 			case 1:
-				loadXml();
+				saveAsXml();
+				loadAssFile();
 				break;
 			case 2:
-				saveXml();
+				loadXml();
 				break;
 			case 3:
-				saveAsXml();
+				saveXml();
 				break;
 			case 4:
-				loadAssFile();
+				saveAsXml();
+				break;
+			case 5:
+				reloadAssFile();
 				break;
 			case 0:
 			default:
@@ -139,6 +157,11 @@ void MainContentComponent::loadAssFile()
 	}
 }
 
+void MainContentComponent::reloadAssFile()
+{
+	parseXml( xmlSequence->getAssFile() );
+}
+
 void MainContentComponent::saveXml()
 {
 	xmlSequence->save();
@@ -148,13 +171,15 @@ void MainContentComponent::saveAsXml()
 {
 	//open a save dialog
 	File chaserLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Chaser/";
-	FileChooser fc ( "Save as...", chaserLocation, "*.xml", true );
+	FileChooser fc ( "Save chaser as...", chaserLocation, "*.xml", true );
 	if ( fc.browseForFileToSave(true) )
 	{
 		File f = fc.getResult();
 		
 		xmlSequence->setXmlFile( f );
 		xmlSequence->save();
+		
+		getTopLevelComponent()->setName(f.getFileNameWithoutExtension());
 	}
 }
 
@@ -191,6 +216,8 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
 			xmlSequence->updateSlice (slices[i], i);
             previewWindow->update(slices[i], i );
         }
+		
+		saveXml();
     }
 }
 
@@ -256,6 +283,10 @@ void MainContentComponent::parseXml(File f)
 {
     if ( !f.exists() )
     {
+		AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
+										  "Sorry!",
+										  "Couldn't reload that file. It looks like it's gone.",
+										  "Ok");
         DBG("Error loading file...");
         return;
     }
@@ -403,9 +434,4 @@ void MainContentComponent::resized()
 	Rectangle<int> bottomArea = area.removeFromBottom( area.getHeight() - previewArea.getHeight() );
 	copier->setBounds(bottomArea.removeFromLeft(75).reduced(5));
 	sequencer->setBounds(bottomArea.reduced(5));
-	
-	//set the name of the window
-	File f = xmlSequence->getXmlFile();
-	getTopLevelComponent()->setName(f.getFileNameWithoutExtension());
-	
 }

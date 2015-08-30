@@ -47,7 +47,6 @@ public:
 	Array<int> subDivideString ( String s);
 	
     void save();
-    bool loadDataFromXmlFile( File f );
 	bool loadXmlFile( File f );
     File getXmlFile();
 	void setXmlFile( File f );
