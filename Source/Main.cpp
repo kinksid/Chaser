@@ -69,6 +69,7 @@ public:
             setContentOwned (new MainContentComponent(), true);
 			ColourLookAndFeel claf;
 			setColour( backgroundColourId, claf.backgroundColour );
+			getLookAndFeel().setUsingNativeAlertWindows(true);
             centreWithSize (getWidth(), getHeight());
             setResizable(true, true);
             setVisible (true);

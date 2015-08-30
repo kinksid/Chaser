@@ -32,6 +32,11 @@ MainContentComponent::MainContentComponent()
 	copier = new Copier();
 	addAndMakeVisible(copier);
 	copier->addListener(this);
+	
+	//add a menu bar
+	menuBar = new MenuBarComponent (this);
+	addAndMakeVisible( menuBar );
+	//setMacMainMenu(this);
     
 	//init the model vars
 	currentSequence = 0;
@@ -39,7 +44,7 @@ MainContentComponent::MainContentComponent()
 	currentSequenceLength = 16;
 	
 	//create a sequence and set the oldest version it will correctly load
-	xmlSequence = new XmlSequence( version );
+	xmlSequence = new XmlSequence( "0.0.1" );
 	
 	//check if we had a file previously loaded
 	//if so, load that bad boy
@@ -53,6 +58,35 @@ MainContentComponent::MainContentComponent()
 			loadAssFile();
 		}
 	}
+	reloadSliceData();
+	
+    setSize (1280, 720);
+	
+	//start a timer to update the window name
+	startTimer( 1000 );
+}
+
+MainContentComponent::~MainContentComponent()
+{
+    slices.clear();
+    previewWindow = nullptr;
+    sliceList = nullptr;
+    xmlSequence = nullptr;
+}
+
+void MainContentComponent::timerCallback()
+{
+	//set the name
+	getTopLevelComponent()->setName( xmlSequence->getXmlFile().getFileNameWithoutExtension());
+	
+	stopTimer();
+}
+
+void MainContentComponent::reloadSliceData()
+{
+	sliceList->clearSlices();
+	previewWindow->clearSlices();
+	slices.clear();
 	
 	//load the slices from the xml if they exist
 	Array<Slice> slicesInXml = xmlSequence->getSlices();
@@ -63,35 +97,15 @@ MainContentComponent::MainContentComponent()
 		sliceList->addSlice( s );
 		slices.add(s);
 	}
-		
+	
 	//update the view for the first step
 	activeSlices = xmlSequence->getStep( currentSequence, currentStep );
 	previewWindow->setSlices( activeSlices );
 	sequencer->setSequenceNames ( xmlSequence->getSequenceNames() );
 	sequencer->setSequenceLengths ( xmlSequence->getSequenceLengths() );
 	currentSequenceLength = xmlSequence->getSequenceLengths()[ currentSequence ];
-
-	//update the version number and save
-	xmlSequence->setVersion( version );
-	xmlSequence->save();
 	
-	//add a menu bar
-	menuBar = new MenuBarComponent (this);
-	addAndMakeVisible( menuBar );
-	//setMacMainMenu(this);
-	
-	getLookAndFeel().setUsingNativeAlertWindows(true);
-    setSize (1280, 720);
-	
-	
-}
-
-MainContentComponent::~MainContentComponent()
-{
-    slices.clear();
-    previewWindow = nullptr;
-    sliceList = nullptr;
-    xmlSequence = nullptr;
+	resized();
 }
 
 StringArray MainContentComponent::getMenuBarNames()
@@ -150,7 +164,7 @@ void MainContentComponent::loadAssFile()
 {
 	File presetsLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Resolume Arena 4/presets/screensetup/";
 	FileChooser fc ( "Pick an ASS file...", presetsLocation, "*.xml", true );
-	if ( fc.browseForFileToOpen() );
+	if ( fc.browseForFileToOpen() )
 	{
 		File f = fc.getResult();
 		parseXml( f );
@@ -201,7 +215,10 @@ void MainContentComponent::loadXml()
 											  "Ok");
 		}
 		else
+		{
+			reloadSliceData();
 			getTopLevelComponent()->setName(f.getFileNameWithoutExtension());
+		}
 	}
 }
 

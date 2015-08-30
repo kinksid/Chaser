@@ -113,6 +113,9 @@ void Sequencer::setSequenceLengths(Array<int> lengths)
 		if ( i < numberOfSteps.size() )
 			numberOfSteps.set( i, lengths[i] );
 	}
+	
+	//so the buttons get drawn again
+	resized();
 }
 
 void Sequencer::setSequenceNames(juce::StringArray seqNames)

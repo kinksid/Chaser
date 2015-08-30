@@ -58,7 +58,9 @@ void Preview::setSlices(Array<int> activeSlices)
         if ( activeSlices[i] < sliceButtons.size() )
             sliceButtons[activeSlices[i]]->setToggleState(true, dontSendNotification);
     }
-    
+	
+	//so the slices get drawn again
+	resized();
 }
 
 void Preview::addSlice( Slice* slice )

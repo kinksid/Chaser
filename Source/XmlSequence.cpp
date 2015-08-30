@@ -303,9 +303,14 @@ bool XmlSequence::versionCheck(juce::String savedVersion, juce::String thisVersi
 
 bool XmlSequence::loadXmlFile( File f )
 {
+	//clear out the previous data
+	if ( positionData != nullptr )
+		positionData->deleteAllChildElements();
+	
 	//read everything out of the XML file, if it exists
 	if (f.exists())
 	{
+		
 		//read in the xml data
 		XmlDocument dataDoc ( f );
 		chaserData = dataDoc.getDocumentElement();

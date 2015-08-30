@@ -30,7 +30,9 @@ class MainContentComponent   :  public Component,
 								public ChangeListener,
 								public Sequencer::Listener,
 								public Preview::Listener,
-								public Copier::Listener 
+								public Copier::Listener,
+								public Timer
+
 {
 public:
     //==============================================================================
@@ -40,6 +42,8 @@ public:
     void resized();
 	
     virtual void changeListenerCallback (ChangeBroadcaster* source);
+	
+	virtual void timerCallback();
 	
 	//menubar methods
 	virtual StringArray getMenuBarNames();
@@ -66,6 +70,7 @@ public:
 	void saveAsXml();
 	void loadXml();
     void parseXml ( File f );
+	void reloadSliceData();
 
 	
 
