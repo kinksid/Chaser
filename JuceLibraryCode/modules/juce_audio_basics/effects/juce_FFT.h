@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -21,7 +21,6 @@
 
   ==============================================================================
 */
-
 
 /**
     A very minimal FFT class.
@@ -63,7 +62,7 @@ public:
 
         The size of the array passed in must be 2 * getSize(), and the first half
         should contain your raw input sample data. On return, the array will contain
-        complex frequency + phase data, and can be passed to performRealOnlyForwardTransform()
+        complex frequency + phase data, and can be passed to performRealOnlyInverseTransform()
         in order to convert it back to reals.
     */
     void performRealOnlyForwardTransform (float* inputOutputData) const noexcept;

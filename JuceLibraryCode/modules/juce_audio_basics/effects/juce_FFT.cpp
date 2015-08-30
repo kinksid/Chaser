@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -21,7 +21,6 @@
 
   ==============================================================================
 */
-
 
 // (For the moment, we'll implement a few local operators for this complex class - one
 // day we'll probably either have a juce complex class, or use the C++11 one)
@@ -267,12 +266,9 @@ void FFT::performFrequencyOnlyForwardTransform (float* d) const noexcept
 
     for (int i = 0; i < twiceSize; i += 2)
     {
-        const float d1 = d[i];
-        const float d2 = d[i + 1];
+        d[i / 2] = juce_hypot (d[i], d[i + 1]);
 
-        d[i / 2] = std::sqrt (d1 * d1 + d2 * d2);
-
-        if (i > size / 2)
+        if (i >= size)
         {
             d[i] = 0;
             d[i + 1] = 0;

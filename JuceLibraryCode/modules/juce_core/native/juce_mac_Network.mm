@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission to use, copy, modify, and/or distribute this software for any purpose with
    or without fee is hereby granted, provided that the above copyright notice and this
@@ -128,7 +128,8 @@ public:
           hasFailed (false),
           hasFinished (false),
           numRedirectsToFollow (maxRedirects),
-          numRedirects (0)
+          numRedirects (0),
+          latestTotalBytes (0)
     {
         static DelegateClass cls;
         delegate = [cls.createInstance() init];
@@ -152,7 +153,7 @@ public:
         while (isThreadRunning() && ! initialised)
         {
             if (callback != nullptr)
-                callback (context, -1, (int) [[request HTTPBody] length]);
+                callback (context, latestTotalBytes, (int) [[request HTTPBody] length]);
 
             Thread::sleep (1);
         }
@@ -203,7 +204,6 @@ public:
             [data setLength: 0];
         }
 
-        initialised = true;
         contentLength = [response expectedContentLength];
 
         [headers release];
@@ -215,6 +215,8 @@ public:
             headers = [[httpResponse allHeaderFields] retain];
             statusCode = (int) [httpResponse statusCode];
         }
+
+        initialised = true;
     }
 
     NSURLRequest* willSendRequest (NSURLRequest* newRequest, NSURLResponse* redirectResponse)
@@ -245,8 +247,9 @@ public:
         initialised = true;
     }
 
-    void didSendBodyData (NSInteger /*totalBytesWritten*/, NSInteger /*totalBytesExpected*/)
+    void didSendBodyData (NSInteger totalBytesWritten, NSInteger /*totalBytesExpected*/)
     {
+        latestTotalBytes = static_cast<int> (totalBytesWritten);
     }
 
     void finishedLoading()
@@ -280,6 +283,7 @@ public:
     bool initialised, hasFailed, hasFinished;
     const int numRedirectsToFollow;
     int numRedirects;
+    int latestTotalBytes;
 
 private:
     //==============================================================================

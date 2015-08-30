@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -42,10 +42,8 @@ import android.opengl.*;
 import android.text.ClipboardManager;
 import android.text.InputType;
 import android.util.DisplayMetrics;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import android.util.Log;
+import java.io.*;
 import java.net.URL;
 import java.net.HttpURLConnection;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -79,6 +77,8 @@ public class JuceAppActivity   extends Activity
     {
         quitApp();
         super.onDestroy();
+
+        clearDataCache();
     }
 
     @Override
@@ -331,15 +331,26 @@ public class JuceAppActivity   extends Activity
             setFocusableInTouchMode (true);
             setOnFocusChangeListener (this);
             requestFocus();
+
+            // swap red and blue colours to match internal opengl texture format
+            ColorMatrix colorMatrix = new ColorMatrix();
+
+            float[] colorTransform = { 0,    0,    1.0f, 0,    0,
+                                       0,    1.0f, 0,    0,    0,
+                                       1.0f, 0,    0,    0,    0,
+                                       0,    0,    0,    1.0f, 0 };
+
+            colorMatrix.set (colorTransform);
+            paint.setColorFilter (new ColorMatrixColorFilter (colorMatrix));
         }
 
         //==============================================================================
-        private native void handlePaint (long host, Canvas canvas);
+        private native void handlePaint (long host, Canvas canvas, Paint paint);
 
         @Override
         public void onDraw (Canvas canvas)
         {
-            handlePaint (host, canvas);
+            handlePaint (host, canvas, paint);
         }
 
         @Override
@@ -350,6 +361,7 @@ public class JuceAppActivity   extends Activity
 
         private boolean opaque;
         private long host;
+        private Paint paint = new Paint();
 
         //==============================================================================
         private native void handleMouseDown (long host, int index, float x, float y, long time);
@@ -446,6 +458,22 @@ public class JuceAppActivity   extends Activity
         {
             handleKeyUp (host, keyCode, event.getUnicodeChar());
             return true;
+        }
+
+        @Override
+        public boolean onKeyMultiple (int keyCode, int count, KeyEvent event)
+        {
+            if (keyCode != KeyEvent.KEYCODE_UNKNOWN || event.getAction() != KeyEvent.ACTION_MULTIPLE)
+                return super.onKeyMultiple (keyCode, count, event);
+
+            if (event.getCharacters() != null)
+            {
+                int utf8Char = event.getCharacters().codePointAt (0);
+                handleKeyDown (host, utf8Char, utf8Char);
+                return true;
+            }
+
+            return false;
         }
 
         // this is here to make keyboard entry work on a Galaxy Tab2 10.1
@@ -815,5 +843,86 @@ public class JuceAppActivity   extends Activity
     public final void scanFile (String filename)
     {
         new SingleMediaScanner (this, filename);
+    }
+
+    public final Typeface getTypeFaceFromAsset (String assetName)
+    {
+        try
+        {
+            return Typeface.createFromAsset (this.getResources().getAssets(), assetName);
+        }
+        catch (Throwable e) {}
+
+        return null;
+    }
+
+    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+    public static String bytesToHex (byte[] bytes)
+    {
+        char[] hexChars = new char[bytes.length * 2];
+
+        for (int j = 0; j < bytes.length; ++j)
+        {
+            int v = bytes[j] & 0xff;
+            hexChars[j * 2]     = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0f];
+        }
+
+        return new String (hexChars);
+    }
+
+    final private java.util.Map dataCache = new java.util.HashMap();
+
+    synchronized private final File getDataCacheFile (byte[] data)
+    {
+        try
+        {
+            java.security.MessageDigest digest = java.security.MessageDigest.getInstance ("MD5");
+            digest.update (data);
+
+            String key = bytesToHex (digest.digest());
+
+            if (dataCache.containsKey (key))
+                return (File) dataCache.get (key);
+
+            File f = new File (this.getCacheDir(), "bindata_" + key);
+            f.delete();
+            FileOutputStream os = new FileOutputStream (f);
+            os.write (data, 0, data.length);
+            dataCache.put (key, f);
+            return f;
+        }
+        catch (Throwable e) {}
+
+        return null;
+    }
+
+    private final void clearDataCache()
+    {
+        java.util.Iterator it = dataCache.values().iterator();
+
+        while (it.hasNext())
+        {
+            File f = (File) it.next();
+            f.delete();
+        }
+    }
+
+    public final Typeface getTypeFaceFromByteArray (byte[] data)
+    {
+        try
+        {
+            File f = getDataCacheFile (data);
+
+            if (f != null)
+                return Typeface.createFromFile (f);
+        }
+        catch (Exception e)
+        {
+            Log.e ("JUCE", e.toString());
+        }
+
+        return null;
     }
 }

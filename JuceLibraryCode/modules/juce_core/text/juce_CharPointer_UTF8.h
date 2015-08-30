@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission to use, copy, modify, and/or distribute this software for any purpose with
    or without fee is hereby granted, provided that the above copyright notice and this
@@ -511,7 +511,7 @@ public:
 
             if (byte < 0)
             {
-                uint8 bit = 0x40;
+                int bit = 0x40;
                 int numExtraValues = 0;
 
                 while ((byte & bit) != 0)
