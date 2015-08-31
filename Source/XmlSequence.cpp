@@ -13,6 +13,7 @@
 
 XmlSequence::XmlSequence( String version )
 {
+	sequenceData = nullptr;
     positionData = nullptr;
 	versionThreshold = version;
 }
@@ -45,28 +46,41 @@ void XmlSequence::setStep(int sequence, int step, Array<int> activeSlices)
 
 Array<int> XmlSequence::getStep(int sequence, int step)
 {
-    
-    XmlElement* currentStep = sequenceData->getChildElement( sequence )->getChildElement( step );
-    Array<int> activeSlices;
-    
-    //read out the the list of ints associated with this step
-    for ( int i = 0; i < currentStep->getNumChildElements(); i++ )
-    {
-        activeSlices.add( currentStep->getChildElement(i)->getAllSubText().getIntValue() );
-    }
+	Array<int> activeSlices;
+	if (sequenceData != nullptr)
+	{
+		if (sequenceData->getChildElement(sequence) != nullptr)
+		{
+			if (sequenceData->getChildElement(sequence)->getChildElement(step) != nullptr)
+			{
+				XmlElement* currentStep = sequenceData->getChildElement(sequence)->getChildElement(step);
+
+				//read out the the list of ints associated with this step
+				for (int i = 0; i < currentStep->getNumChildElements(); i++)
+				{
+					activeSlices.add(currentStep->getChildElement(i)->getAllSubText().getIntValue());
+				}
+			}
+		}
+		
+	}
     return activeSlices;
 }
 
 StringArray XmlSequence::getSequenceNames()
 {
 	StringArray names;
-	if ( sequenceData->getNumChildElements() > 0 )
+	if (sequenceData != nullptr)
 	{
-		forEachXmlChildElement(*sequenceData, sequence)
+		if (sequenceData->getNumChildElements() > 0)
 		{
-			names.add(sequence->getStringAttribute("name", "Unnamed Sequence"));
+			forEachXmlChildElement(*sequenceData, sequence)
+			{
+				names.add(sequence->getStringAttribute("name", "Unnamed Sequence"));
+			}
 		}
 	}
+
 	
 	return names;
 }
@@ -92,13 +106,17 @@ void XmlSequence::setNumberOfSteps( int sequenceNumber, int numberOfSteps )
 Array<int> XmlSequence::getSequenceLengths()
 {
 	Array<int> lengths;
-	if ( sequenceData->getNumChildElements() > 0 )
+	if (sequenceData != nullptr)
 	{
-		forEachXmlChildElement(*sequenceData, sequence)
+		if (sequenceData->getNumChildElements() > 0)
 		{
-			lengths.add(sequence->getIntAttribute("maxsteps", 16));
+			forEachXmlChildElement(*sequenceData, sequence)
+			{
+				lengths.add(sequence->getIntAttribute("maxsteps", 16));
+			}
 		}
 	}
+
 	
 	return lengths;
 }
@@ -224,7 +242,9 @@ void XmlSequence::save()
 		if (! f.exists() )
 			f.create();
 		
-		
+		if (chaserData == nullptr)
+			createFreshXml( getVersion() );
+
 		if (chaserData->writeToFile(f, "") )
 			return;
 		else
@@ -236,14 +256,6 @@ void XmlSequence::save()
 											  "Ok");
 		}
 	}
-	else
-	{
-		//prompt a save window?
-
-	}
-
-
-
 }
 
 void XmlSequence::setAssFile( File f )
@@ -314,29 +326,36 @@ bool XmlSequence::loadXmlFile( File f )
 		//read in the xml data
 		XmlDocument dataDoc ( f );
 		chaserData = dataDoc.getDocumentElement();
-		sequenceData = chaserData->getChildByName("sequenceData");
-		
-		if ( versionCheck( getVersion(), versionThreshold ) )
+		if (versionCheck(getVersion(), versionThreshold))
 		{
-			forEachXmlChildElement(*sequenceData, sequence)
+			if (chaserData->getChildByName("sequenceData") != nullptr)
 			{
-				forEachXmlChildElement(*sequence, step)
+				sequenceData = chaserData->getChildByName("sequenceData");
+
+
+				forEachXmlChildElement(*sequenceData, sequence)
 				{
-					
+					forEachXmlChildElement(*sequence, step)
+					{
+
+					}
 				}
 			}
 			
-			positionData = chaserData->getChildByName( "positionData");
-			if ( positionData != nullptr)
+			if (chaserData->getChildByName("positionData") != nullptr)
 			{
+				positionData = chaserData->getChildByName("positionData");
+
 				forEachXmlChildElement(*positionData, slice);
 				{
-					
+
 				}
 			}
-			
-			setXmlFile( f );
+
+			setXmlFile(f);
 			return true;
+		
+	
 		}
 		
 		else

@@ -49,15 +49,14 @@ MainContentComponent::MainContentComponent()
 	//check if we had a file previously loaded
 	//if so, load that bad boy
 	//if not, ask to load a new one
-	if ( xmlSequence->getXmlFile() != File() )
+	if (xmlSequence->getXmlFile() != File())
 	{
-		if ( !xmlSequence->loadXmlFile( xmlSequence->getXmlFile() ) )
-		{
-			xmlSequence->createFreshXml( version );
-			saveAsXml();
-			loadAssFile();
-		}
+		xmlSequence->loadXmlFile(xmlSequence->getXmlFile());
+		//if something goes wrong here, fuck it
 	}
+	else
+		xmlSequence->createFreshXml( version );
+
 	reloadSliceData();
 	
     setSize (1280, 720);
@@ -138,6 +137,7 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 		switch ( menuItemID )
 		{
 			case 1:
+				xmlSequence->createFreshXml(version);
 				saveAsXml();
 				loadAssFile();
 				break;
@@ -185,6 +185,8 @@ void MainContentComponent::saveAsXml()
 {
 	//open a save dialog
 	File chaserLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Chaser/";
+	if (!chaserLocation.exists())
+		chaserLocation.createDirectory();
 	FileChooser fc ( "Save chaser as...", chaserLocation, "*.xml", true );
 	if ( fc.browseForFileToSave(true) )
 	{
