@@ -35,8 +35,11 @@ MainContentComponent::MainContentComponent()
 	
 	//add a menu bar
 	menuBar = new MenuBarComponent (this);
+	#if JUCE_WINDOWS
 	addAndMakeVisible( menuBar );
-	//setMacMainMenu(this);
+	#elif JUCE_MAC
+	setMacMainMenu(this);
+	#endif
     
 	//init the model vars
 	currentSequence = 0;
@@ -327,9 +330,6 @@ void MainContentComponent::parseXml(File f)
         //traverse the whole fucking tree
         if (preset != nullptr && preset->hasTagName ("preset"))
         {
-            //set the window name
-            //getParentComponent()->setName(preset->getStringAttribute("name"));
-            
             //clear the previewWindow
             slices.clear();
             
@@ -438,7 +438,13 @@ void MainContentComponent::resized()
 
 	Rectangle<int> area (getLocalBounds());
 	
-	float menuBarHeight = LookAndFeel::getDefaultLookAndFeel().getDefaultMenuBarHeight();
+	float menuBarHeight;
+	#if JUCE_WINDOWS
+	menuBarHeight = LookAndFeel::getDefaultLookAndFeel().getDefaultMenuBarHeight();
+	#elif JUCE_MAC
+	menuBarHeight = 0;
+	#endif
+	
 	menuBar->setBounds (area.removeFromTop (menuBarHeight));
 	
 	AffineTransform scalePreview = AffineTransform::scale(0.83, (9.0 / 16.0) * 0.83 );
