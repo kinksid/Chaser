@@ -5,3 +5,7 @@ Builds/MacOSX/Chaser.xcodeproj/project.xcworkspace/xcuserdata/hybrid.xcuserdatad
 Builds/MacOSX/Chaser.xcodeproj/xcuserdata/hybrid.xcuserdatad/xcschemes/Chaser.xcscheme
 Builds/MacOSX/Chaser.xcodeproj/xcuserdata/hybrid.xcuserdatad/xcschemes/xcschememanagement.plist
 Builds/MacOSX/build/Release
+Builds/VisualStudio2015/Debug/
+Builds/VisualStudio2015/x64/
+Builds/VisualStudio2015/Chaser.opensdf
+Builds/VisualStudio2015/Chaser.sdf
