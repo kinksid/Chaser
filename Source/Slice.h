@@ -21,6 +21,11 @@ public:
 	Slice( String n, bool enable, double l, double t, double r, double b ) : name ( n ), enabled ( enable ), proportionalX ( l ), proportionalY ( t ), proportionalW ( r - l ), proportionalH ( b - t )
     {}
 	
+	Slice ( const Slice& slice) : name (slice.name ), enabled(slice.enabled), proportionalX(slice.proportionalX), proportionalY(slice.proportionalY), proportionalW(slice.proportionalW), proportionalH(slice.proportionalH)
+	{
+		
+	}
+	
     Slice(){}
     ~Slice()
     {
