@@ -18,17 +18,8 @@ class Slice
 public:
 	
 	
-    Slice( String n, bool enable, double l, double t, double r, double b )
-    {
-        name = n;
-        
-        enabled = enable;
-        
-        proportionalX = l;
-        proportionalY = t;
-        proportionalW = r - l;
-        proportionalH = b - t;
-    }
+	Slice( String n, bool enable, double l, double t, double r, double b ) : name ( n ), enabled ( enable ), proportionalX ( l ), proportionalY ( t ), proportionalW ( r - l ), proportionalH ( b - t )
+    {}
 	
     Slice(){}
     ~Slice()
@@ -37,15 +28,16 @@ public:
     }
     
     String name;
-    
+	bool enabled;
     double proportionalX;
     double proportionalY;
     double proportionalW;
     double proportionalH;
-    bool enabled;
+	
     
 private:
-    
+	OwnedArray<Point<float>> inputRectPoints;
+	OwnedArray<Point<float>> inputMaskPoints;
 };
 
 

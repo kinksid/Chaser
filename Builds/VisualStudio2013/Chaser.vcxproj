@@ -128,6 +128,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\XmlParser.cpp"/>
     <ClCompile Include="..\..\Source\Copier.cpp"/>
     <ClCompile Include="..\..\Source\Main.cpp"/>
     <ClCompile Include="..\..\Source\MainComponent.cpp"/>
@@ -1150,6 +1151,7 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_extra\juce_gui_extra.cpp"/>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\XmlParser.h"/>
     <ClInclude Include="..\..\Source\ColourLookAndFeel.h"/>
     <ClInclude Include="..\..\Source\Copier.h"/>
     <ClInclude Include="..\..\Source\MainComponent.h"/>

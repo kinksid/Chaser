@@ -7,6 +7,7 @@
 */
 
 #include "MainComponent.h"
+#include "XmlParser.h"
 
 
 //==============================================================================
@@ -308,6 +309,8 @@ void MainContentComponent::parseXml(File f)
 {
     if ( !f.exists() )
     {
+		//because we're using a file selection dialog to choose new ASS files
+		//a non-existant file could only happen on a reload action
 		AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
 										  "Sorry!",
 										  "Couldn't reload that file. It looks like it's gone.",
@@ -317,9 +320,6 @@ void MainContentComponent::parseXml(File f)
     }
     else
     {
-        DBG("Loading: " + f.getFullPathName() );
-        XmlDocument xmlDoc ( f );
-		
 		//check if we're loading a new file or the same file
 		//if it's new, clear the xml and create a fresh one
 		bool loadingSameFile = (f == xmlSequence->getAssFile() );
@@ -327,73 +327,20 @@ void MainContentComponent::parseXml(File f)
 		{
 			xmlSequence->createFreshXml( version );
 		}
-
+		
+        DBG("Loading: " + f.getFullPathName() );
+        XmlDocument xmlDoc ( f );
+		
         ScopedPointer<XmlElement> preset (XmlDocument::parse ( f ));
         
         //traverse the whole fucking tree
+		bool succesfulParse;
+		
         if (preset != nullptr && preset->hasTagName ("preset"))
-        {
-            //clear the previewWindow
-            slices.clear();
-            
-            forEachXmlChildElement( *preset, presetNode )
-            {
-                if ( presetNode != nullptr && presetNode->hasTagName("screen") )
-                {
-                    forEachXmlChildElement( *presetNode, screenNode )
-                    {
-                        if ( screenNode != nullptr && screenNode->hasTagName("slices") )
-                        {
-                            forEachXmlChildElement( *screenNode, slicesNode)
-                            {
-                                if ( slicesNode != nullptr && slicesNode->hasTagName("Slice") )
-                                {
-                                    String name;
-                                    bool enabled = slicesNode->getBoolAttribute("isEnabled");
-                                    int type;
-                                    double l;
-                                    double t;
-                                    double r;
-                                    double b;
-                                    
-                                    forEachXmlChildElement( *slicesNode, sliceNode)
-                                    {
-                                        if ( sliceNode != nullptr )
-                                        {
-                                            
-                                            if ( sliceNode->hasTagName("name") )
-                                            {
-                                                name = sliceNode->getStringAttribute("value");
-                                            }
-                                            
-                                            if ( sliceNode->hasTagName("type") )
-                                            {
-                                                type = sliceNode->getIntAttribute("value");
-                                            }
-                                            
-                                            if ( sliceNode->hasTagName("rect") )
-                                            {
-                                                l = sliceNode->getDoubleAttribute( "l" );
-                                                t = sliceNode->getDoubleAttribute( "t" );
-                                                r = sliceNode->getDoubleAttribute( "r" );
-                                                b = sliceNode->getDoubleAttribute( "b" );
-                                            }
-                                        }
-                                    }
-                                    
-                                    //type 0 means only slices are loaded, no masks or crops
-                                    if ( type == 0 )
-                                    {
-                                        Slice* slice = new Slice( name, enabled, l, t, r, b);
-                                        slices.add( slice );
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-			
+			succesfulParse = XmlParser::parseRes4Xml( *preset, slices );
+		
+		if ( succesfulParse )
+		{
 			//if we're loading the same file, get the enabled states from the chaserxml
 			if ( loadingSameFile )
 			{
@@ -431,7 +378,7 @@ void MainContentComponent::parseXml(File f)
 			//store the last used ass file in xml and save it
             xmlSequence->setAssFile( f );
 			xmlSequence->save();
-        }
+		}
     }
 }
 
