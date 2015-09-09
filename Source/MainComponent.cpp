@@ -74,6 +74,9 @@ MainContentComponent::~MainContentComponent()
     previewWindow = nullptr;
     sliceList = nullptr;
     xmlSequence = nullptr;
+	#if JUCE_MAC
+	setMacMainMenu(nullptr);
+	#endif
 }
 
 void MainContentComponent::timerCallback()
