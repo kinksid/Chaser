@@ -84,3 +84,128 @@ bool XmlParser::parseRes4Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 		return true;
 	}
 }
+
+bool XmlParser::parseRes5Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slices)
+{
+   
+    slices.clear();
+    
+    XmlElement* screenSetup = xmlTreeToParse.getChildByName("ScreenSetup");
+    if ( screenSetup != nullptr )
+    {
+        XmlElement* screens = screenSetup->getChildByName("screens");
+        if ( screens!= nullptr )
+        {
+            forEachXmlChildElement( *screens, child )
+            {
+                if ( child->hasTagName("Screen") )
+                {
+                    XmlElement* layers = child->getChildByName("layers");
+                    if ( layers != nullptr )
+                    {
+                        forEachXmlChildElement( *layers, child )
+                        {
+                            if ( child->hasTagName("Slice") || child->hasTagName("Polygon"))
+                            {
+                                Slice* newSlice = new Slice();
+                                
+                                XmlElement* params = child->getChildByName("Params");
+                                if ( params != nullptr )
+                                {
+                                    forEachXmlChildElement( *params, child )
+                                    {
+                                        if ( child->hasTagName("Param") && child->getStringAttribute("name") == "Name")
+                                        {
+                                            newSlice->name = child->getStringAttribute("value", "Slice");
+                                        }
+                                    }
+                                }
+                                XmlElement* inputRect = child->getChildByName("InputRect");
+                                if ( inputRect != nullptr )
+                                {
+                                    forEachXmlChildElement( *inputRect, child )
+                                    {
+                                        if ( child->hasTagName("v") )
+                                        {
+                                            Point<float> newPoint;
+                                            newPoint.x = child->getStringAttribute("x", "0.0").getFloatValue();
+                                            newPoint.y = child->getStringAttribute("y", "0.0").getFloatValue();
+                                            newSlice->inputRectPoints.add( newPoint );
+                                        }
+                                    }
+                                }
+                                XmlElement* sliceMask = child->getChildByName("SliceMask");
+                                if ( sliceMask != nullptr )
+                                {
+                                    XmlElement* shapeObject = sliceMask->getChildByName("ShapeObject");
+                                    if ( shapeObject != nullptr )
+                                    {
+                                        XmlElement* shape = shapeObject->getChildByName("Shape");
+                                        if ( shape != nullptr )
+                                        {
+                                            XmlElement* contour = shape->getChildByName("Contour");
+                                            if ( contour != nullptr )
+                                            {
+                                                XmlElement* points = contour->getChildByName("points");
+                                                if ( points != nullptr )
+                                                {
+                                                    forEachXmlChildElement( *points, child )
+                                                    {
+                                                        if ( child->hasTagName("v") )
+                                                        {
+                                                            Point<float> newPoint;
+                                                            newPoint.x = child->getStringAttribute("x", "0.0").getFloatValue();
+                                                            newPoint.y = child->getStringAttribute("y", "0.0").getFloatValue();
+                                                            newSlice->inputMaskPoints.add( newPoint );
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                XmlElement* contour = child->getChildByName("InputContour");
+                                if ( contour != nullptr )
+                                {
+                                    XmlElement* points = contour->getChildByName("points");
+                                    if ( points != nullptr )
+                                    {
+                                        forEachXmlChildElement( *points, child )
+                                        {
+                                            if ( child->hasTagName("v") )
+                                            {
+                                                Point<float> newPoint;
+                                                newPoint.x = child->getStringAttribute("x", "0.0").getFloatValue();
+                                                newPoint.y = child->getStringAttribute("y", "0.0").getFloatValue();
+                                                newSlice->inputMaskPoints.add( newPoint );
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                slices.add( newSlice );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    
+  
+    
+    
+    
+    if ( slices.size() == 0 )
+    {
+        DBG("Not able to parse any slice data");
+        return false;
+    }
+    else
+    {
+        DBG("Slice data parsed succesfully");
+        return true;
+    }
+}

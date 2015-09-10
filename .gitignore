@@ -9,3 +9,9 @@ Builds/VisualStudio2015/Debug/
 Builds/VisualStudio2015/x64/
 Builds/VisualStudio2015/Chaser.opensdf
 Builds/VisualStudio2015/Chaser.sdf
+
+build
+
+/Builds/MacOSX/Chaser.xcodeproj/project.xcworkspace/xcuserdata/
+
+/Builds/MacOSX/Chaser.xcodeproj/xcuserdata/joris.xcuserdatad/

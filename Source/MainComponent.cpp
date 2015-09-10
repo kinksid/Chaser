@@ -169,7 +169,7 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 
 void MainContentComponent::loadAssFile()
 {
-	File presetsLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Resolume Arena 4/presets/screensetup/";
+	File presetsLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Resolume Arena 5/presets/screensetup/";
 	FileChooser fc ( "Pick an ASS file...", presetsLocation, "*.xml", true );
 	if ( fc.browseForFileToOpen() )
 	{
@@ -331,14 +331,18 @@ void MainContentComponent::parseXml(File f)
         DBG("Loading: " + f.getFullPathName() );
         XmlDocument xmlDoc ( f );
 		
-        ScopedPointer<XmlElement> preset (XmlDocument::parse ( f ));
+        ScopedPointer<XmlElement> xmlRoot (XmlDocument::parse ( f ));
         
-        //traverse the whole fucking tree
+        //see if we're dealing with a res 4 or res 5 ass file
+        //then try to parse it
 		bool succesfulParse;
 		
-        if (preset != nullptr && preset->hasTagName ("preset"))
-			succesfulParse = XmlParser::parseRes4Xml( *preset, slices );
+        if (xmlRoot != nullptr && xmlRoot->hasTagName ("preset"))
+			succesfulParse = XmlParser::parseRes4Xml( *xmlRoot, slices );
+        else if ( xmlRoot != nullptr && xmlRoot->hasTagName("XmlState"))
+            succesfulParse = XmlParser::parseRes5Xml( *xmlRoot, slices );
 		
+        //if the file was susccesfully parsed
 		if ( succesfulParse )
 		{
 			//if we're loading the same file, get the enabled states from the chaserxml

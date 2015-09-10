@@ -16,8 +16,8 @@
 
 namespace XmlParser
 {
-	bool parseRes4Xml( XmlElement& xmlTreeToParse, OwnedArray<Slice>& slices);
-	//bool parseRes5Xml(File fileToParse, Array<Slice>& slices);
+	bool parseRes4Xml( XmlElement& xmlTreeToParse, OwnedArray<Slice>& slices );
+	bool parseRes5Xml( XmlElement& xmlTreeToParse, OwnedArray<Slice>& slices );
 }
 
 

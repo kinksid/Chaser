@@ -23,14 +23,24 @@ public:
 	
 	Slice ( const Slice& slice) : name (slice.name ), enabled(slice.enabled), proportionalX(slice.proportionalX), proportionalY(slice.proportionalY), proportionalW(slice.proportionalW), proportionalH(slice.proportionalH)
 	{
-		
+        
 	}
-	
+    
     Slice(){}
     ~Slice()
     {
         
     }
+
+    struct vec4f
+    {
+        vec4f( float x, float y, float z, float w ): x(0.0), y(0.0), z(0.0), w(0.0){}
+        vec4f() : x(0.0), y(0.0), z(0.0), w(0.0){}
+        float x;
+        float y;
+        float z;
+        float w;
+    };
     
     String name;
 	bool enabled;
@@ -38,11 +48,13 @@ public:
     double proportionalY;
     double proportionalW;
     double proportionalH;
+    
+    Array<Point<float>> inputRectPoints;
+    Array<Point<float>> inputMaskPoints;
 	
     
 private:
-	OwnedArray<Point<float>> inputRectPoints;
-	OwnedArray<Point<float>> inputMaskPoints;
+
 };
 
 
