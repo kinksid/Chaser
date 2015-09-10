@@ -65,13 +65,14 @@ void Preview::setSlices(Array<int> activeSlices)
 
 void Preview::addSlice( Slice* slice )
 {
-    SliceButton* newButton = new SliceButton ( slice );
+    SliceButton* newButton = new SliceButton ( slice, Point<int> (getWidth(), getHeight()) );
     
     newButton->setLookAndFeel(sliceLaf);
-    newButton->setColour(TextButton::buttonColourId, sliceLaf->backgroundColour);
-    newButton->setColour(TextButton::buttonOnColourId, sliceLaf->primaryColour);
-    newButton->setColour(TextButton::textColourOffId, sliceLaf->textColour);
-    newButton->setColour(TextButton::textColourOnId, sliceLaf->textOnColour);
+	newButton->setColours(sliceLaf->backgroundColour, sliceLaf->textColour, sliceLaf->primaryColour);
+//    newButton->setColour(TextButton::buttonColourId, sliceLaf->backgroundColour);
+//    newButton->setColour(TextButton::buttonOnColourId, sliceLaf->primaryColour);
+//    newButton->setColour(TextButton::textColourOffId, sliceLaf->textColour);
+//    newButton->setColour(TextButton::textColourOnId, sliceLaf->textOnColour);
     newButton->addListener(this);
     sliceButtons.add( newButton );
 
@@ -110,7 +111,8 @@ void Preview::resized()
     
     for ( int i = 0; i < sliceButtons.size(); i++ )
     {
-        sliceButtons[i]->setBoundsRelative(sliceButtons[i]->proportionalX, sliceButtons[i]->proportionalY, sliceButtons[i]->proportionalW, sliceButtons[i]->proportionalH);
+		
+		//sliceButtons[i]->setBoundsRelative(sliceButtons[i]->proportionalX, sliceButtons[i]->proportionalY, sliceButtons[i]->proportionalW, sliceButtons[i]->proportionalH);
     }
 
 }

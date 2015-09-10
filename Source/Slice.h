@@ -50,7 +50,8 @@ public:
     double proportionalH;
     
     Array<Point<float>> inputRectPoints;
-    Array<Point<float>> inputMaskPoints;
+    Array<Point<float>> maskPoints;
+	Array<Point<float>> maskRectPoints;
 	
     
 private:

@@ -18,11 +18,12 @@
 //==============================================================================
 /*
 */
-class SliceButton    : public TextButton
+
+class SliceButton    : public ShapeButton
 {
 public:
     SliceButton ( String n, bool enable, double l, double t, double r, double b );
-    SliceButton ( Slice* s );
+    SliceButton ( Slice* s, Point<int> scale );
     ~SliceButton();
     
     double proportionalX;
@@ -33,10 +34,28 @@ public:
     String name;
     
     void update();
-
+	Path getPath()
+	{
+		if ( mask.isEmpty())
+			return path;
+		else
+			return mask;
+	}
+	
+	bool hitTest(int x, int y) override
+	{
+		DBG(x);
+		DBG(y);
+		if ( getPath().contains( x+getPosition().x, y+getPosition().y))
+			return true;
+		return false;
+	}
+	
 private:
-    
-    
+	Path path;
+	Path mask;
+	Path maskRect;
+	
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SliceButton)
 };
 
