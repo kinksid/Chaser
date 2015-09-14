@@ -18,6 +18,8 @@ namespace XmlParser
 {
 	bool parseRes4Xml( XmlElement& xmlTreeToParse, OwnedArray<Slice>& slices );
 	bool parseRes5Xml( XmlElement& xmlTreeToParse, OwnedArray<Slice>& slices );
+	
+	void addPointToSlice ( Point<float> newPoint, XmlElement* sliceElement, Array<Point<float>>& pointType);
 }
 
 

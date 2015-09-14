@@ -132,9 +132,7 @@ bool XmlParser::parseRes5Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
                                         if ( child->hasTagName("v") )
                                         {
                                             Point<float> newPoint;
-                                            newPoint.x = child->getStringAttribute("x", "0.0").getFloatValue();
-                                            newPoint.y = child->getStringAttribute("y", "0.0").getFloatValue();
-                                            newSlice->inputRectPoints.add( newPoint );
+                                            addPointToSlice(newPoint, child, newSlice->inputRectPoints);
                                         }
                                     }
                                 }
@@ -152,9 +150,7 @@ bool XmlParser::parseRes5Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 												if ( child->hasTagName("v") )
 												{
 													Point<float> newPoint;
-													newPoint.x = child->getStringAttribute("x", "0.0").getFloatValue();
-													newPoint.y = child->getStringAttribute("y", "0.0").getFloatValue();
-													newSlice->maskRectPoints.add( newPoint );
+													addPointToSlice(newPoint, child, newSlice->maskRectPoints);
 												}
 											}
 										}
@@ -172,9 +168,7 @@ bool XmlParser::parseRes5Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
                                                         if ( child->hasTagName("v") )
                                                         {
                                                             Point<float> newPoint;
-                                                            newPoint.x = child->getStringAttribute("x", "0.0").getFloatValue();
-                                                            newPoint.y = child->getStringAttribute("y", "0.0").getFloatValue();
-                                                            newSlice->maskPoints.add( newPoint );
+                                                            addPointToSlice(newPoint, child, newSlice->maskPoints);
                                                         }
                                                     }
                                                 }
@@ -194,9 +188,7 @@ bool XmlParser::parseRes5Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
                                             if ( child->hasTagName("v") )
                                             {
                                                 Point<float> newPoint;
-                                                newPoint.x = child->getStringAttribute("x", "0.0").getFloatValue();
-                                                newPoint.y = child->getStringAttribute("y", "0.0").getFloatValue();
-                                                newSlice->maskPoints.add( newPoint );
+												addPointToSlice(newPoint, child, newSlice->maskPoints);
                                             }
                                         }
                                     }
@@ -226,4 +218,11 @@ bool XmlParser::parseRes5Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
         DBG("Slice data parsed succesfully");
         return true;
     }
+}
+
+void XmlParser::addPointToSlice(Point<float> newPoint, juce::XmlElement *element, Array<Point<float>>& pointType)
+{
+	newPoint.x = element->getStringAttribute("x", "0.0").getFloatValue();
+	newPoint.y = element->getStringAttribute("y", "0.0").getFloatValue();
+	pointType.add( newPoint );
 }
