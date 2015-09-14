@@ -18,15 +18,20 @@ class Slice
 public:
 	
 	
-	Slice( String n, bool enable, double l, double t, double r, double b ) : name ( n ), enabled ( enable ), proportionalX ( l ), proportionalY ( t ), proportionalW ( r - l ), proportionalH ( b - t )
-    {}
+	Slice( String n, bool enable) : name ( n ), enabled ( enable )
+    {
+		inputRectPoints.clear();
+		maskPoints.clear();
+		maskRectPoints.clear();
+	}
 	
-	Slice ( const Slice& slice) : name (slice.name ), enabled(slice.enabled), proportionalX(slice.proportionalX), proportionalY(slice.proportionalY), proportionalW(slice.proportionalW), proportionalH(slice.proportionalH)
+	Slice ( const Slice& slice) : name (slice.name ), enabled(slice.enabled), inputRectPoints(slice.inputRectPoints), maskPoints(slice.maskPoints), maskRectPoints(slice.maskRectPoints)
 	{
         
 	}
     
     Slice(){}
+	
     ~Slice()
     {
         
@@ -44,11 +49,7 @@ public:
     
     String name;
 	bool enabled;
-    double proportionalX;
-    double proportionalY;
-    double proportionalW;
-    double proportionalH;
-    
+	
     Array<Point<float>> inputRectPoints;
     Array<Point<float>> maskPoints;
 	Array<Point<float>> maskRectPoints;

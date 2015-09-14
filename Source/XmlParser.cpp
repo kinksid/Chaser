@@ -14,18 +14,18 @@ bool XmlParser::parseRes4Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 {
 	forEachXmlChildElement( xmlTreeToParse, presetNode )
 	{
-		if ( presetNode != nullptr && presetNode->hasTagName("screen") )
+		if ( presetNode->hasTagName("screen") )
 		{
 			forEachXmlChildElement( *presetNode, screenNode )
 			{
-				if ( screenNode != nullptr && screenNode->hasTagName("slices") )
+				if ( screenNode->hasTagName("slices") )
 				{
 					//clear the slice array so we don't get doubles
 					slices.clear();
 					
 					forEachXmlChildElement( *screenNode, slicesNode)
 					{
-						if ( slicesNode != nullptr && slicesNode->hasTagName("Slice") )
+						if ( slicesNode->hasTagName("Slice") )
 						{
 							String name;
 							bool enabled = slicesNode->getBoolAttribute("isEnabled");
@@ -37,33 +37,32 @@ bool XmlParser::parseRes4Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 							
 							forEachXmlChildElement( *slicesNode, sliceNode)
 							{
-								if ( sliceNode != nullptr )
+									
+								if ( sliceNode->hasTagName("name") )
 								{
-									
-									if ( sliceNode->hasTagName("name") )
-									{
-										name = sliceNode->getStringAttribute("value");
-									}
-									
-									if ( sliceNode->hasTagName("type") )
-									{
-										type = sliceNode->getIntAttribute("value");
-									}
-									
-									if ( sliceNode->hasTagName("rect") )
-									{
-										l = sliceNode->getDoubleAttribute( "l" );
-										t = sliceNode->getDoubleAttribute( "t" );
-										r = sliceNode->getDoubleAttribute( "r" );
-										b = sliceNode->getDoubleAttribute( "b" );
-									}
+									name = sliceNode->getStringAttribute("value");
 								}
+								
+								if ( sliceNode->hasTagName("type") )
+								{
+									type = sliceNode->getIntAttribute("value");
+								}
+								
+								if ( sliceNode->hasTagName("rect") )
+								{
+									l = sliceNode->getDoubleAttribute( "l" );
+									t = sliceNode->getDoubleAttribute( "t" );
+									r = sliceNode->getDoubleAttribute( "r" );
+									b = sliceNode->getDoubleAttribute( "b" );
+								}
+							
 							}
 							
 							//type 0 means only slices are loaded, no masks or crops
 							if ( type == 0 )
 							{
-								Slice* slice = new Slice( name, enabled, l, t, r, b);
+								Slice* slice = new Slice( name, enabled );//, l, t, r, b);
+								//TODO make this work for Res4 slices
 								slices.add( slice );
 							}
 						}						

@@ -107,7 +107,7 @@ void Preview::resized()
     
     for ( int i = 0; i < sliceButtons.size(); i++ )
     {
-		
+		sliceButtons[i]->repaint();
 		//sliceButtons[i]->setBoundsRelative(sliceButtons[i]->proportionalX, sliceButtons[i]->proportionalY, sliceButtons[i]->proportionalW, sliceButtons[i]->proportionalH);
     }
 

@@ -165,10 +165,10 @@ void XmlSequence::setPositionData(juce::XmlElement *sliceXml, Slice *slice)
 	addPointsToXml(slice->maskRectPoints, maskRect);
 	sliceXml->addChildElement(maskRect);
 	
-	sliceXml->setAttribute("l", slice->proportionalX);
-	sliceXml->setAttribute("t", slice->proportionalY);
-	sliceXml->setAttribute("r", slice->proportionalX + slice->proportionalW);
-	sliceXml->setAttribute("b", slice->proportionalY + slice->proportionalH);
+//	sliceXml->setAttribute("l", slice->proportionalX);
+//	sliceXml->setAttribute("t", slice->proportionalY);
+//	sliceXml->setAttribute("r", slice->proportionalX + slice->proportionalW);
+//	sliceXml->setAttribute("b", slice->proportionalY + slice->proportionalH);
 }
 
 void XmlSequence::addPointsToXml(Array<Point<float> > &points, juce::XmlElement *pointDataElement)
@@ -248,11 +248,26 @@ Array<Slice> XmlSequence::getSlices()
     Array<Slice> sliceArray;
     if ( positionData != nullptr )
     {
-        if ( positionData->getNumChildElements() > 0 )
-        {
-            forEachXmlChildElement(*positionData, slice)
-            sliceArray.add(Slice(slice->getStringAttribute("name", "Unnamed Slice"), (bool)slice->getIntAttribute("enable", false), slice->getDoubleAttribute("l", 0.0), slice->getDoubleAttribute("t", 0.0), slice->getDoubleAttribute("r", 0.0), slice->getDoubleAttribute("b", 0.0)));
-        }
+		forEachXmlChildElement(*positionData, slice)
+		{
+			Slice newSlice(slice->getStringAttribute("name", "Unnamed Slice"), (bool)slice->getIntAttribute("enable", false));
+			forEachXmlChildElement(*slice, pointData)
+			{
+				forEachXmlChildElement(*pointData, point)
+				{
+					float x = point->getDoubleAttribute("x");
+					float y = point->getDoubleAttribute("y");
+					Point<float> newPoint(x,y);
+					if ( pointData->getTagName() == "inputRect" )
+						newSlice.inputRectPoints.add(newPoint);
+					if ( pointData->getTagName() == "mask" )
+						newSlice.maskPoints.add(newPoint);
+					if ( pointData->getTagName() == "maskRect" )
+						newSlice.maskRectPoints.add(newPoint);
+				}
+			}
+			sliceArray.add(newSlice);
+		}
     }
     return sliceArray;
 }

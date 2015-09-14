@@ -46,6 +46,8 @@ MainContentComponent::MainContentComponent()
 	currentSequence = 0;
 	currentStep = 0;
 	currentSequenceLength = 16;
+
+    setSize (1280, 720);
 	
 	//create a sequence and set the oldest version it will correctly load
 	xmlSequence = new XmlSequence( "0.0.1" );
@@ -60,10 +62,8 @@ MainContentComponent::MainContentComponent()
 	}
 	else
 		xmlSequence->createFreshXml( version );
-
-	reloadSliceData();
 	
-    setSize (1280, 720);
+	reloadSliceData();
 	
 	//start a timer to update the window name
 	startTimer( 1000 );
@@ -86,32 +86,6 @@ void MainContentComponent::timerCallback()
 	getTopLevelComponent()->setName( xmlSequence->getXmlFile().getFileNameWithoutExtension());
 	
 	stopTimer();
-}
-
-void MainContentComponent::reloadSliceData()
-{
-	sliceList->clearSlices();
-	previewWindow->clearSlices();
-	slices.clear();
-	
-	//load the slices from the xml if they exist
-	Array<Slice> slicesInXml = xmlSequence->getSlices();
-	for ( int i = 0; i < slicesInXml.size(); i++ )
-	{
-		Slice* s = new Slice ( slicesInXml[i] );
-		previewWindow->addSlice (s) ;
-		sliceList->addSlice( s );
-		slices.add(s);
-	}
-	
-	//update the view for the first step
-	activeSlices = xmlSequence->getStep( currentSequence, currentStep );
-	previewWindow->setSlices( activeSlices );
-	sequencer->setSequenceNames ( xmlSequence->getSequenceNames() );
-	sequencer->setSequenceLengths ( xmlSequence->getSequenceLengths() );
-	currentSequenceLength = xmlSequence->getSequenceLengths()[ currentSequence ];
-	
-	resized();
 }
 
 StringArray MainContentComponent::getMenuBarNames()
@@ -384,6 +358,32 @@ void MainContentComponent::parseXml(File f)
 			xmlSequence->save();
 		}
     }
+}
+
+void MainContentComponent::reloadSliceData()
+{
+	sliceList->clearSlices();
+	previewWindow->clearSlices();
+	slices.clear();
+	
+	//load the slices from the xml if they exist
+	Array<Slice> slicesInXml = xmlSequence->getSlices();
+	for ( int i = 0; i < slicesInXml.size(); i++ )
+	{
+		Slice* s = new Slice ( slicesInXml[i] );
+		previewWindow->addSlice (s) ;
+		sliceList->addSlice( s );
+		slices.add(s);
+	}
+	
+	//update the view for the first step
+	activeSlices = xmlSequence->getStep( currentSequence, currentStep );
+	previewWindow->setSlices( activeSlices );
+	sequencer->setSequenceNames ( xmlSequence->getSequenceNames() );
+	sequencer->setSequenceLengths ( xmlSequence->getSequenceLengths() );
+	currentSequenceLength = xmlSequence->getSequenceLengths()[ currentSequence ];
+
+	resized();
 }
 
 
