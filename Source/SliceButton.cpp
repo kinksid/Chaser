@@ -59,8 +59,6 @@ Path SliceButton::makePath(Array<Point<float> > points, Point<int> scale )
 	{
 		Point<float> p = points[i];
 		p *= scale;
-		DBG(p.x);
-		DBG(p.y);
 		if ( i == 0)
 		{
 			newPath.startNewSubPath( p );

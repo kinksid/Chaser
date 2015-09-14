@@ -61,6 +61,7 @@ private:
 	
 	void addElement(XmlElement* elementToAddTo, String nameOfNewElement, String valueOfNewElement);
 	void setPositionData(XmlElement* sliceXml, Slice* s);
+	void addPointsToXml(Array<Point<float>>& points, XmlElement* pointDataElement);
 };
 
 

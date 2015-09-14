@@ -150,10 +150,36 @@ void XmlSequence::setPositionData(juce::XmlElement *sliceXml, Slice *slice)
 {
 	sliceXml->setAttribute("name", slice->name);
 	sliceXml->setAttribute("enable", (int) slice->enabled );
+	
+	sliceXml->deleteAllChildElements();
+
+	XmlElement* inputRect = new XmlElement("inputRect");
+	addPointsToXml(slice->inputRectPoints, inputRect);
+	sliceXml->addChildElement(inputRect);
+	
+	XmlElement* mask = new XmlElement("mask");
+	addPointsToXml(slice->maskPoints, mask);
+	sliceXml->addChildElement(mask);
+	
+	XmlElement* maskRect = new XmlElement("maskRect");
+	addPointsToXml(slice->maskRectPoints, maskRect);
+	sliceXml->addChildElement(maskRect);
+	
 	sliceXml->setAttribute("l", slice->proportionalX);
 	sliceXml->setAttribute("t", slice->proportionalY);
 	sliceXml->setAttribute("r", slice->proportionalX + slice->proportionalW);
 	sliceXml->setAttribute("b", slice->proportionalY + slice->proportionalH);
+}
+
+void XmlSequence::addPointsToXml(Array<Point<float> > &points, juce::XmlElement *pointDataElement)
+{
+	for ( int i = 0; i < points.size(); i++ )
+	{
+		XmlElement* point = new XmlElement("point");
+		point->setAttribute("x", points[i].x);
+		point->setAttribute("y", points[i].y);
+		pointDataElement->addChildElement(point);
+	}
 }
 
 void XmlSequence::clearSlices()

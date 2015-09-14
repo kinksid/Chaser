@@ -69,10 +69,6 @@ void Preview::addSlice( Slice* slice )
     
     newButton->setLookAndFeel(sliceLaf);
 	newButton->setColours(sliceLaf->backgroundColour, sliceLaf->textColour, sliceLaf->primaryColour);
-//    newButton->setColour(TextButton::buttonColourId, sliceLaf->backgroundColour);
-//    newButton->setColour(TextButton::buttonOnColourId, sliceLaf->primaryColour);
-//    newButton->setColour(TextButton::textColourOffId, sliceLaf->textColour);
-//    newButton->setColour(TextButton::textColourOnId, sliceLaf->textOnColour);
     newButton->addListener(this);
     sliceButtons.add( newButton );
 
