@@ -60,7 +60,7 @@ private:
 	StringArray sequenceNames;
 	
 	void addElement(XmlElement* elementToAddTo, String nameOfNewElement, String valueOfNewElement);
-
+	void setPositionData(XmlElement* sliceXml, Slice* s);
 };
 
 

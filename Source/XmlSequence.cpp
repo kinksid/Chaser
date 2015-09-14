@@ -131,12 +131,7 @@ void XmlSequence::addSlice(Slice* slice)
     }
 
     XmlElement* sliceXml = new XmlElement("slice");
-    sliceXml->setAttribute("name", slice->name);
-    sliceXml->setAttribute("enable", (int) slice->enabled );
-    sliceXml->setAttribute("l", slice->proportionalX);
-    sliceXml->setAttribute("t", slice->proportionalY);
-    sliceXml->setAttribute("r", slice->proportionalX + slice->proportionalW);
-    sliceXml->setAttribute("b", slice->proportionalY + slice->proportionalH);
+	setPositionData(sliceXml, slice);
     positionData->addChildElement(sliceXml);
 
 }
@@ -146,14 +141,19 @@ void XmlSequence::updateSlice(Slice *slice, int i )
 	XmlElement* sliceXml = positionData->getChildElement(i);
 	if ( sliceXml != nullptr )
 	{
-		sliceXml->setAttribute("name", slice->name);
-		sliceXml->setAttribute("enable", (int) slice->enabled );
-		sliceXml->setAttribute("l", slice->proportionalX);
-		sliceXml->setAttribute("t", slice->proportionalY);
-		sliceXml->setAttribute("r", slice->proportionalX + slice->proportionalW);
-		sliceXml->setAttribute("b", slice->proportionalY + slice->proportionalH);
+		setPositionData(sliceXml, slice);
 	}
 	
+}
+
+void XmlSequence::setPositionData(juce::XmlElement *sliceXml, Slice *slice)
+{
+	sliceXml->setAttribute("name", slice->name);
+	sliceXml->setAttribute("enable", (int) slice->enabled );
+	sliceXml->setAttribute("l", slice->proportionalX);
+	sliceXml->setAttribute("t", slice->proportionalY);
+	sliceXml->setAttribute("r", slice->proportionalX + slice->proportionalW);
+	sliceXml->setAttribute("b", slice->proportionalY + slice->proportionalH);
 }
 
 void XmlSequence::clearSlices()
