@@ -177,6 +177,9 @@ void Sequencer::buttonClicked (Button* b)
 	
 	else if ( b == previous || b == next  )
 	{
+		//stop playing if it's playing
+		if ( play->getToggleState() )
+			play->triggerClick();
 		
 		if ( b == previous )
 		{
