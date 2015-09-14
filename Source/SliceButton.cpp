@@ -58,8 +58,6 @@ Path SliceButton::makePath(Array<Point<float> > points, Point<int> scale )
 	for ( int i = 0; i < points.size(); i++ )
 	{
 		Point<float> p = points[i];
-		p.x /= 1920.0;
-		p.y /= 1080.0;
 		p *= scale;
 		DBG(p.x);
 		DBG(p.y);

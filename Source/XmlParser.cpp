@@ -222,7 +222,7 @@ bool XmlParser::parseRes5Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 
 void XmlParser::addPointToSlice(Point<float> newPoint, juce::XmlElement *element, Array<Point<float>>& pointType)
 {
-	newPoint.x = element->getStringAttribute("x", "0.0").getFloatValue();
-	newPoint.y = element->getStringAttribute("y", "0.0").getFloatValue();
+	newPoint.x = element->getStringAttribute("x", "0.0").getFloatValue() / 1920.0;
+	newPoint.y = element->getStringAttribute("y", "0.0").getFloatValue() / 1080.0;
 	pointType.add( newPoint );
 }
