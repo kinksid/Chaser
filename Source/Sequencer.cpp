@@ -95,6 +95,7 @@ Sequencer::Sequencer()
     sequenceName->setColour(Label::outlineColourId, claf.outlineColour);
     sequenceName->setColour(Label::backgroundColourId, claf.backgroundColour);
     sequenceName->setColour(Label::textColourId, claf.textColour);
+	sequenceName->setColour(TextEditor::ColourIds::highlightColourId, claf.primaryColour);
     
     addAndMakeVisible(sequenceName);
 	
