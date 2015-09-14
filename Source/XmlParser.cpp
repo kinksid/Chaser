@@ -61,8 +61,28 @@ bool XmlParser::parseRes4Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 							//type 0 means only slices are loaded, no masks or crops
 							if ( type == 0 )
 							{
-								Slice* slice = new Slice( name, enabled );//, l, t, r, b);
-								//TODO make this work for Res4 slices
+								Slice* slice = new Slice( name, enabled );
+								//create 4 points out of the ltrb data
+								for (int i = 0; i < 4; i++ )
+								{
+									Point<float> newPoint;
+									switch (i)
+									{
+										case 0:
+											newPoint = Point<float>(l,t);
+											break;
+										case 1:
+											newPoint = Point<float>(r,t);
+											break;
+										case 2:
+											newPoint = Point<float>(r,b);
+											break;
+										case 3:
+											newPoint = Point<float>(l,b);
+											break;
+									}
+									slice->inputRectPoints.add(newPoint);
+								}
 								slices.add( slice );
 							}
 						}						
