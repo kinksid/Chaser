@@ -13,6 +13,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Slice.h"
+#include "ColourLookAndFeel.h"
 
 
 //==============================================================================
@@ -34,27 +35,18 @@ public:
     String name;
     
     void update();
-	Path getPath()
-	{
-		if ( mask.isEmpty())
-			return path;
-		else
-			return mask;
-	}
+	Path getPath();
 	
-	bool hitTest(int x, int y) override
-	{
-		DBG(x);
-		DBG(y);
-		if ( getPath().contains( x+getPosition().x, y+getPosition().y))
-			return true;
-		return false;
-	}
-	
+	//overridden functions for ShapeButton
+	bool hitTest(int x, int y) override;
+	void paintButton (Graphics& g, bool isMouseOverButton, bool isButtonDown) override;
+
 private:
 	Path path;
 	Path mask;
 	Path maskRect;
+	
+	Path makePath( Array<Point<float>>, Point<int> scale );
 	
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SliceButton)
 };
