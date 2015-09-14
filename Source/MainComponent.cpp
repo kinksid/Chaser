@@ -143,6 +143,7 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 
 void MainContentComponent::loadAssFile()
 {
+	//todo set a default preferences for 4 or 5
 	File presetsLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Resolume Arena 5/presets/screensetup/";
 	FileChooser fc ( "Pick an ASS file...", presetsLocation, "*.xml", true );
 	if ( fc.browseForFileToOpen() )
