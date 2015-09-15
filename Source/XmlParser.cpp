@@ -146,6 +146,7 @@ bool XmlParser::parseRes5Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
                                 XmlElement* inputRect = child->getChildByName("InputRect");
                                 if ( inputRect != nullptr )
                                 {
+									newSlice->inputRectOrientation = inputRect->getStringAttribute("orientation", "0").getFloatValue();
                                     forEachXmlChildElement( *inputRect, child )
                                     {
                                         if ( child->hasTagName("v") )
@@ -164,6 +165,7 @@ bool XmlParser::parseRes5Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 										XmlElement* maskRect = shapeObject->getChildByName("Rect");
 										if ( maskRect != nullptr )
 										{
+											newSlice->maskRectOrientation = maskRect->getStringAttribute("orientation", "0").getFloatValue();
 											forEachXmlChildElement( *maskRect, child )
 											{
 												if ( child->hasTagName("v") )

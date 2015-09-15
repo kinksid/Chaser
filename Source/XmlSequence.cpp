@@ -155,6 +155,7 @@ void XmlSequence::setPositionData(juce::XmlElement *sliceXml, Slice *slice)
 
 	XmlElement* inputRect = new XmlElement("inputRect");
 	addPointsToXml(slice->inputRectPoints, inputRect);
+	inputRect->setAttribute("orientation", slice->inputRectOrientation );
 	sliceXml->addChildElement(inputRect);
 	
 	XmlElement* mask = new XmlElement("mask");
@@ -163,6 +164,7 @@ void XmlSequence::setPositionData(juce::XmlElement *sliceXml, Slice *slice)
 	
 	XmlElement* maskRect = new XmlElement("maskRect");
 	addPointsToXml(slice->maskRectPoints, maskRect);
+	maskRect->setAttribute("orientation", slice->maskRectOrientation);
 	sliceXml->addChildElement(maskRect);
 	
 //	sliceXml->setAttribute("l", slice->proportionalX);

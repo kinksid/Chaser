@@ -23,14 +23,16 @@ public:
 		inputRectPoints.clear();
 		maskPoints.clear();
 		maskRectPoints.clear();
+		inputRectOrientation = 0.0;
+		maskRectOrientation = 0.0;
 	}
 	
-	Slice ( const Slice& slice) : name (slice.name ), enabled(slice.enabled), inputRectPoints(slice.inputRectPoints), maskPoints(slice.maskPoints), maskRectPoints(slice.maskRectPoints)
+	Slice ( const Slice& slice ) : name (slice.name ), enabled(slice.enabled), inputRectPoints(slice.inputRectPoints), maskPoints(slice.maskPoints), maskRectPoints(slice.maskRectPoints), inputRectOrientation(slice.inputRectOrientation), maskRectOrientation(slice.maskRectOrientation)
 	{
         
 	}
     
-    Slice(){}
+	Slice() : Slice ("New Slice", false ){}
 	
     ~Slice()
     {
@@ -39,7 +41,7 @@ public:
 
     struct vec4f
     {
-        vec4f( float x, float y, float z, float w ): x(0.0), y(0.0), z(0.0), w(0.0){}
+        vec4f( float x, float y, float z, float w ): x(x), y(y), z(z), w(w){}
         vec4f() : x(0.0), y(0.0), z(0.0), w(0.0){}
         float x;
         float y;
@@ -50,10 +52,14 @@ public:
     String name;
 	bool enabled;
 	
+	
+	
     Array<Point<float>> inputRectPoints;
     Array<Point<float>> maskPoints;
 	Array<Point<float>> maskRectPoints;
 	
+	float inputRectOrientation;
+	float maskRectOrientation;
     
 private:
 
