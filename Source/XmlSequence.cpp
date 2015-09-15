@@ -261,11 +261,17 @@ Array<Slice> XmlSequence::getSlices()
 					float y = point->getDoubleAttribute("y");
 					Point<float> newPoint(x,y);
 					if ( pointData->getTagName() == "inputRect" )
+					{
+						newSlice.inputRectOrientation = pointData->getStringAttribute("orientation", "0.0").getFloatValue();
 						newSlice.inputRectPoints.add(newPoint);
+					}
 					if ( pointData->getTagName() == "mask" )
 						newSlice.maskPoints.add(newPoint);
 					if ( pointData->getTagName() == "maskRect" )
+					{
+						newSlice.maskRectOrientation = pointData->getStringAttribute("orientation", "0.0").getFloatValue();
 						newSlice.maskRectPoints.add(newPoint);
+					}
 				}
 			}
 			sliceArray.add(newSlice);
