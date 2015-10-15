@@ -245,6 +245,6 @@ void XmlParser::addPointToSlice(Point<float> newPoint, juce::XmlElement *element
 {
 	//TODO get these values from a popup when you open an ass 5 file
 	newPoint.x = element->getStringAttribute("x", "0.0").getFloatValue() / 1920.0;
-	newPoint.y = element->getStringAttribute("y", "0.0").getFloatValue() / 1080.0;
+	newPoint.y = element->getStringAttribute("y", "0.0").getFloatValue() / 1392.0;
 	pointType.add( newPoint );
 }
