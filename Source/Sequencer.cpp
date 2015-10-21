@@ -117,6 +117,11 @@ void Sequencer::setSequenceLengths(Array<int> lengths)
 	
 	//so the buttons get drawn again
 	resized();
+	
+	//let the listeners know
+	Component::BailOutChecker checker (this);
+	if (! checker.shouldBailOut())
+		listeners.callChecked ( checker, &Sequencer::Listener::sequenceLengthChanged, numberOfSteps[ activeSequence ] );
 }
 
 void Sequencer::setSequenceNames(juce::StringArray seqNames)
