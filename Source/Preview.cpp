@@ -65,14 +65,13 @@ void Preview::setSlices(Array<int> activeSlices)
 
 void Preview::addSlice( Slice* slice )
 {
-    SliceButton* newButton = new SliceButton ( slice, Point<int> (getWidth(), getHeight()) );
-    
+	SliceButton* newButton = new SliceButton ( slice, Point<int> (getWidth(), getHeight()) );
     newButton->setLookAndFeel(sliceLaf);
 	newButton->setColours(sliceLaf->backgroundColour, sliceLaf->textColour, sliceLaf->primaryColour);
     newButton->addListener(this);
     sliceButtons.add( newButton );
 
-    if ( newButton->enabled )
+    if ( newButton->isVisible() )
         addAndMakeVisible( newButton );
     else
         addChildComponent( newButton );
@@ -107,7 +106,7 @@ void Preview::resized()
     
     for ( int i = 0; i < sliceButtons.size(); i++ )
     {
-		sliceButtons[i]->repaint();
+		sliceButtons[i]->resized();
 		//sliceButtons[i]->setBoundsRelative(sliceButtons[i]->proportionalX, sliceButtons[i]->proportionalY, sliceButtons[i]->proportionalW, sliceButtons[i]->proportionalH);
     }
 

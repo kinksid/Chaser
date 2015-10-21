@@ -11,43 +11,16 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "SliceButton.h"
 
-//==============================================================================
-//SliceButton::SliceButton(String n, bool enable, double l, double t, double r, double b) : ShapeButton ( n, Colours::transparentBlack, Colours::transparentBlack, Colours::transparentBlack )
-//{
-//    setButtonText( n );
-//    
-//    //enable loads the state from the ass xml file
-//    //it can still be edited via the slicelist
-//    enabled = enable;
-//    
-//	
-//    setToggleState( false, sendNotification );
-//    
-////    proportionalX = l;
-////    proportionalY = t;
-////    proportionalW = r - l;
-////    proportionalH = b - t;
-//
-//}
 
-
-
-SliceButton::SliceButton(Slice* s, Point<int> scale) : ShapeButton ( s->name, Colours::transparentBlack, Colours::transparentBlack, Colours::transparentBlack )
+SliceButton::SliceButton(Slice* s, Point<int> scale) : ShapeButton ( s->name, Colours::transparentBlack, Colours::transparentBlack, Colours::transparentBlack ), slice(s)
 {
 	setButtonText( s->name );
 	//enable loads the state from the ass xml file
 	//it can still be edited via the slicelist
-	enabled = s->enabled;
+	setVisible( s->enabled );
 	name = s->name;
-	path = makePath(s->inputRectPoints, scale);
-	mask = makePath(s->maskPoints, scale);
-	maskRect = makePath(s->maskRectPoints, scale);
-
-	Rectangle<int> bounds = maskRect.isEmpty()? path.getBounds().toType<int>() : maskRect.getBounds().toType<int>();
-	setBounds( bounds );
-	//set the path so that it starts at (0,0) of its bounds
-	getPath().applyTransform(AffineTransform().translated(getPosition()));
 	
+	createPath( scale );
 	setClickingTogglesState( true );
 	setToggleState( false, sendNotification );
 }
@@ -57,10 +30,22 @@ SliceButton::~SliceButton()
     
 }
 
-Path SliceButton::makePath(Array<Point<float> >& points, Point<int> scale )
+void SliceButton::createPath( Point<int> scale )
+{
+	path = makePath(slice->inputRectPoints, scale);
+	mask = makePath(slice->maskPoints, scale);
+	maskRect = makePath(slice->maskRectPoints, scale);
+	
+	Rectangle<int> bounds = maskRect.isEmpty()? path.getBounds().toType<int>() : maskRect.getBounds().getSmallestIntegerContainer();
+	setBounds( bounds );
+	
+	//set the path so that it starts at (0,0) of its bounds
+	getPath().applyTransform(AffineTransform().translated(getPosition()));
+}
+
+Path SliceButton::makePath( Array<Point<float>>& points, Point<int> scale )
 {
 	Path newPath;
-	
 	for ( int i = 0; i < points.size(); i++ )
 	{
 		Point<float> p = points[i];
@@ -94,9 +79,9 @@ bool SliceButton::hitTest(int x, int y)
 
 void SliceButton::paintButton(juce::Graphics &g, bool isMouseOverButton, bool isButtonDown)
 {
-	if (isEnabled())
+	if (isVisible())
 	{
-		Rectangle<float> r = getLocalBounds().toFloat().reduced ( 0.5f);
+		Rectangle<float> r = getLocalBounds().toFloat().reduced ( 0.5f );
 		if (isButtonDown)
 		{
 			const float sizeReductionWhenPressed = 0.01f;
@@ -112,12 +97,21 @@ void SliceButton::paintButton(juce::Graphics &g, bool isMouseOverButton, bool is
 			col = col.brighter(0.2);
 		g.setColour ( col );
 		
-		g.fillPath ( getPath(), trans);
+		//AffineTransform previewScale = AffineTransform::identity.scaled(0.5f,0.5f);
+		Path scaledToPreview = getPath();
+		//scaledToPreview.applyTransform( previewScale );
+		g.fillPath ( scaledToPreview, trans);
 		
 		g.setColour (claf.outlineColour);
-		g.strokePath( getPath(), PathStrokeType (1.0), trans);
+		g.strokePath( scaledToPreview, PathStrokeType (1.0), trans);
 	}
 	
+}
+
+void SliceButton::resized()
+{
+	DBG(getParentHeight());
+	createPath( Point<int>(getParentWidth(), getParentHeight() ));
 }
 
 

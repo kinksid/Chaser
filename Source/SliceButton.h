@@ -24,25 +24,28 @@ class SliceButton    : public ShapeButton
 {
 public:
 	//SliceButton ( String n, bool enable, double l, double t, double r, double b );
-    SliceButton ( Slice* s, Point<int> scale );
+	SliceButton ( Slice* s, Point<int> scale );
     ~SliceButton();
-    
-    bool enabled;
+	
+	//bool enabled;
     String name;
     
     void update();
 	Path getPath();
+	void createPath( Point<int> scale);
 	
 	//overridden functions for ShapeButton
 	bool hitTest(int x, int y) override;
 	void paintButton (Graphics& g, bool isMouseOverButton, bool isButtonDown) override;
+	void resized() override;
 
 private:
 	Path path;
 	Path mask;
 	Path maskRect;
 	
-	Path makePath( Array<Point<float>>&, Point<int> scale );
+	Slice* slice;
+	Path makePath( Array<Point<float>>& points, Point<int> scale );
 	
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SliceButton)
 };

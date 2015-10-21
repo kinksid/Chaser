@@ -41,6 +41,9 @@ public:
     
     void setAssFile ( File f );
     File getAssFile();
+	
+	void setResolution( Point<int> resolution );
+	Point<int> getResolution();
 
     void createFreshXml( String version );
 	bool versionCheck ( String savedVersion, String thisVersion );
@@ -58,8 +61,9 @@ private:
     XmlElement* sequenceData;
     XmlElement* positionData;
 	StringArray sequenceNames;
+	Point<int> resolution;
 	
-	void addElement(XmlElement* elementToAddTo, String nameOfNewElement, String valueOfNewElement);
+	void addElement(XmlElement* elementToAddTo, String nameOfNewElement, String valueOfNewElement, bool replace);
 	void setPositionData(XmlElement* sliceXml, Slice* s);
 	void addPointsToXml(Array<Point<float>>& points, XmlElement* pointDataElement);
 };

@@ -46,8 +46,20 @@ MainContentComponent::MainContentComponent()
 	currentSequence = 0;
 	currentStep = 0;
 	currentSequenceLength = 16;
+	
+	//texteditors to change width and height of the preview
+	//and also how the res 5 comp data gets parsed
+	compWidth = new TextEditor("Comp Width");
+	compWidth->addListener(this);
+	compWidth->setInputRestrictions(0, "0123456789");
+	addAndMakeVisible( compWidth );
+	
+	compHeight = new TextEditor("Comp Height");
+	compHeight->addListener(this);
+	compHeight->setInputRestrictions(0, "0123456789");
+	addAndMakeVisible( compHeight );
 
-    setSize (1280, 720);
+	
 	
 	//create a sequence and set the oldest version it will correctly load
 	xmlSequence = new XmlSequence( "0.0.1" );
@@ -63,7 +75,15 @@ MainContentComponent::MainContentComponent()
 	else
 		xmlSequence->createFreshXml( version );
 	
+	resolution = xmlSequence->getResolution();
+	compWidth->setText(String(resolution.x), dontSendNotification );
+	compHeight->setText(String(resolution.y), dontSendNotification );
+	
+	setSize (1280, 720);
+	
 	reloadSliceData();
+	
+	
 	
 	//start a timer to update the window name
 	startTimer( 1000 );
@@ -315,7 +335,7 @@ void MainContentComponent::parseXml(File f)
         if (xmlRoot != nullptr && xmlRoot->hasTagName ("preset"))
 			succesfulParse = XmlParser::parseRes4Xml( *xmlRoot, slices );
         else if ( xmlRoot != nullptr && xmlRoot->hasTagName("XmlState"))
-            succesfulParse = XmlParser::parseRes5Xml( *xmlRoot, slices );
+            succesfulParse = XmlParser::parseRes5Xml( *xmlRoot, slices, resolution );
 		
         //if the file was susccesfully parsed
 		if ( succesfulParse )
@@ -353,10 +373,18 @@ void MainContentComponent::parseXml(File f)
 			
 			//set the previewWindow to the correct step
 			previewWindow->setSlices( xmlSequence->getStep( currentSequence, currentStep) );
-
+			
+			//set the resolution in the xml
+			xmlSequence->setResolution( resolution );
+			
 			//store the last used ass file in xml and save it
             xmlSequence->setAssFile( f );
 			xmlSequence->save();
+			
+			//update the numbers
+			compWidth->setText( String(resolution.x), dontSendNotification );
+			compHeight->setText( String(resolution.y), dontSendNotification );
+			resized();
 		}
     }
 }
@@ -387,6 +415,30 @@ void MainContentComponent::reloadSliceData()
 	resized();
 }
 
+void MainContentComponent::textEditorReturnKeyPressed(juce::TextEditor &t)
+{
+	resolution = Point<int>(compWidth->getText().getIntValue(), compHeight->getText().getIntValue());
+	resized();
+	unfocusAllComponents();
+	
+}
+
+void MainContentComponent::textEditorFocusLost(juce::TextEditor &t)
+{
+	textEditorReturnKeyPressed( t );
+}
+
+void MainContentComponent::textEditorEscapeKeyPressed(juce::TextEditor &t)
+{
+	if ( &t == compWidth )
+		compWidth->setText( String(resolution.x), dontSendNotification);
+	else if ( &t == compHeight )
+		compHeight->setText( String(resolution.y), dontSendNotification);
+
+	
+}
+
+
 
 void MainContentComponent::resized()
 {
@@ -401,12 +453,17 @@ void MainContentComponent::resized()
 	#endif
 	
 	menuBar->setBounds (area.removeFromTop (menuBarHeight));
+
+	Rectangle<int> previewArea = Rectangle<int>{0, 0, int(getWidth() * 0.83), int((getWidth() / 16.0) * 9.0 * 0.83) };
+	previewArea.setPosition(0.0,  menuBarHeight);
 	
-	AffineTransform scalePreview = AffineTransform::scale(0.83, (9.0 / 16.0) * 0.83 );
-	Rectangle<int> previewArea = Rectangle<int>{0,0,getWidth(),getWidth()};
-	previewArea = previewArea.transformedBy( scalePreview );
-	previewArea.setPosition(0.0, menuBarHeight);
-    previewWindow->setBounds(previewArea.reduced(5));
+	previewWindow->setBounds(0,0,resolution.x, resolution.y);
+	Rectangle<int> previewWindowArea = previewArea.reduced(5);
+
+	previewWindow->setBoundsToFit( previewWindowArea.getX(), previewWindowArea.getY(), previewWindowArea.getWidth(), previewWindowArea.getHeight(), Justification::centred, false);
+	
+	compHeight->setBounds( previewWindowArea.getRight() - 55, previewWindowArea.getHeight() * 0.5, 50, 20);
+	compWidth->setBounds( previewWindowArea.getWidth() * 0.5 - 20, previewWindowArea.getHeight() - 25, 50, 20);
 	
 	Rectangle<int> sliceArea = Rectangle<int> { previewArea.getWidth(), int(menuBarHeight), area.getWidth() - previewArea.getWidth(), previewArea.getHeight()};
 	sliceList->setBounds(sliceArea.reduced(5));

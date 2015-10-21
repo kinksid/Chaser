@@ -23,9 +23,12 @@ XmlSequence::~XmlSequence()
 	
 }
 
-void XmlSequence::addElement(juce::XmlElement *elementToAddTo, juce::String nameOfNewElement, juce::String valueOfNewElement)
+void XmlSequence::addElement(juce::XmlElement *elementToAddTo, juce::String nameOfNewElement, juce::String valueOfNewElement, bool replace)
 {
 	XmlElement* newElement = new XmlElement( nameOfNewElement );
+	if ( replace && elementToAddTo->containsChildElement( newElement ))
+		elementToAddTo->removeChildElement( newElement, false);
+	
 	newElement->addTextElement( valueOfNewElement );
 	elementToAddTo->addChildElement( newElement );
 }
@@ -40,7 +43,7 @@ void XmlSequence::setStep(int sequence, int step, Array<int> activeSlices)
     {
         
         //DBG("Added to XML: "+ String(i));
-		addElement( currentStep, "slice", String( activeSlices[i]));
+		addElement( currentStep, "slice", String( activeSlices[i]), false);
     }
 }
 
@@ -206,7 +209,7 @@ void XmlSequence::setVersion(juce::String version)
 	if (chaserData->getChildByName("version") != nullptr )
 		chaserData->removeChildElement(chaserData->getChildByName("version"), true);
 
-	addElement( chaserData, "version", version);
+	addElement( chaserData, "version", version, true);
 }
 
 void XmlSequence::createFreshXml( String version )
@@ -217,7 +220,6 @@ void XmlSequence::createFreshXml( String version )
 	XmlElement* versionData = new XmlElement("version");
 	versionData->addTextElement(version);
 	chaserData->addChildElement( versionData );
-
 	
     //sequencing data
     //this is where we store which slices are active in each step of each sequence
@@ -241,6 +243,10 @@ void XmlSequence::createFreshXml( String version )
             sequence->addChildElement(step);
         }
     }
+	
+	resolution = Point<int>(1920,1080);
+	
+	
     
     clearSlices(); 
 }
@@ -309,7 +315,7 @@ void XmlSequence::save()
 
 void XmlSequence::setAssFile( File f )
 {
-	addElement( chaserData, "file", f.getFullPathName() );
+	addElement( chaserData, "file", f.getFullPathName(), true );
     save();
 }
 
@@ -400,6 +406,16 @@ bool XmlSequence::loadXmlFile( File f )
 
 				}
 			}
+			
+			if ( chaserData->getChildByName("width") != nullptr )
+				resolution.x = chaserData->getChildByName("width")->getAllSubText().getIntValue();
+			else
+				resolution.x = 1920;
+			
+			if ( chaserData->getChildByName("height") != nullptr )
+				resolution.y = chaserData->getChildByName("height")->getAllSubText().getIntValue();
+			else
+				resolution.y = 1080;
 
 			setXmlFile(f);
 			return true;
@@ -415,6 +431,17 @@ bool XmlSequence::loadXmlFile( File f )
 		return false;
 }
 
+void XmlSequence::setResolution(Point<int> resolution)
+{
+	addElement(chaserData, "width", String(resolution.x), true);
+	addElement(chaserData, "height", String(resolution.y), true);
+}
+
+Point<int> XmlSequence::getResolution()
+{
+	return resolution;
+}
+
 void XmlSequence::setXmlFile( File f )
 {
 	File docDir = File::getSpecialLocation( File::userDocumentsDirectory );
@@ -423,7 +450,7 @@ void XmlSequence::setXmlFile( File f )
 		prefFile.create();
 	
 	XmlElement* lastUsedFileData = new XmlElement("preferences");
-	addElement( lastUsedFileData, "lastusedfile", f.getFullPathName() );
+	addElement( lastUsedFileData, "lastusedfile", f.getFullPathName(), true );
 	
 	lastUsedFileData->writeToFile( prefFile, "");
 	delete lastUsedFileData;
