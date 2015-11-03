@@ -212,7 +212,11 @@ void Sequencer::buttonClicked (Button* b)
 		//let the listeners know
 		Component::BailOutChecker checker (this);
 		if (! checker.shouldBailOut())
+		{
 			listeners.callChecked ( checker, &Sequencer::Listener::sequenceSelected, activeSequence );
+			//the sequence lenght might also have changed
+			listeners.callChecked ( checker, &Sequencer::Listener::sequenceLengthChanged, numberOfSteps[ activeSequence ] );
+		}
 		
 		//always set the step to be the first step
 		stepper[0]->triggerClick();

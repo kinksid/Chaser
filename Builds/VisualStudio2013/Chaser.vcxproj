@@ -1558,6 +1558,7 @@
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h"/>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Source\buttons\ICON-B.png"/>
     <None Include="..\..\Source\buttons\next.svg"/>
     <None Include="..\..\Source\buttons\pause.svg"/>
     <None Include="..\..\Source\buttons\play.svg"/>
@@ -1571,6 +1572,7 @@
     <None Include="..\..\JuceLibraryCode\modules\juce_graphics\juce_module_info"/>
     <None Include="..\..\JuceLibraryCode\modules\juce_gui_basics\juce_module_info"/>
     <None Include="..\..\JuceLibraryCode\modules\juce_gui_extra\juce_module_info"/>
+    <None Include=".\icon.ico"/>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include=".\resources.rc"/>
