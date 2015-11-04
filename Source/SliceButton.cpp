@@ -110,7 +110,6 @@ void SliceButton::paintButton(juce::Graphics &g, bool isMouseOverButton, bool is
 
 void SliceButton::resized()
 {
-	DBG(getParentHeight());
 	createPath( Point<int>(getParentWidth(), getParentHeight() ));
 }
 

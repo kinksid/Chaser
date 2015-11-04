@@ -31,7 +31,6 @@ class MainContentComponent   :  public Component,
 								public Sequencer::Listener,
 								public Preview::Listener,
 								public Copier::Listener,
-								public TextEditor::Listener,
 								public Timer
 
 {
@@ -65,10 +64,7 @@ public:
 	//copier listener methods
 	virtual void copierClicked ( int m ) override;
 	
-	//texteditor listener methods
-	virtual void textEditorReturnKeyPressed (TextEditor&) override;
-	virtual void textEditorEscapeKeyPressed (TextEditor&) override;
-	virtual void textEditorFocusLost (TextEditor&) override;
+
 	
 	void loadAssFile();
 	void reloadAssFile();
@@ -77,9 +73,7 @@ public:
 	void loadXml();
     void parseXml ( File f );
 	void reloadSliceData();
-
 	
-
 private:
 	ScopedPointer<MenuBarComponent> menuBar;
 	
@@ -97,11 +91,8 @@ private:
     ScopedPointer<Sequencer> sequencer;
     ScopedPointer<XmlSequence> xmlSequence;
 	ScopedPointer<Copier> copier;
-	
-	ScopedPointer<TextEditor> compWidth;
-	ScopedPointer<TextEditor> compHeight;
-	Point<int> resolution;
-	
+	Point<int>resolution;
+
 	String version;
     
     //==============================================================================
