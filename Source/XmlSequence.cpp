@@ -302,6 +302,7 @@ void XmlSequence::save()
 
 		if (chaserData->writeToFile(f, "") )
 			return;
+		
 		else
 		{
 			DBG("SAVE ERROR!");
@@ -310,6 +311,14 @@ void XmlSequence::save()
 											  "Could not save data.",
 											  "Ok");
 		}
+	}
+	else
+	{
+		DBG("SAVE ERROR!");
+		AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
+										  "Sorry!",
+										  "Could not save data.",
+										  "Ok");
 	}
 }
 

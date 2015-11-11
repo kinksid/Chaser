@@ -234,7 +234,8 @@ bool XmlParser::parseRes5Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 										}
 									}
 									
-									slices.add( newSlice );
+									slices.insert(0, newSlice);
+									//slices.add( newSlice );
 								}
 							}
 						}

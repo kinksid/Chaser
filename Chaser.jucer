@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="ZsFZkw" name="Chaser" projectType="guiapp" version="1.0.2"
+<JUCERPROJECT id="ZsFZkw" name="Chaser" projectType="guiapp" version="1.0.3"
               bundleIdentifier="nl.HybridVisuals.www" includeBinaryInAppConfig="1"
               jucerVersion="3.2.0" companyName="Hybrid Visuals" companyWebsite="www.hybridvisuals.nl"
               companyEmail="joris@hybridvisuals.nl">
@@ -43,8 +43,8 @@
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
                        isDebug="1" optimisation="1" targetName="Chaser"/>
-        <CONFIGURATION name="Release" osxSDK="10.6 SDK" osxCompatibility="10.6 SDK"
-                       osxArchitecture="64BitIntel" isDebug="0" optimisation="2" targetName="Chaser"/>
+        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.7 SDK" osxArchitecture="64BitIntel"
+                       isDebug="0" optimisation="2" targetName="Chaser"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="JuceLibraryCode/modules"/>

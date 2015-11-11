@@ -17,6 +17,7 @@ Preview::Preview()
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
     sliceLaf = new SliceLookAndFeel();
+	sliceButtons.clear();
 }
 
 Preview::~Preview()
@@ -69,12 +70,17 @@ void Preview::addSlice( Slice* slice )
     newButton->setLookAndFeel(sliceLaf);
 	newButton->setColours(sliceLaf->backgroundColour, sliceLaf->textColour, sliceLaf->primaryColour);
     newButton->addListener(this);
-    sliceButtons.add( newButton );
 
+    sliceButtons.add( newButton );
+	
     if ( newButton->isVisible() )
         addAndMakeVisible( newButton );
     else
         addChildComponent( newButton );
+	
+	//flip the order, so things match the way they are in resolume
+	if ( sliceButtons.size() > 1 )
+		sliceButtons[1]->toBehind(sliceButtons[0]);
 }
 
 void Preview::clearSlices()
@@ -104,7 +110,7 @@ void Preview::paint (Graphics& g)
 void Preview::resized()
 {
     
-    for ( int i = 0; i < sliceButtons.size(); i++ )
+    for ( int i = 0; i < sliceButtons.size() ; i++ )
     {
 		sliceButtons[i]->resized();
 		//sliceButtons[i]->setBoundsRelative(sliceButtons[i]->proportionalX, sliceButtons[i]->proportionalY, sliceButtons[i]->proportionalW, sliceButtons[i]->proportionalH);
