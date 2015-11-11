@@ -284,8 +284,14 @@ void MainContentComponent::sequenceLengthChanged(int newSequenceLength)
 	currentSequenceLength = newSequenceLength;
 	
 	//save it to xml
-	xmlSequence->setNumberOfSteps( currentSequence, currentSequenceLength);
-	xmlSequence->save();
+	if ( xmlSequence->getSequenceLengths().size() > currentSequence )
+	{
+		if ( xmlSequence->getSequenceLengths()[currentSequence] != currentSequenceLength )
+		{
+			xmlSequence->setNumberOfSteps( currentSequence, currentSequenceLength);
+			xmlSequence->save();
+		}
+	}
 	
 }
 
