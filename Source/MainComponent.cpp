@@ -107,12 +107,12 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const juce::Strin
 	
 	if (menuIndex == 0)
 	{
-		menu.addItem(1, "New");
-		menu.addItem(2, "Load");
-		menu.addItem(3, "Save");
-		menu.addItem(4, "Save as...");
+		menu.addItem(1, "New Chaser");
+		menu.addItem(2, "Load Chaser");
+		menu.addItem(3, "Save Chaser");
+		menu.addItem(4, "Save Chaser as...");
 		menu.addSeparator();
-		menu.addItem(5, "Reload ASS file");
+		menu.addItem(5, "Reload Res file");
 	}
 
 	return menu;
