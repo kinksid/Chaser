@@ -136,7 +136,7 @@ bool XmlParser::parseRes5Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
             {
                 if ( child->hasTagName("Screen") )
                 {
-					if ( !child->getStringAttribute("name").contains("Scaling") )
+					if ( !child->getStringAttribute("name").containsIgnoreCase("scaling") )
 					{
 						XmlElement* layers = child->getChildByName("layers");
 						if ( layers != nullptr )
@@ -263,7 +263,7 @@ bool XmlParser::parseRes5Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 
 void XmlParser::addPointToSlice(Point<float> newPoint, juce::XmlElement *element, Array<Point<float>>& pointType, Point<int> resolution)
 {
-	//TODO get these values from a popup when you open an ass 5 file
+
 	newPoint.x = element->getStringAttribute("x", "0.0").getFloatValue() / float(resolution.x);
 	newPoint.y = element->getStringAttribute("y", "0.0").getFloatValue() / float(resolution.y);
 	pointType.add( newPoint );
