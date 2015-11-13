@@ -170,8 +170,11 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 
 void MainContentComponent::loadAssFile()
 {
-	//todo set a default preferences for 4 or 5
+	//first check 5, then check 4
 	File presetsLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Resolume Arena 5/presets/screensetup/";
+	if ( !presetsLocation.exists() )
+		presetsLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Resolume Arena 4/presets/screensetup/";
+	
 	FileChooser fc ( "Pick an Arena setup file...", presetsLocation, "*.xml", true );
 	if ( fc.browseForFileToOpen() )
 	{
