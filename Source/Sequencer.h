@@ -52,7 +52,9 @@ public:
 	void addListener ( Listener* const l ) { listeners.add ( l ); }
 	void removeListener ( Listener* const l ) { listeners.remove (l ); }
 	
-
+	void nextStep();
+	void previousStep();
+	
 private:
 	int activeButton;
 	int activeSequence;

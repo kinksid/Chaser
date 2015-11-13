@@ -277,9 +277,23 @@ void Sequencer::buttonStateChanged (Button* b)
 
 void Sequencer::timerCallback()
 {
-    activeButton++;
-    activeButton = fmod( activeButton, numberOfSteps[activeSequence] );
-    stepper[activeButton]->triggerClick();
+	nextStep();
+}
+
+void Sequencer::nextStep()
+{
+	activeButton++;
+	activeButton = fmod( activeButton, numberOfSteps[activeSequence] );
+	stepper[activeButton]->triggerClick();
+}
+
+void Sequencer::previousStep()
+{
+	activeButton--;
+	if ( activeButton < 0 )
+		activeButton = numberOfSteps[activeSequence] - 1;
+	stepper[activeButton]->triggerClick();
+
 }
 
 void Sequencer::resized()

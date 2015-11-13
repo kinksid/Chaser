@@ -31,6 +31,7 @@ class MainContentComponent   :  public Component,
 								public Sequencer::Listener,
 								public Preview::Listener,
 								public Copier::Listener,
+								public KeyListener,
 								public Timer
 
 {
@@ -64,6 +65,9 @@ public:
 	//copier listener methods
 	virtual void copierClicked ( int m ) override;
 	
+	//keyboard listener
+	virtual bool keyPressed (const KeyPress& key,
+							 Component* originatingComponent) override;
 
 	
 	void loadAssFile();

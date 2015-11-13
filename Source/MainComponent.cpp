@@ -78,6 +78,9 @@ MainContentComponent::MainContentComponent()
 	
 	//start a timer to update the window name
 	startTimer( 1000 );
+	
+	addKeyListener(this);
+	grabKeyboardFocus();
 }
 
 MainContentComponent::~MainContentComponent()
@@ -430,6 +433,21 @@ void MainContentComponent::reloadSliceData()
 
 	resolution = xmlSequence->getResolution();
 	resized();
+}
+
+bool MainContentComponent::keyPressed(const juce::KeyPress &key, juce::Component *originatingComponent)
+{
+	
+	if ( key == KeyPress::leftKey )
+	{
+		sequencer->previousStep();
+	}
+	else if ( key == KeyPress::rightKey )
+	{
+		sequencer->nextStep();
+	}
+		
+	return true;
 }
 
 
