@@ -246,8 +246,8 @@ void XmlSequence::createFreshXml( String version )
 	
 	resolution = Point<int>(1920,1080);
 	
+	setXmlFile( getXmlFile() );
 	
-    
     clearSlices(); 
 }
 
@@ -286,11 +286,10 @@ Array<Slice> XmlSequence::getSlices()
     return sliceArray;
 }
 
-void XmlSequence::save()
+bool XmlSequence::save()
 {
     //save everything into an XML file
     File f = getXmlFile();
-	
 	
 	if ( f != File() )
 	{
@@ -300,9 +299,18 @@ void XmlSequence::save()
 		if (chaserData == nullptr)
 			createFreshXml( getVersion() );
 
-		if (chaserData->writeToFile(f, "") )
-			return;
+		if (!chaserData->writeToFile(f, "") )
+			return false;
 		
+		//save the preferences
+		setXmlFile( f );
+		
+		return true;
+	}
+	
+	return false;
+		
+		/*
 		else
 		{
 			DBG("SAVE ERROR!");
@@ -320,6 +328,9 @@ void XmlSequence::save()
 										  "Could not save data.",
 										  "Ok");
 	}
+		 */
+	
+	
 }
 
 void XmlSequence::setAssFile( File f )
@@ -453,6 +464,9 @@ Point<int> XmlSequence::getResolution()
 
 void XmlSequence::setXmlFile( File f )
 {
+	if ( !f.exists() )
+		f.create();
+	
 	File docDir = File::getSpecialLocation( File::userDocumentsDirectory );
 	File prefFile = docDir.getChildFile("Chaser/preferences/preferences.xml");
 	if (!prefFile.exists())
@@ -467,19 +481,37 @@ void XmlSequence::setXmlFile( File f )
 
 File XmlSequence::getXmlFile()
 {
-    //get the file chaserData.xml, for now we'll use the userDocs
+	File savedFileName = getXmlFileFromPreferences();
+	if ( savedFileName != File() )
+		return savedFileName;
+	
+	File docDir = File::getSpecialLocation( File::userDocumentsDirectory );
+	File defaultChaseFile = docDir.getChildFile("Chaser/DefaultChaser.xml");
+	if (!defaultChaseFile.exists() )
+		defaultChaseFile.create();
+
+	return defaultChaseFile;
+}
+
+File XmlSequence::getXmlFileFromPreferences()
+{
+	//the preferences file we'll use the userDocs
 	File docDir = File::getSpecialLocation( File::userDocumentsDirectory );
 	File prefFile = docDir.getChildFile("Chaser/preferences/preferences.xml");
 	
-	if ( prefFile.exists())
+	if ( prefFile.exists() )
 	{
 		XmlDocument lastUsedFile ( prefFile );
 		lastUsedFileData = lastUsedFile.getDocumentElement();
 		if (lastUsedFileData->getChildByName("lastusedfile") != nullptr )
-			return File (lastUsedFileData->getChildByName("lastusedfile")->getAllSubText());
-		else return File();
+		{
+			File savedFile = File (lastUsedFileData->getChildByName("lastusedfile")->getAllSubText());
+			if ( savedFile.exists() )
+				return savedFile;
+		}
+		
 	}
-
+	
 	return File();
 }
 

@@ -49,9 +49,10 @@ public:
 	bool versionCheck ( String savedVersion, String thisVersion );
 	Array<int> subDivideString ( String s);
 	
-    void save();
+    bool save();
 	bool loadXmlFile( File f );
     File getXmlFile();
+	File getXmlFileFromPreferences();
 	void setXmlFile( File f );
     
 private:
