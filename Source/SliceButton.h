@@ -41,9 +41,6 @@ public:
 
 private:
 	Path path;
-	Path mask;
-	Path maskRect;
-	
 	Slice* slice;
 	Path makePath( Array<Point<float>>& points, Point<int> scale );
 	
