@@ -145,7 +145,7 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 			case 3:
 				xmlSequence->createFreshXml(version);
 				saveAsXml();
-				loadAssFile();
+				//loadAssFile();
 				break;
 			case 4:
 				loadXml();
