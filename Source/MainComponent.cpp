@@ -145,6 +145,12 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 			case 3:
 				xmlSequence->createFreshXml(version);
 				saveAsXml();
+				//update the previewWindow and sliceList
+				sliceList->clearSlices();
+				previewWindow->clearSlices();
+				xmlSequence->clearSlices();
+				sequencer->setDefaultSequences();
+				resized();
 				//loadAssFile();
 				break;
 			case 4:

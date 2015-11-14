@@ -65,6 +65,7 @@ void SliceList::updateStates()
 void SliceList::clearSlices()
 {
     slices.clear(false);
+	sliceList.updateContent();
 }
 
 int SliceList::getNumRows()
