@@ -283,7 +283,7 @@ void Sequencer::timerCallback()
 void Sequencer::nextStep()
 {
 	activeButton++;
-	activeButton = fmod( activeButton, numberOfSteps[activeSequence] );
+	activeButton = int(fmod( activeButton, numberOfSteps[activeSequence] ));
 	stepper[activeButton]->triggerClick();
 }
 
@@ -299,7 +299,7 @@ void Sequencer::previousStep()
 void Sequencer::resized()
 {
 	
-	float w = (1.0 / float( numberOfSteps[ activeSequence ]) * 0.817); //the magic number math is there so the 16 buttons align perfectly with the preview window
+	float w = (1.0f / float( numberOfSteps[ activeSequence ]) * 0.817f); //the magic number math is there so the 16 buttons align perfectly with the preview window
     for(int i = 0; i < stepper.size() ; i++ )
     {
 		if( i < numberOfSteps[ activeSequence ] )
@@ -311,14 +311,14 @@ void Sequencer::resized()
 			stepper[ i ]->setVisible( false );
     }
 
-	float sequenceControlButtonWidth = 0.0632526;
-	previous->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 2.7, 0.225, sequenceControlButtonWidth * 0.9, 0.6 );
-	play->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 1.8, 0.225, sequenceControlButtonWidth * 0.9, 0.6 );
-	next->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 0.9, 0.225, sequenceControlButtonWidth * 0.9, 0.6 );
+	float sequenceControlButtonWidth = 0.0632526f;
+	previous->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 2.7f, 0.225f, sequenceControlButtonWidth * 0.9f, 0.6f );
+	play->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 1.8f, 0.225f, sequenceControlButtonWidth * 0.9f, 0.6f );
+	next->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 0.9f, 0.225f, sequenceControlButtonWidth * 0.9f, 0.6f );
     
 	
-	sequenceName->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 2.65, 0.05, sequenceControlButtonWidth * 2.6, 0.24 );
+	sequenceName->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 2.65f, 0.05f, sequenceControlButtonWidth * 2.6f, 0.24f );
 
-	lessSteps->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 2.7, 0.75, sequenceControlButtonWidth *  1.35, 0.2 );
-	moreSteps->setBoundsRelative( 1.0 - sequenceControlButtonWidth * 1.4, 0.75, sequenceControlButtonWidth *  1.35, 0.2 );
+	lessSteps->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 2.7f, 0.75f, sequenceControlButtonWidth *  1.35f, 0.2f );
+	moreSteps->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 1.4f, 0.75f, sequenceControlButtonWidth *  1.35f, 0.2f );
 }

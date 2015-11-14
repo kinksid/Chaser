@@ -68,7 +68,7 @@ public:
             setUsingNativeTitleBar (true);
             setContentOwned (new MainContentComponent(), true);
 			ColourLookAndFeel claf;
-			setColour( backgroundColourId, claf.backgroundColour.darker(0.3) );
+			setColour( backgroundColourId, claf.backgroundColour.darker(0.3f) );
 			getLookAndFeel().setUsingNativeAlertWindows(true);
             centreWithSize (getWidth(), getHeight());
             setResizable(true, true);

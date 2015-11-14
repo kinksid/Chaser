@@ -353,7 +353,7 @@ void MainContentComponent::parseXml(File f)
         
         //see if we're dealing with a res 4 or res 5 ass file
         //then try to parse it
-		bool succesfulParse;
+		bool succesfulParse = false;
 		
         if (xmlRoot != nullptr && xmlRoot->hasTagName ("preset"))
 			succesfulParse = XmlParser::parseRes4Xml( *xmlRoot, slices );
@@ -407,6 +407,16 @@ void MainContentComponent::parseXml(File f)
 			//update the numbers
 			resized();
 			
+		}
+		else
+		{
+			AlertWindow::showMessageBoxAsync(AlertWindow::AlertIconType::WarningIcon,
+				"Sorry!",
+				"Something went wrong reading that file.",
+				"Ok");
+			DBG("Error loading file...");
+			return;
+
 		}
     }
 }
@@ -462,7 +472,7 @@ void MainContentComponent::resized()
 
 	Rectangle<int> area (getLocalBounds());
 	
-	float menuBarHeight;
+	int menuBarHeight = 0;
 	#if JUCE_WINDOWS
 	menuBarHeight = LookAndFeel::getDefaultLookAndFeel().getDefaultMenuBarHeight();
 	#elif JUCE_MAC
@@ -472,7 +482,7 @@ void MainContentComponent::resized()
 	menuBar->setBounds (area.removeFromTop (menuBarHeight));
 
 	Rectangle<int> previewArea = Rectangle<int>{0, 0, int(getWidth() * 0.83), int((getWidth() / 16.0) * 9.0 * 0.83) };
-	previewArea.setPosition(0.0,  menuBarHeight);
+	previewArea.setPosition(0,  menuBarHeight);
 	
 	previewWindow->setBounds(0,0,resolution.x, resolution.y);
 	Rectangle<int> previewWindowArea = previewArea.reduced(5);
@@ -480,7 +490,7 @@ void MainContentComponent::resized()
 	//this will hit a jassert on the first run, but that shouldn't be a problem
 	previewWindow->setBoundsToFit( previewWindowArea.getX(), previewWindowArea.getY(), previewWindowArea.getWidth(), previewWindowArea.getHeight(), Justification::centred, false);
 	
-	Rectangle<int> sliceArea = Rectangle<int> { previewArea.getWidth(), int(menuBarHeight), area.getWidth() - previewArea.getWidth(), previewArea.getHeight()};
+	Rectangle<int> sliceArea = Rectangle<int> { previewArea.getWidth(), menuBarHeight, area.getWidth() - previewArea.getWidth(), previewArea.getHeight()};
 	sliceList->setBounds(sliceArea.reduced(5));
 
 	Rectangle<int> bottomArea = area.removeFromBottom( area.getHeight() - previewArea.getHeight() );

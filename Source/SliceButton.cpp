@@ -82,7 +82,7 @@ bool SliceButton::hitTest(int x, int y)
 {
 	//the path points are absolute, while the hittest x and y points are relative to the bounds
 	//that's why I'm adding getPosition to get the correct result
-	if ( getPath().contains( x + getPosition().x, y + getPosition().y) )
+	if ( getPath().contains( float(x + getPosition().x), float(y + getPosition().y)) )
 		return true;
 	return false;
 }
@@ -105,7 +105,7 @@ void SliceButton::paintButton(juce::Graphics &g, bool isMouseOverButton, bool is
 		ColourLookAndFeel claf;
 		Colour col = getToggleState() ? claf.primaryColour : claf.backgroundColour;
 		if ( isMouseOverButton )
-			col = col.brighter(0.2);
+			col = col.brighter(0.2f);
 		g.setColour ( col );
 		
 		Path scaledToPreview = getPath();

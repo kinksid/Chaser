@@ -29,11 +29,11 @@ bool XmlParser::parseRes4Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 						{
 							String name;
 							bool enabled = slicesNode->getBoolAttribute("isEnabled");
-							int type;
-							double l;
-							double t;
-							double r;
-							double b;
+							int type = 0;
+							float l = 0.0f;
+							float t = 0.0f;
+							float r = 0.0f;
+							float b = 0.0f;
 							
 							forEachXmlChildElement( *slicesNode, sliceNode)
 							{
@@ -50,10 +50,10 @@ bool XmlParser::parseRes4Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 								
 								if ( sliceNode->hasTagName("rect") )
 								{
-									l = sliceNode->getDoubleAttribute( "l" );
-									t = sliceNode->getDoubleAttribute( "t" );
-									r = sliceNode->getDoubleAttribute( "r" );
-									b = sliceNode->getDoubleAttribute( "b" );
+									l = float(sliceNode->getDoubleAttribute("l"));
+									t = float(sliceNode->getDoubleAttribute("t"));
+									r = float(sliceNode->getDoubleAttribute("r"));
+									b = float(sliceNode->getDoubleAttribute("b"));
 								}
 							
 							}
@@ -158,7 +158,7 @@ bool XmlParser::parseRes5Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 											}
 											if ( child->hasTagName("Param") && child->getStringAttribute("name") == "Enabled")
 											{
-												newSlice->enabled = bool(child->getStringAttribute("value", "1").getIntValue());
+												newSlice->enabled = child->getStringAttribute("value", "1").getIntValue() != 0;
 											}
 										}
 									}

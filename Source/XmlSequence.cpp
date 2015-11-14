@@ -258,13 +258,13 @@ Array<Slice> XmlSequence::getSlices()
     {
 		forEachXmlChildElement(*positionData, slice)
 		{
-			Slice newSlice(slice->getStringAttribute("name", "Unnamed Slice"), (bool)slice->getIntAttribute("enable", false));
+			Slice newSlice(slice->getStringAttribute("name", "Unnamed Slice"), slice->getIntAttribute("enable", 0) != 0 );
 			forEachXmlChildElement(*slice, pointData)
 			{
 				forEachXmlChildElement(*pointData, point)
 				{
-					float x = point->getDoubleAttribute("x");
-					float y = point->getDoubleAttribute("y");
+					float x = float(point->getDoubleAttribute("x"));
+					float y = float(point->getDoubleAttribute("y"));
 					Point<float> newPoint(x,y);
 					if ( pointData->getTagName() == "inputRect" )
 					{
