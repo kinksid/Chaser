@@ -19,6 +19,10 @@ namespace XmlParser
 	bool parseRes4Xml( XmlElement& xmlTreeToParse, OwnedArray<Slice>& slices );
 	bool parseRes5Xml( XmlElement& xmlTreeToParse, OwnedArray<Slice>& slices, Point<int>& resolution );
 	
+	bool parseRes5PrefXml ( XmlElement& xmlTreeToParse, OwnedArray<Slice>& slices, Point<int>& resolution );
+	
+	String getAdvancedPresetNameFromRes5Xml( XmlElement& xmlTreeToParse );
+	
 	void addPointToSlice ( Point<float> newPoint, XmlElement* sliceElement, Array<Point<float>>& pointType, Point<int> resolution);
 }
 

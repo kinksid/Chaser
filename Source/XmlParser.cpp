@@ -104,11 +104,179 @@ bool XmlParser::parseRes4Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 	}
 }
 
+String XmlParser::getAdvancedPresetNameFromRes5Xml( XmlElement& xmlTreeToParse )
+{
+	String fileNameToReturn = String().empty;
+
+	if ( xmlTreeToParse.hasAttribute("presetFile"))
+		fileNameToReturn = xmlTreeToParse.getStringAttribute("presetFile", String().empty);
+
+	return fileNameToReturn;
+}
+
+bool XmlParser::parseRes5PrefXml(juce::XmlElement& screenSetup, OwnedArray<Slice>& slices, Point<int>& resolution)
+{
+	slices.clear();
+
+	
+	XmlElement* sizing = screenSetup.getChildByName("sizing");
+	if ( sizing!= nullptr )
+	{
+		forEachXmlChildElement( *sizing, inputs )
+		{
+			if ( inputs->hasTagName("inputs") )
+			{
+				forEachXmlChildElement( *inputs, InputSize )
+				{
+					if ( InputSize->getStringAttribute("name") == "0:1" )
+					{
+						resolution.x = InputSize->getIntAttribute("width", 1920);
+						resolution.y = InputSize->getIntAttribute("height", 1080);
+					}
+				}
+			}
+		}
+	}
+	XmlElement* screens = screenSetup.getChildByName("screens");
+	if ( screens!= nullptr )
+	{
+		forEachXmlChildElement( *screens, child )
+		{
+			if ( child->hasTagName("Screen") )
+			{
+				if ( !child->getStringAttribute("name").containsIgnoreCase("scaling") )
+				{
+					XmlElement* layers = child->getChildByName("layers");
+					if ( layers != nullptr )
+					{
+						forEachXmlChildElement( *layers, child )
+						{
+							if ( child->hasTagName("Slice") || child->hasTagName("Polygon"))
+							{
+								Slice* newSlice = new Slice();
+								newSlice->enabled = true;
+								
+								XmlElement* params = child->getChildByName("Params");
+								if ( params != nullptr )
+								{
+									forEachXmlChildElement( *params, child )
+									{
+										if ( child->hasTagName("Param") && child->getStringAttribute("name") == "Name")
+										{
+											newSlice->name = child->getStringAttribute("value", "Slice");
+										}
+										if ( child->hasTagName("Param") && child->getStringAttribute("name") == "Enabled")
+										{
+											newSlice->enabled = child->getStringAttribute("value", "1").getIntValue() != 0;
+										}
+									}
+								}
+								XmlElement* inputRect = child->getChildByName("InputRect");
+								if ( inputRect != nullptr )
+								{
+									newSlice->inputRectOrientation = inputRect->getStringAttribute("orientation", "0").getFloatValue();
+									forEachXmlChildElement( *inputRect, child )
+									{
+										if ( child->hasTagName("v") )
+										{
+											Point<float> newPoint;
+											addPointToSlice(newPoint, child, newSlice->inputRectPoints, resolution);
+										}
+									}
+								}
+								XmlElement* sliceMask = child->getChildByName("SliceMask");
+								if ( sliceMask != nullptr )
+								{
+									XmlElement* shapeObject = sliceMask->getChildByName("ShapeObject");
+									if ( shapeObject != nullptr )
+									{
+										XmlElement* maskRect = shapeObject->getChildByName("Rect");
+										if ( maskRect != nullptr )
+										{
+											newSlice->maskRectOrientation = maskRect->getStringAttribute("orientation", "0").getFloatValue();
+											forEachXmlChildElement( *maskRect, child )
+											{
+												if ( child->hasTagName("v") )
+												{
+													Point<float> newPoint;
+													addPointToSlice(newPoint, child, newSlice->maskRectPoints, resolution);
+												}
+											}
+										}
+										XmlElement* shape = shapeObject->getChildByName("Shape");
+										if ( shape != nullptr )
+										{
+											XmlElement* contour = shape->getChildByName("Contour");
+											if ( contour != nullptr )
+											{
+												XmlElement* points = contour->getChildByName("points");
+												if ( points != nullptr )
+												{
+													forEachXmlChildElement( *points, child )
+													{
+														if ( child->hasTagName("v") )
+														{
+															Point<float> newPoint;
+															addPointToSlice(newPoint, child, newSlice->maskPoints, resolution);
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+								
+								XmlElement* contour = child->getChildByName("InputContour");
+								if ( contour != nullptr )
+								{
+									XmlElement* points = contour->getChildByName("points");
+									if ( points != nullptr )
+									{
+										forEachXmlChildElement( *points, child )
+										{
+											if ( child->hasTagName("v") )
+											{
+												Point<float> newPoint;
+												addPointToSlice(newPoint, child, newSlice->maskPoints, resolution);
+											}
+										}
+									}
+								}
+								
+								slices.insert(0, newSlice);
+								//slices.add( newSlice );
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	if ( slices.size() == 0 )
+	{
+		DBG("Not able to parse any slice data");
+		return false;
+	}
+	else
+	{
+		DBG("Slice data parsed succesfully");
+		return true;
+	}
+}
+
 bool XmlParser::parseRes5Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slices, Point<int>& resolution )
 {
-    slices.clear();
-    
     XmlElement* screenSetup = xmlTreeToParse.getChildByName("ScreenSetup");
+	
+	slices.clear();
+	
     if ( screenSetup != nullptr )
     {
 		XmlElement* sizing = screenSetup->getChildByName("sizing");
@@ -146,6 +314,7 @@ bool XmlParser::parseRes5Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 								if ( child->hasTagName("Slice") || child->hasTagName("Polygon"))
 								{
 									Slice* newSlice = new Slice();
+									newSlice->enabled = true;
 									
 									XmlElement* params = child->getChildByName("Params");
 									if ( params != nullptr )

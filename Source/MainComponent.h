@@ -71,13 +71,17 @@ public:
 
 	
 	void loadAssFile();
+	void loadDefaultAssFile();
 	void reloadAssFile();
 	void saveXml();
 	void saveAsXml();
 	void loadXml();
-    void parseXml ( File f );
+    bool parseAssXml ( File f );
 	void reloadSliceData();
 	void clearGUI();
+	
+	void throwLoadError();
+	void throwSaveError();
 	
 private:
 	ScopedPointer<MenuBarComponent> menuBar;
