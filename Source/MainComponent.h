@@ -77,6 +77,7 @@ public:
 	void loadXml();
     void parseXml ( File f );
 	void reloadSliceData();
+	void clearGUI();
 	
 private:
 	ScopedPointer<MenuBarComponent> menuBar;

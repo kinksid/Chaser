@@ -145,12 +145,7 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 			case 3:
 				xmlSequence->createFreshXml(version);
 				saveAsXml();
-				//update the previewWindow and sliceList
-				sliceList->clearSlices();
-				previewWindow->clearSlices();
-				xmlSequence->clearSlices();
-				sequencer->setDefaultSequences();
-				resized();
+				clearGUI();
 				//loadAssFile();
 				break;
 			case 4:
@@ -172,6 +167,20 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 	}
 }
 
+void MainContentComponent::clearGUI()
+{
+	//clear the previewWindow and sliceList
+	//empty the xmlSequence
+	//reset the sequencer
+	
+	sliceList->clearSlices();
+	previewWindow->clearSlices();
+	xmlSequence->clearSlices();
+	sequencer->setDefaultSequences();
+	sequencer->
+	resized();
+
+}
 
 
 void MainContentComponent::loadAssFile()
@@ -320,10 +329,8 @@ void MainContentComponent::sequenceLengthChanged(int newSequenceLength)
 	//save it to xml
 	if ( xmlSequence->getSequenceLengths().size() > currentSequence )
 	{
-
 		xmlSequence->setNumberOfSteps( currentSequence, currentSequenceLength);
 		saveXml();
-	
 	}
 	
 }
