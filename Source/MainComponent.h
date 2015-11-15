@@ -74,7 +74,7 @@ public:
 	void loadDefaultAssFile();
 	void reloadAssFile();
 	void saveXml();
-	void saveAsXml();
+	bool saveAsXml();
 	void loadXml();
     bool parseAssXml ( File f );
 	void reloadSliceData();

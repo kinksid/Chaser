@@ -35,19 +35,16 @@ MainContentComponent::MainContentComponent()
 	addAndMakeVisible(copier);
 	copier->addListener(this);
 	
-	//add a menu bar
-	menuBar = new MenuBarComponent (this);
-	#if JUCE_WINDOWS
-	addAndMakeVisible( menuBar );
-	#elif JUCE_MAC
-	setMacMainMenu(this);
-	#endif
-	
-	
 	//create a sequence and set the oldest version it will correctly load
 	xmlSequence = new XmlSequence( "0.0.1" );
 
-
+	//add a menu bar
+	menuBar = new MenuBarComponent (this);
+#if JUCE_WINDOWS
+	addAndMakeVisible( menuBar );
+#elif JUCE_MAC
+	setMacMainMenu(this);
+#endif
     
 	//init the model vars
 	currentSequence = 0;
@@ -120,7 +117,7 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const juce::Strin
 	if (menuIndex == 0)
 	{
 		menu.addItem(1, "Load Arena Setup");
-		menu.addItem(2, "Reload Arena Setup");
+		menu.addItem(2, "Reload Arena Setup", xmlSequence->getAssFile() == File()? false: true );
 		menu.addSeparator();
 		
 		menu.addItem(3, "New Chaser");
@@ -149,13 +146,15 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 				reloadAssFile();
 				break;
 			case 3:
-				xmlSequence->createFreshXml(version);
-				resolution = xmlSequence->getResolution();
-				saveAsXml();
-				//this will make sure nothing is loaded and everything is empty
-				clearGUI();
-				//try to load the default assfile
-				loadDefaultAssFile();
+				if(saveAsXml())
+				{
+					xmlSequence->createFreshXml(version);
+					resolution = xmlSequence->getResolution();
+					//this will make sure nothing is loaded and everything is empty
+					clearGUI();
+					//try to load the default assfile
+					loadDefaultAssFile();
+				}
 				break;
 			case 4:
 				loadXml();
@@ -255,7 +254,7 @@ void MainContentComponent::saveXml()
 	}
 }
 
-void MainContentComponent::saveAsXml()
+bool MainContentComponent::saveAsXml()
 {
 	//open a save dialog
 	File chaserLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Chaser/";
@@ -270,7 +269,9 @@ void MainContentComponent::saveAsXml()
 		saveXml();
 		
 		getTopLevelComponent()->setName(f.getFileNameWithoutExtension());
+		return true;
 	}
+	return false;
 }
 
 void MainContentComponent::loadXml()
