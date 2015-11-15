@@ -77,10 +77,8 @@ void Preview::addSlice( Slice* slice )
         addAndMakeVisible( newButton );
     else
         addChildComponent( newButton );
-	
-	//flip the order, so things match the way they are in resolume
-	if ( sliceButtons.size() > 1 )
-		sliceButtons[1]->toBehind(sliceButtons[0]);
+	//flip the order, so it matches the order in Resolume
+	newButton->toBack();
 }
 
 void Preview::clearSlices()
