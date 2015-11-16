@@ -97,9 +97,11 @@ void SliceList::paintListBoxItem (int rowNumber, Graphics& g, int width, int hei
     else
         g.setColour(claf.textColour);
 	
-	String text = slices[rowNumber]->name;
-    
-    g.drawFittedText (text, 4 , 0, width - 4, height, Justification::centredLeft, true);
+	if (rowNumber < slices.size())
+	{
+		String text = slices[rowNumber]->name;
+		g.drawFittedText(text, 4, 0, width - 4, height, Justification::centredLeft, true);
+	}
 }
 
 void SliceList::resized()
