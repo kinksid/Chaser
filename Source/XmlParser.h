@@ -16,10 +16,12 @@
 
 namespace XmlParser
 {
-	bool parseRes4Xml( XmlElement& xmlTreeToParse, OwnedArray<Slice>& slices );
+	bool parseRes4Xml( XmlElement& xmlTreeToParse, OwnedArray<Slice>& slices, Point<int>& resolution );
 	bool parseRes5Xml( XmlElement& xmlTreeToParse, OwnedArray<Slice>& slices, Point<int>& resolution );
 	
 	bool parseRes5PrefXml ( XmlElement& xmlTreeToParse, OwnedArray<Slice>& slices, Point<int>& resolution );
+	
+	bool parseRes4ConfigXml ( XmlElement& xmlTreeToParse, OwnedArray<Slice>& slices, Point<int>& resolution );
 	
 	String getAdvancedPresetNameFromRes5Xml( XmlElement& xmlTreeToParse );
 	

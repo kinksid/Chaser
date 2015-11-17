@@ -10,7 +10,155 @@
 
 #include "XmlParser.h"
 
-bool XmlParser::parseRes4Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slices)
+bool XmlParser::parseRes4ConfigXml(juce::XmlElement &xmlTreeToParse, OwnedArray<Slice>& slices, Point<int> &resolution)
+{
+	forEachXmlChildElement( xmlTreeToParse, avenueChild )
+	{
+		if ( avenueChild->hasTagName("settings") )
+		{
+			forEachXmlChildElement( *avenueChild, settingsChild )
+			{
+				if ( settingsChild->hasTagName("video"))
+				{
+					forEachXmlChildElement( *settingsChild, videoChild )
+					{
+						if ( videoChild->hasTagName("settings"))
+						{
+							forEachXmlChildElement( *videoChild, videoSettingsChild )
+							{
+								if ( videoSettingsChild->hasTagName("screenSetup"))
+								{
+									forEachXmlChildElement( *videoSettingsChild, screenSetupChild )
+									{
+										if ( screenSetupChild->hasTagName("screens"))
+										{
+											forEachXmlChildElement(*screenSetupChild, screensChild )
+											{
+												if ( screensChild->hasTagName("advancedScreens") )
+												{
+													forEachXmlChildElement( *screensChild, advancedScreensChild )
+													{
+														if ( advancedScreensChild->hasTagName("screen") )
+														{
+															forEachXmlChildElement( *advancedScreensChild, screenNode )
+															{
+																if ( screenNode->hasTagName("slices") )
+																{
+																	//clear the slice array so we don't get doubles
+																	slices.clear();
+																	
+																	forEachXmlChildElement( *screenNode, slicesNode)
+																	{
+																		if ( slicesNode->hasTagName("Slice") )
+																		{
+																			String name;
+																			bool enabled = slicesNode->getBoolAttribute("isEnabled");
+																			int type = 0;
+																			float l = 0.0f;
+																			float t = 0.0f;
+																			float r = 0.0f;
+																			float b = 0.0f;
+																			
+																			forEachXmlChildElement( *slicesNode, sliceNode)
+																			{
+																				
+																				if ( sliceNode->hasTagName("name") )
+																				{
+																					name = sliceNode->getStringAttribute("value");
+																				}
+																				
+																				if ( sliceNode->hasTagName("type") )
+																				{
+																					type = sliceNode->getIntAttribute("value");
+																				}
+																				
+																				if ( sliceNode->hasTagName("rect") )
+																				{
+																					l = float(sliceNode->getDoubleAttribute("l"));
+																					t = float(sliceNode->getDoubleAttribute("t"));
+																					r = float(sliceNode->getDoubleAttribute("r"));
+																					b = float(sliceNode->getDoubleAttribute("b"));
+																				}
+																				
+																			}
+																			
+																			//type 0 means only slices are loaded, no masks or crops
+																			if ( type == 0 )
+																			{
+																				Slice* slice = new Slice( name, enabled );
+																				//create 4 points out of the ltrb data
+																				for (int i = 0; i < 4; i++ )
+																				{
+																					Point<float> newPoint;
+																					switch (i)
+																					{
+																						case 0:
+																							newPoint = Point<float>(l,t);
+																							break;
+																						case 1:
+																							newPoint = Point<float>(r,t);
+																							break;
+																						case 2:
+																							newPoint = Point<float>(r,b);
+																							break;
+																						case 3:
+																							newPoint = Point<float>(l,b);
+																							break;
+																					}
+																					slice->inputRectPoints.add(newPoint);
+																				}
+																				slices.insert(0, slice);
+																			}
+																		}						
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				if ( settingsChild->hasTagName("composition"))
+				{
+					//read out the resolution from the comp file
+					File compFile = settingsChild->getStringAttribute("startupFileName");
+					if (compFile.exists())
+					{
+						ScopedPointer<XmlElement> composition;
+						composition = (XmlDocument::parse ( compFile ));
+						forEachXmlChildElement( *composition, compChild )
+						{
+							if ( compChild->hasTagName("generalInfo"))
+							{
+								resolution.x = compChild->getIntAttribute("width", 1920);
+								resolution.y = compChild->getIntAttribute("height", 1080);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	if ( slices.size() == 0 )
+	{
+		DBG("Not able to parse any slice data");
+		return false;
+	}
+	else
+	{
+		DBG("Slice data parsed succesfully");
+		return true;
+	}
+}
+
+bool XmlParser::parseRes4Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slices, Point<int>& resolution)
 {
 	forEachXmlChildElement( xmlTreeToParse, presetNode )
 	{
@@ -83,13 +231,49 @@ bool XmlParser::parseRes4Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 									}
 									slice->inputRectPoints.add(newPoint);
 								}
-								slices.add( slice );
+								slices.insert(0, slice);
 							}
 						}						
 					}
 				}
 			}
 		}
+	}
+	
+	//try to get the resolution from the config.xml file and the associated comp file
+	File advancedLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Resolume Arena 4/preferences/config.xml";
+	if ( advancedLocation.exists() )
+	{
+		ScopedPointer<XmlElement> xmlRoot;
+		xmlRoot = (XmlDocument::parse ( advancedLocation ));
+		forEachXmlChildElement( *xmlRoot, avenueChild )
+		{
+			if ( avenueChild->hasTagName("settings") )
+			{
+				forEachXmlChildElement( *avenueChild, settingsChild )
+				{
+					if ( settingsChild->hasTagName("composition"))
+					{
+						//read out the resolution from the comp file
+						File compFile = settingsChild->getStringAttribute("startupFileName");
+						if (compFile.exists())
+						{
+							ScopedPointer<XmlElement> composition;
+							composition = (XmlDocument::parse ( compFile ));
+							forEachXmlChildElement( *composition, compChild )
+							{
+								if ( compChild->hasTagName("generalInfo"))
+								{
+									resolution.x = compChild->getIntAttribute("width", 1920);
+									resolution.y = compChild->getIntAttribute("height", 1080);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
 	}
 	
 	if ( slices.size() == 0 )

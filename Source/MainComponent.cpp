@@ -112,6 +112,7 @@ StringArray MainContentComponent::getMenuBarNames()
 
 PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const juce::String &menuName)
 {
+	
 	PopupMenu menu;
 	
 	if (menuIndex == 0)
@@ -126,7 +127,7 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const juce::Strin
 		menu.addItem(5, "Save Chaser as...");
 	
 	}
-
+	
 	return menu;
 }
 
@@ -207,7 +208,10 @@ void MainContentComponent::loadAssFile()
 
 void MainContentComponent::loadDefaultAssFile()
 {
-	File advancedLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Resolume Arena 5/preferences/screensetup/advanced.xml";
+	//check for the Arena 5 preset
+	File advancedLocation;
+	
+	advancedLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Resolume Arena 5/preferences/screensetup/advanced.xml";
 	if ( advancedLocation.exists() )
 	{
 		if ( AlertWindow::showOkCancelBox(AlertWindow::AlertIconType::QuestionIcon,
@@ -215,10 +219,9 @@ void MainContentComponent::loadDefaultAssFile()
 										 "Would you like to load the current Arena setup file?",
 										 "OK", "Cancel") )
 		{
-			DBG("Trying to load Arena file...");
+			DBG("Trying to load Arena 5 file...");
 			
 			//try to get the file name of the xml that is currently loaded
-			XmlDocument xmlDoc ( advancedLocation );
 			ScopedPointer<XmlElement> xmlRoot (XmlDocument::parse ( advancedLocation ));
 			String advancedName = XmlParser::getAdvancedPresetNameFromRes5Xml( *xmlRoot );
 			
@@ -237,6 +240,28 @@ void MainContentComponent::loadDefaultAssFile()
 			}
 		}
 	}
+	//check for the Arena 4 preset
+	else
+	{
+		advancedLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Resolume Arena 4/preferences/config.xml";
+		if ( advancedLocation.exists() )
+		{
+		
+			if ( AlertWindow::showOkCancelBox(AlertWindow::AlertIconType::QuestionIcon,
+											  "Res 4 setup file found!",
+											  "Would you like to load the current Arena setup file?",
+											  "OK", "Cancel") )
+			{
+				DBG("Trying to load Arena 4 file...");
+				//this requires parsing of the config xml
+				if ( !parseAssXml( advancedLocation ))
+					throwLoadError();
+			}
+		}
+		
+	}
+	
+	
 }
 
 void MainContentComponent::reloadAssFile()
@@ -315,24 +340,22 @@ bool MainContentComponent::parseAssXml(File f)
 		}
 		
 		DBG("Loading: " + f.getFullPathName() );
-		//XmlDocument xmlDoc ( f );
-		
-		
+	
 		ScopedPointer<XmlElement> xmlRoot;
 		xmlRoot = (XmlDocument::parse ( f ));
-		
-		
 		
 		//see if we're dealing with a res 4 or res 5 ass file
 		//then try to parse it
 		bool succesfulParse = false;
 		
 		if (xmlRoot != nullptr && xmlRoot->hasTagName ("preset"))
-			succesfulParse = XmlParser::parseRes4Xml( *xmlRoot, slices );
+			succesfulParse = XmlParser::parseRes4Xml( *xmlRoot, slices, resolution );
 		else if ( xmlRoot != nullptr && xmlRoot->hasTagName("XmlState"))
 			succesfulParse = XmlParser::parseRes5Xml( *xmlRoot, slices, resolution );
 		else if ( xmlRoot != nullptr && xmlRoot->hasTagName("ScreenSetup") )
 			succesfulParse = XmlParser::parseRes5PrefXml( *xmlRoot, slices, resolution);
+		else if ( xmlRoot != nullptr && xmlRoot->hasTagName("avenue"))
+			succesfulParse = XmlParser::parseRes4ConfigXml( *xmlRoot, slices, resolution);
 
 		
 		//if the file was susccesfully parsed
