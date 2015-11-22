@@ -154,15 +154,16 @@ void Sequencer::setDefaultSequences()
 	//update the label
 	sequenceName->setText(sequenceNames[activeSequence], dontSendNotification);
 	
-	//always set the step to be the first step
-	stepper[0]->triggerClick();
-	
 	//let the listeners know
 	Component::BailOutChecker checker (this);
 	if (! checker.shouldBailOut())
 	{
+		listeners.callChecked ( checker, &Sequencer::Listener::sequenceSelected, activeSequence );
 		listeners.callChecked ( checker, &Sequencer::Listener::sequenceLengthChanged, numberOfSteps[ activeSequence ] );
 	}
+	
+	//always set the step to be the first step
+	stepper[0]->triggerClick();
 	
 	resized();
 }

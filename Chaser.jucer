@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="ZsFZkw" name="Chaser" projectType="guiapp" version="1.0.5"
+<JUCERPROJECT id="ZsFZkw" name="Chaser" projectType="guiapp" version="1.0.6"
               bundleIdentifier="nl.HybridVisuals.www" includeBinaryInAppConfig="1"
               jucerVersion="3.2.0" companyName="Hybrid Visuals" companyWebsite="www.hybridvisuals.nl"
               companyEmail="joris@hybridvisuals.nl">

@@ -120,8 +120,8 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const juce::Strin
 		menu.addItem(1, "Load Arena Setup");
 		menu.addItem(2, "Reload Arena Setup", xmlSequence->getAssFile() == File()? false: true );
 		menu.addSeparator();
-		
 		menu.addItem(3, "New Chaser");
+		menu.addSeparator();
 		menu.addItem(4, "Load Chaser");
 		//menu.addItem(5, "Save Chaser");
 		menu.addItem(5, "Save Chaser as...");
@@ -147,16 +147,22 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 				reloadAssFile();
 				break;
 			case 3:
-				if(saveAsXml())
-				{
-					xmlSequence->createFreshXml(version);
-					resolution = xmlSequence->getResolution();
-					//this will make sure nothing is loaded and everything is empty
-					clearGUI();
-					//try to load the default assfile
-					loadDefaultAssFile();
-				}
+			{
+				//create a fresh xml file
+				xmlSequence->createFreshXml(version);
+				//set the filename to DefaultChaserxml
+				File docDir = File::getSpecialLocation( File::userDocumentsDirectory );
+				File defaultChaseFile = docDir.getChildFile("Chaser/DefaultChaser.xml");
+				xmlSequence->setXmlFile( defaultChaseFile );
+				getTopLevelComponent()->setName(defaultChaseFile.getFileNameWithoutExtension());
+				//read out the resolution
+				resolution = xmlSequence->getResolution();
+				//this will make sure nothing is loaded and everything is empty
+				clearGUI();
+				//try to load the default assfile
+				loadDefaultAssFile();
 				break;
+			}
 			case 4:
 				loadXml();
 				break;
