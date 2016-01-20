@@ -52,6 +52,9 @@ public:
     String name;
 	bool enabled;
 	
+	String screen = "Screen 1";
+	int uniqueId = 0;
+	
 	
 	
     Array<Point<float>> inputRectPoints;

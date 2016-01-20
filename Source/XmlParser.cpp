@@ -164,6 +164,9 @@ bool XmlParser::parseRes4Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 	{
 		if ( presetNode->hasTagName("screen") )
 		{
+			String screenName = presetNode->getStringAttribute("name");
+			int screenUniqueId = presetNode->getIntAttribute("uniqueId");
+			
 			forEachXmlChildElement( *presetNode, screenNode )
 			{
 				if ( screenNode->hasTagName("slices") )
@@ -210,6 +213,9 @@ bool XmlParser::parseRes4Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 							if ( type == 0 )
 							{
 								Slice* slice = new Slice( name, enabled );
+								slice->screen = screenName;
+								slice->uniqueId = screenUniqueId;
+								
 								//create 4 points out of the ltrb data
 								for (int i = 0; i < 4; i++ )
 								{

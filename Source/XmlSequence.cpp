@@ -154,6 +154,9 @@ void XmlSequence::setPositionData(juce::XmlElement *sliceXml, Slice *slice)
 	sliceXml->setAttribute("name", slice->name);
 	sliceXml->setAttribute("enable", (int) slice->enabled );
 	
+	sliceXml->setAttribute("screenName", slice->screen);
+	sliceXml->setAttribute("screenUniqueId", slice->uniqueId );
+	
 	sliceXml->deleteAllChildElements();
 
 	XmlElement* inputRect = new XmlElement("inputRect");
@@ -259,6 +262,10 @@ Array<Slice> XmlSequence::getSlices()
 		forEachXmlChildElement(*positionData, slice)
 		{
 			Slice newSlice(slice->getStringAttribute("name", "Unnamed Slice"), slice->getIntAttribute("enable", 0) != 0 );
+			if ( slice->hasAttribute("screenName"))
+				newSlice.screen = slice->getStringAttribute("screenName");
+			if ( slice->hasAttribute("screenUniqueId"))
+				newSlice.uniqueId = slice->getIntAttribute("screenUniqueId");
 			forEachXmlChildElement(*slice, pointData)
 			{
 				forEachXmlChildElement(*pointData, point)
