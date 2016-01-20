@@ -54,6 +54,7 @@ public:
 	
 	void nextStep();
 	void previousStep();
+	void selectStep( int i );
 	
 private:
 	int activeButton;
@@ -71,6 +72,7 @@ private:
     
 	Array<int> numberOfSteps;
     ScopedPointer<Label> sequenceName;
+	ScopedPointer<Label> sequenceNumber;
     StringArray sequenceNames;
 	
 	ColourLookAndFeel claf;

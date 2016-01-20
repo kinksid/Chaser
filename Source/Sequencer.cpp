@@ -99,6 +99,19 @@ Sequencer::Sequencer()
     
     addAndMakeVisible(sequenceName);
 	
+	//sequence number label
+	sequenceNumber = new Label("sequencenumber");
+	sequenceNumber->setText( "1:", dontSendNotification);
+	sequenceNumber->setEditable(false);
+
+	
+	sequenceNumber->setColour(Label::outlineColourId, claf.outlineColour.darker());
+	sequenceNumber->setColour(Label::backgroundColourId, claf.backgroundColour);
+	sequenceNumber->setColour(Label::textColourId, claf.textColour.darker());
+
+	
+	addAndMakeVisible(sequenceNumber);
+	
 	setDefaultSequences();
 }
 
@@ -210,6 +223,7 @@ void Sequencer::buttonClicked (Button* b)
 		
 		//update the sequence name and redraw the component
 		sequenceName->setText( sequenceNames[ activeSequence ], dontSendNotification );
+		sequenceNumber->setText( String(activeSequence + 1) + ": ", dontSendNotification);
 		resized();
 		
 		//let the listeners know
@@ -299,6 +313,15 @@ void Sequencer::previousStep()
 
 }
 
+void Sequencer::selectStep(int i)
+{
+	if ( i < numberOfSteps[activeSequence] && i > -1 )
+	{
+		activeButton = i;
+		stepper[activeButton]->triggerClick();
+	}
+}
+
 void Sequencer::resized()
 {
 	
@@ -319,8 +342,8 @@ void Sequencer::resized()
 	play->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 1.8f, 0.225f, sequenceControlButtonWidth * 0.9f, 0.6f );
 	next->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 0.9f, 0.225f, sequenceControlButtonWidth * 0.9f, 0.6f );
     
-	
-	sequenceName->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 2.65f, 0.05f, sequenceControlButtonWidth * 2.6f, 0.24f );
+	sequenceNumber->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 2.65f, 0.05f, sequenceControlButtonWidth * 0.4f, 0.24f);
+	sequenceName->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 2.2f, 0.05f, sequenceControlButtonWidth * 2.15f, 0.24f );
 
 	lessSteps->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 2.7f, 0.75f, sequenceControlButtonWidth *  1.35f, 0.2f );
 	moreSteps->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 1.4f, 0.75f, sequenceControlButtonWidth *  1.35f, 0.2f );

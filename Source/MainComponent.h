@@ -83,6 +83,11 @@ public:
 	void throwLoadError();
 	void throwSaveError();
 	
+	void copyStep();
+	void pasteStep();
+	void copySequence();
+	void pasteSequence();
+	
 private:
 	ScopedPointer<MenuBarComponent> menuBar;
 	
@@ -90,6 +95,9 @@ private:
 	int currentSequence;
 	int currentSequenceLength;
 	Array<int> activeSlices;
+	Array<int> slicesToCopy;
+	Array<Array<int>> currentSequenceSlices;
+	String sequenceNameToCopy;
 	
     ScopedPointer<ColourLookAndFeel> laf;
     

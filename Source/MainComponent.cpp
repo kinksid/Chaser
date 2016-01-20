@@ -57,6 +57,10 @@ MainContentComponent::MainContentComponent()
 	
 	//start a timer to update the window name
 	startTimer( 1000 );
+	
+	slicesToCopy.clear();
+	currentSequenceSlices.clear();
+	sequenceNameToCopy = String().empty;
 }
 
 MainContentComponent::~MainContentComponent()
@@ -68,13 +72,12 @@ MainContentComponent::~MainContentComponent()
 	#if JUCE_MAC
 	setMacMainMenu(nullptr);
 	#endif
+	slicesToCopy.clear();
+	currentSequenceSlices.clear();
 }
 
 void MainContentComponent::timerCallback()
 {
-	
-	
-	
 	//check if we had a file previously loaded
 	//if so, load that bad boy
 	//if not, load a new one called DefaultXml
@@ -106,7 +109,7 @@ void MainContentComponent::timerCallback()
 
 StringArray MainContentComponent::getMenuBarNames()
 {
-	const char* const names[] = { "File", nullptr };
+	const char* const names[] = { "File", "Edit", nullptr };
 	return StringArray (names);
 }
 
@@ -123,9 +126,16 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const juce::Strin
 		menu.addItem(3, "New Chaser");
 		menu.addSeparator();
 		menu.addItem(4, "Load Chaser");
-		//menu.addItem(5, "Save Chaser");
 		menu.addItem(5, "Save Chaser as...");
+	}
 	
+	else if ( menuIndex == 1 )
+	{
+		menu.addItem(1, "Copy Step " + KeyPress('c', ModifierKeys::commandModifier, NULL).getTextDescriptionWithIcons());
+		menu.addItem(2, "Paste Step " + KeyPress('v', ModifierKeys::commandModifier, NULL).getTextDescriptionWithIcons());
+		menu.addSeparator();
+		menu.addItem(3, "Copy Sequence");
+		menu.addItem(4, "Paste Sequence");
 	}
 	
 	return menu;
@@ -150,15 +160,19 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 			{
 				//create a fresh xml file
 				xmlSequence->createFreshXml(version);
+				
 				//set the filename to DefaultChaserxml
 				File docDir = File::getSpecialLocation( File::userDocumentsDirectory );
 				File defaultChaseFile = docDir.getChildFile("Chaser/DefaultChaser.xml");
 				xmlSequence->setXmlFile( defaultChaseFile );
 				getTopLevelComponent()->setName(defaultChaseFile.getFileNameWithoutExtension());
+				
 				//read out the resolution
 				resolution = xmlSequence->getResolution();
+				
 				//this will make sure nothing is loaded and everything is empty
 				clearGUI();
+				
 				//try to load the default assfile
 				loadDefaultAssFile();
 				break;
@@ -174,6 +188,29 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 				saveAsXml();
 				break;
 				 */
+
+			case 0:
+			default:
+				return;
+		}
+	}
+	
+	else if ( topLevelMenuIndex == 1 )
+	{
+		switch ( menuItemID )
+		{
+			case 1:
+				copyStep();
+				break;
+			case 2:
+				pasteStep();
+				break;
+			case 3:
+				copySequence();
+				break;
+			case 4:
+				pasteSequence();
+				break;
 
 			case 0:
 			default:
@@ -523,7 +560,6 @@ void MainContentComponent::sequenceLengthChanged(int newSequenceLength)
 		xmlSequence->setNumberOfSteps( currentSequence, currentSequenceLength);
 		saveXml();
 	}
-	
 }
 
 
@@ -539,8 +575,57 @@ bool MainContentComponent::keyPressed(const juce::KeyPress &key, juce::Component
 	{
 		sequencer->nextStep();
 	}
+	else if ( key == KeyPress ('c', ModifierKeys::commandModifier, NULL) )
+	{
+		copyStep();
+	}
+	else if ( key ==  KeyPress ('v', ModifierKeys::commandModifier, NULL))
+	{
+		pasteStep();
+	}
 		
 	return true;
+}
+
+void MainContentComponent::copyStep()
+{
+	slicesToCopy = activeSlices;
+}
+
+void MainContentComponent::pasteStep()
+{
+	sliceClicked( slicesToCopy );
+	previewWindow->setSlices( activeSlices );
+}
+
+void MainContentComponent::copySequence()
+{
+	//copy the name
+	sequenceNameToCopy = xmlSequence->getSequenceNames()[currentSequence];
+	//create an array with an array
+	currentSequenceSlices.clear();
+	for ( int i = 0; i < currentSequenceLength; i++ )
+	{
+		Array<int> step = xmlSequence->getStep(currentSequence, i);
+		currentSequenceSlices.add( step );
+	}
+}
+
+void MainContentComponent::pasteSequence()
+{
+	sequenceNameChanged( String(sequenceNameToCopy + " copy"));
+	sequenceLengthChanged( currentSequenceSlices.size() );
+	for ( int i = 0; i < currentSequenceSlices.size(); i++ )
+	{
+		stepSelected( i );
+		sliceClicked( currentSequenceSlices[i] );
+		previewWindow->setSlices( activeSlices );
+	}
+	
+	//update the views
+	sequencer->selectStep( 0 );
+	sequencer->setSequenceNames ( xmlSequence->getSequenceNames() );
+	sequencer->setSequenceLengths ( xmlSequence->getSequenceLengths() );
 }
 
 void MainContentComponent::throwLoadError()
