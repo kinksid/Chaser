@@ -92,7 +92,7 @@ void SliceList::addSlices( OwnedArray<Slice>& slices )
 	}
 	
 	//now go through all the arrays again and create sections out of them
-	for ( int i = 0; i < sections.size(); i++ )
+	for ( int i = sections.size() - 1; i >= 0 ; i-- )
 		panel.addSection( sections[i]->name, sections[i]->array );
 	
     updateStates();
