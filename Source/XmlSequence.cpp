@@ -254,18 +254,18 @@ void XmlSequence::createFreshXml( String version )
     clearSlices(); 
 }
 
-Array<Slice> XmlSequence::getSlices()
+Array<Slice*> XmlSequence::getSlices()
 {
-    Array<Slice> sliceArray;
+    Array<Slice*> sliceArray;
     if ( positionData != nullptr )
     {
 		forEachXmlChildElement(*positionData, slice)
 		{
-			Slice newSlice(slice->getStringAttribute("name", "Unnamed Slice"), slice->getIntAttribute("enable", 0) != 0 );
+			Slice* newSlice = new Slice (slice->getStringAttribute("name", "Unnamed Slice"), slice->getIntAttribute("enable", 0) != 0 );
 			if ( slice->hasAttribute("screenName"))
-				newSlice.screen = slice->getStringAttribute("screenName");
+				newSlice->screen = slice->getStringAttribute("screenName");
 			if ( slice->hasAttribute("screenUniqueId"))
-				newSlice.uniqueId = slice->getIntAttribute("screenUniqueId");
+				newSlice->uniqueId = slice->getIntAttribute("screenUniqueId");
 			forEachXmlChildElement(*slice, pointData)
 			{
 				forEachXmlChildElement(*pointData, point)
@@ -275,15 +275,15 @@ Array<Slice> XmlSequence::getSlices()
 					Point<float> newPoint(x,y);
 					if ( pointData->getTagName() == "inputRect" )
 					{
-						newSlice.inputRectOrientation = pointData->getStringAttribute("orientation", "0.0").getFloatValue();
-						newSlice.inputRectPoints.add(newPoint);
+						newSlice->inputRectOrientation = pointData->getStringAttribute("orientation", "0.0").getFloatValue();
+						newSlice->inputRectPoints.add(newPoint);
 					}
 					if ( pointData->getTagName() == "mask" )
-						newSlice.maskPoints.add(newPoint);
+						newSlice->maskPoints.add(newPoint);
 					if ( pointData->getTagName() == "maskRect" )
 					{
-						newSlice.maskRectOrientation = pointData->getStringAttribute("orientation", "0.0").getFloatValue();
-						newSlice.maskRectPoints.add(newPoint);
+						newSlice->maskRectOrientation = pointData->getStringAttribute("orientation", "0.0").getFloatValue();
+						newSlice->maskRectPoints.add(newPoint);
 					}
 				}
 			}

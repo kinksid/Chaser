@@ -14,18 +14,20 @@
 //==============================================================================
 SliceList::SliceList()
 {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
+    /*
     sliceList.setModel( this );
     sliceList.setColour(ListBox::backgroundColourId, Colours::transparentWhite );
     sliceList.setMultipleSelectionEnabled(true);
     sliceList.setClickingTogglesRowSelection(true);
     addAndMakeVisible( sliceList );
+	 */
+	
+	addAndMakeVisible( panel );
 }
 
 SliceList::~SliceList()
 {
-    clearSlices();
+	//clearSlices();
 }
 
 
@@ -41,10 +43,58 @@ void SliceList::paint (Graphics& g)
 }
 
 
-void SliceList::addSlice( Slice* slice )
+
+void SliceList::addSlices( OwnedArray<Slice>& slices )
 {
-    slices.add( slice );
-    sliceList.updateContent();
+	//slices.add( slice );
+	//sliceList.updateContent();
+	//slices.addArray( slices_, slices_.size());
+	
+	
+	
+	clear();
+	
+	
+	for ( int i = 0; i < slices.size(); i++ )
+	{
+		int id = slices[i]->uniqueId;
+		
+		//make a new section for each uniqued id
+		if ( !uniqueIds.contains( id ))
+		{
+			uniqueIds.add(id);
+			NamedArray* newSection = new NamedArray();
+			DBG(slices[i]->screen);
+			newSection->name = slices[i]->screen;
+			newSection->uniqueId = id;
+			sections.add ( newSection );
+		}
+	}
+	
+	//now go through the slices again
+	//if their unique id matches the sections
+	//add it to the array for that section
+	for ( int i = 0; i < slices.size(); i++ )
+	{
+		int id = slices[i]->uniqueId;
+		
+		for ( int j = 0; j < sections.size(); j++ )
+		{
+			if ( id == sections[j]->uniqueId )
+			{
+				//create a new BooleanPropery
+				String name = slices[i]->name;
+				SlicePropertyButton* newComponent = new SlicePropertyButton( name );
+				newComponent->setState( slices[i]->enabled );
+				sections[j]->array.add( newComponent );
+			}
+		}
+	}
+	
+	//now go through all the arrays again and create sections out of them
+	for ( int i = 0; i < sections.size(); i++ )
+		panel.addSection( sections[i]->name, sections[i]->array );
+	
     updateStates();
 }
 
@@ -52,22 +102,28 @@ void SliceList::updateStates()
 {
     for ( int i = 0; i < slices.size(); i++ )
     {
+		/*
         if ( slices[i]->enabled )
             sliceList.selectRow( i, true, false );
         else
             sliceList.deselectRow( i );
+		 */
 
     }
-    sliceList.repaint();
-
+	//  sliceList.repaint();
+	resized();
 }
 
-void SliceList::clearSlices()
+
+void SliceList::clear()
 {
-    slices.clear(false);
-	sliceList.updateContent();
+	uniqueIds.clear();
+	sections.clear();
+	panel.clear();
 }
 
+
+/*
 int SliceList::getNumRows()
 {
     return slices.size();
@@ -81,8 +137,6 @@ void SliceList::listBoxItemClicked (int row, const MouseEvent&)
 
 void SliceList::paintListBoxItem (int rowNumber, Graphics& g, int width, int height, bool rowIsSelected)
 {
-
-
     Rectangle <int> rect ( width, height );
     rect.reduce( 1, 1 );
     
@@ -103,13 +157,14 @@ void SliceList::paintListBoxItem (int rowNumber, Graphics& g, int width, int hei
 		g.drawFittedText(text, 4, 0, width - 4, height, Justification::centredLeft, true);
 	}
 }
+ */
 
 void SliceList::resized()
 {
     // This method is where you should set the bounds of any child
     // components that your component contains..
     BorderSize<int> b = {5,5,5,5};
-    sliceList.setBoundsInset(b);
+	panel.setBoundsInset(b);
     
 
 

@@ -18,6 +18,8 @@
 //==============================================================================
 /*
 */
+
+/*
 class SliceList    : public Component, public ListBoxModel, public ChangeBroadcaster
 {
 public:
@@ -41,6 +43,79 @@ private:
 	ColourLookAndFeel claf;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SliceList)
+};
+ */
+
+
+
+class SlicePropertyButton : public BooleanPropertyComponent
+{
+public:
+	SlicePropertyButton(String n) : BooleanPropertyComponent(n, n, n )
+	{
+		state = false;
+	}
+	~SlicePropertyButton(){}
+	
+	void buttonClicked ( Button* b ) override
+	{
+		setState( !getState() );
+		b->setToggleState( getState(), dontSendNotification );
+	}
+	
+	void setState (bool newState) override
+	{
+		state = newState;
+	}
+	
+	bool getState() const override
+	{
+		return state;
+	}
+	
+	
+private:
+	
+	bool state;
+	
+	
+};
+
+class SliceList : public Component
+{
+public:
+	SliceList();
+	~SliceList();
+	
+	void paint(Graphics&) override;
+	void resized() override;
+	
+	void addSlices( OwnedArray<Slice>& slices );
+	void clear();
+	void updateStates();
+private:
+	struct NamedArray
+	{
+	public:
+		NamedArray() {}
+		~NamedArray() {}
+		
+		String name;
+		int uniqueId;
+		Array<PropertyComponent*> array;
+		
+	};
+	Array<Slice*> slices;
+	ColourLookAndFeel claf;
+	Array<int> uniqueIds;
+	OwnedArray<NamedArray> sections;
+	
+	PropertyPanel panel;
+	
+	
+	
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SliceList)
+	
 };
 
 

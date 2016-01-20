@@ -28,7 +28,7 @@ public:
     void clearSlices();
     void addSlice ( Slice* slice );
 	void updateSlice ( Slice* slice, int i);
-    Array<Slice> getSlices();
+    Array<Slice*> getSlices();
 	
 	StringArray getSequenceNames();
 	void setSequenceName ( int sequenceNumber, String name );

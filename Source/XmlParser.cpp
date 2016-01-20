@@ -164,9 +164,6 @@ bool XmlParser::parseRes4Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 	{
 		if ( presetNode->hasTagName("screen") )
 		{
-			String screenName = presetNode->getStringAttribute("name");
-			int screenUniqueId = presetNode->getIntAttribute("uniqueId");
-			
 			forEachXmlChildElement( *presetNode, screenNode )
 			{
 				if ( screenNode->hasTagName("slices") )
@@ -213,8 +210,7 @@ bool XmlParser::parseRes4Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 							if ( type == 0 )
 							{
 								Slice* slice = new Slice( name, enabled );
-								slice->screen = screenName;
-								slice->uniqueId = screenUniqueId;
+								
 								
 								//create 4 points out of the ltrb data
 								for (int i = 0; i < 4; i++ )
@@ -334,6 +330,9 @@ bool XmlParser::parseRes5PrefXml(juce::XmlElement& screenSetup, OwnedArray<Slice
 		{
 			if ( child->hasTagName("Screen") )
 			{
+				String screenName = child->getStringAttribute("name");
+				int screenUniqueId = child->getIntAttribute("uniqueId");
+				
 				if ( !child->getStringAttribute("name").containsIgnoreCase("scaling") )
 				{
 					XmlElement* layers = child->getChildByName("layers");
@@ -432,7 +431,8 @@ bool XmlParser::parseRes5PrefXml(juce::XmlElement& screenSetup, OwnedArray<Slice
 										}
 									}
 								}
-								
+								newSlice->screen = screenName;
+								newSlice->uniqueId = screenUniqueId;
 								slices.insert(0, newSlice);
 								//slices.add( newSlice );
 							}
@@ -494,6 +494,8 @@ bool XmlParser::parseRes5Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
             {
                 if ( child->hasTagName("Screen") )
                 {
+					String screenName = child->getStringAttribute("name");
+					int screenUniqueId = child->getIntAttribute("uniqueId");
 					if ( !child->getStringAttribute("name").containsIgnoreCase("scaling") )
 					{
 						XmlElement* layers = child->getChildByName("layers");
@@ -592,7 +594,8 @@ bool XmlParser::parseRes5Xml(XmlElement& xmlTreeToParse, OwnedArray<Slice>& slic
 											}
 										}
 									}
-									
+									newSlice->screen = screenName;
+									newSlice->uniqueId = screenUniqueId;
 									slices.insert(0, newSlice);
 									//slices.add( newSlice );
 								}

@@ -52,7 +52,7 @@ public:
     String name;
 	bool enabled;
 	
-	String screen = "Screen 1";
+	String screen = "Default Screen";
 	int uniqueId = 0;
 	
 	

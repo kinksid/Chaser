@@ -25,7 +25,7 @@ MainContentComponent::MainContentComponent()
     
     sliceList = new SliceList();
     addAndMakeVisible(sliceList);
-    sliceList->addChangeListener(this);
+	//sliceList->addChangeListener(this);
     
     sequencer = new Sequencer();
     addAndMakeVisible(sequencer);
@@ -225,7 +225,7 @@ void MainContentComponent::clearGUI()
 	//empty the xmlSequence
 	//reset the sequencer
 	
-	sliceList->clearSlices();
+	sliceList->clear();
 	previewWindow->clearSlices();
 	xmlSequence->clearSlices();
 	sequencer->setDefaultSequences();
@@ -407,25 +407,26 @@ bool MainContentComponent::parseAssXml(File f)
 			//if we're loading the same file, get the enabled states from the chaserxml
 			if ( loadingSameFile )
 			{
-				Array<Slice> prevSlices = xmlSequence->getSlices() ;
+				Array<Slice*> prevSlices = xmlSequence->getSlices() ;
 				for ( int i = 0; i < prevSlices.size(); i++ )
 				{
 					if ( i < slices.size() )
-						slices[i]->enabled = prevSlices[i].enabled;
+						slices[i]->enabled = prevSlices[i]->enabled;
 				}
 			}
 			
 			//update the previewWindow and sliceList
-			sliceList->clearSlices();
+			//sliceList->clearSlices();
 			previewWindow->clearSlices();
 			xmlSequence->clearSlices();
 			
 			for ( int i = 0; i < slices.size(); i++ )
 			{
-				sliceList->addSlice( slices[i] );
+				
 				previewWindow->addSlice( slices[i] );
 				xmlSequence->addSlice ( slices[i] );
 			}
+			sliceList->addSlices( slices );
 			
 			previewWindow->resized();
 			
@@ -462,19 +463,21 @@ bool MainContentComponent::parseAssXml(File f)
 
 void MainContentComponent::reloadSliceData()
 {
-	sliceList->clearSlices();
+	//sliceList->clearSlices();
 	previewWindow->clearSlices();
 	slices.clear();
 	
 	//load the slices from the xml if they exist
-	Array<Slice> slicesInXml = xmlSequence->getSlices();
+	Array<Slice*> slicesInXml = xmlSequence->getSlices();
 	for ( int i = 0; i < slicesInXml.size(); i++ )
 	{
-		Slice* s = new Slice ( slicesInXml[i] );
+		Slice* s = slicesInXml[i];
 		previewWindow->addSlice (s) ;
-		sliceList->addSlice( s );
+		
 		slices.add(s);
 	}
+	
+	sliceList->addSlices( slices );
 	
 	//update the view for the first step
 	activeSlices = xmlSequence->getStep( currentSequence, currentStep );
@@ -491,6 +494,7 @@ void MainContentComponent::reloadSliceData()
 
 void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
 {
+	/*
     if ( source == sliceList )
     {
         for ( int i = 0; i < slices.size(); i++ )
@@ -501,6 +505,7 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
 		
 		saveXml();
     }
+	 */
 }
 
 void MainContentComponent::copierClicked(int multiplier)
