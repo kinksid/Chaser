@@ -192,7 +192,10 @@ void Sequencer::buttonClicked (Button* b)
     if ( b == play )
     {
         if ( b->getToggleState())
+		{
+			numberOfLoopsMade = 0;
             startTimer(200);
+		}
         else
             stopTimer();
     }
@@ -300,7 +303,20 @@ void Sequencer::timerCallback()
 void Sequencer::nextStep()
 {
 	activeButton++;
-	activeButton = int(fmod( activeButton, numberOfSteps[activeSequence] ));
+	
+	//rollover
+	if ( activeButton > numberOfSteps[activeSequence] - 1)
+	{
+		activeButton = 0;
+		numberOfLoopsMade++;
+		
+		//DJAktion is a little bitch
+		if ( numberOfLoopsMade > 3 )
+		{
+			play->triggerClick();
+		}
+	}
+	
 	stepper[activeButton]->triggerClick();
 }
 
