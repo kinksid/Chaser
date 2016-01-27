@@ -84,7 +84,8 @@ void SliceList::addSlices( OwnedArray<Slice>& slices )
 			{
 				//create a new BooleanPropery
 				String name = slices[i]->name;
-				SlicePropertyButton* newComponent = new SlicePropertyButton( name );
+				SlicePropertyButton* newComponent = new SlicePropertyButton( slices[i] );
+				newComponent->addListener(this);
 				newComponent->setState( slices[i]->enabled );
 				sections[j]->array.add( newComponent );
 			}
@@ -96,6 +97,15 @@ void SliceList::addSlices( OwnedArray<Slice>& slices )
 		panel.addSection( sections[i]->name, sections[i]->array );
 	
     updateStates();
+}
+
+void SliceList::sliceToggled()
+{
+
+	Component::BailOutChecker checker (this);
+	if (! checker.shouldBailOut())
+		listeners.callChecked ( checker, &SliceList::Listener::sliceVisibilityChanged );
+
 }
 
 void SliceList::updateStates()

@@ -51,6 +51,7 @@ public:
     
     String name;
 	bool enabled;
+	bool shouldDrawInPreview;
 	
 	String screen = "Default Screen";
 	int uniqueId = 0;

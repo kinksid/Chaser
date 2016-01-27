@@ -27,7 +27,8 @@
 */
 class MainContentComponent   :  public Component,
 								public MenuBarModel,
-								public ChangeListener,
+//public ChangeListener,
+								public SliceList::Listener,
 								public Sequencer::Listener,
 								public Preview::Listener,
 								public Copier::Listener,
@@ -42,7 +43,8 @@ public:
 
     void resized() override;
 	
-    virtual void changeListenerCallback (ChangeBroadcaster* source) override;
+	//virtual void changeListenerCallback (ChangeBroadcaster* source) override;
+	virtual void sliceVisibilityChanged() override;
 	
 	virtual void timerCallback() override;
 	

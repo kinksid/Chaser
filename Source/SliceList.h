@@ -51,9 +51,9 @@ private:
 class SlicePropertyButton : public BooleanPropertyComponent
 {
 public:
-	SlicePropertyButton(String n) : BooleanPropertyComponent(n, n, n )
+	SlicePropertyButton(Slice* slice) : BooleanPropertyComponent(slice->name, slice->name, slice->name ), slice(slice)
 	{
-		state = false;
+		state = slice->enabled;
 	}
 	~SlicePropertyButton(){}
 	
@@ -61,6 +61,11 @@ public:
 	{
 		setState( !getState() );
 		b->setToggleState( getState(), dontSendNotification );
+		slice->enabled = getState();
+		
+		Component::BailOutChecker checker (this);
+		if (! checker.shouldBailOut())
+			listeners.callChecked ( checker, &SlicePropertyButton::Listener::sliceToggled );
 	}
 	
 	void setState (bool newState) override
@@ -73,15 +78,28 @@ public:
 		return state;
 	}
 	
+	class Listener
+	{
+		
+	public:
+		virtual ~Listener() {}
+		virtual void sliceToggled () = 0;
+		
+	};
+	
+	void addListener ( Listener* const l ) { listeners.add ( l ); }
+	void removeListener ( Listener* const l ) { listeners.remove (l ); }
+	
 	
 private:
-	
+	Slice* slice;
 	bool state;
 	
+	ListenerList<Listener> listeners;
 	
 };
 
-class SliceList : public Component
+class SliceList : public Component, public SlicePropertyButton::Listener
 {
 public:
 	SliceList();
@@ -93,6 +111,23 @@ public:
 	void addSlices( OwnedArray<Slice>& slices );
 	void clear();
 	void updateStates();
+	
+	class Listener
+	{
+		
+	public:
+		virtual ~Listener() {}
+		virtual void sliceVisibilityChanged () = 0;
+		
+	};
+	
+	void addListener ( Listener* const l ) { listeners.add ( l ); }
+	void removeListener ( Listener* const l ) { listeners.remove (l ); }
+	
+	virtual void sliceToggled () override;
+	
+
+	
 private:
 	struct NamedArray
 	{
@@ -111,6 +146,8 @@ private:
 	OwnedArray<NamedArray> sections;
 	
 	PropertyPanel panel;
+	
+	ListenerList<Listener> listeners;
 	
 	
 	

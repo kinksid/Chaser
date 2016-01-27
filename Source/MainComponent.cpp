@@ -25,7 +25,7 @@ MainContentComponent::MainContentComponent()
     
     sliceList = new SliceList();
     addAndMakeVisible(sliceList);
-	//sliceList->addChangeListener(this);
+	sliceList->addListener(this);
     
     sequencer = new Sequencer();
     addAndMakeVisible(sequencer);
@@ -491,22 +491,17 @@ void MainContentComponent::reloadSliceData()
 }
 
 
-
-void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
+void MainContentComponent::sliceVisibilityChanged()
 {
-	/*
-    if ( source == sliceList )
-    {
-        for ( int i = 0; i < slices.size(); i++ )
-        {
-			xmlSequence->updateSlice (slices[i], i);
-            previewWindow->update(slices[i], i );
-        }
-		
-		saveXml();
-    }
-	 */
+	for ( int i = 0; i < slices.size(); i++ )
+	{
+		xmlSequence->updateSlice (slices[i], i);
+		previewWindow->update(slices[i], i );
+	}
+	
+	saveXml();
 }
+
 
 void MainContentComponent::copierClicked(int multiplier)
 {
