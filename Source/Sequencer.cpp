@@ -15,10 +15,10 @@
 //==============================================================================
 Sequencer::Sequencer()
 {
-
-    for ( int i = 0; i < 16; i++ )
+	int numberOfButtons = 16;
+    for ( int i = 0; i < numberOfButtons; i++ )
     {
-        //create 16 buttons for the step sequencer
+        //create buttons for the step sequencer
         Button* b = new TextButton( String (i + 1) );
         b->setColour(TextButton::buttonColourId, claf.backgroundColour);
         b->setColour(TextButton::buttonOnColourId, claf.primaryColour);
@@ -26,20 +26,14 @@ Sequencer::Sequencer()
         b->setClickingTogglesState(true);
         if ( i == 0 )
             b->setConnectedEdges(2);
-        if ( i > 0 && i < 15 )
+        if ( i > 0 && i < numberOfButtons - 1 )
             b->setConnectedEdges(3);
-        if ( i == 15 )
+        if ( i == numberOfButtons - 1 )
             b->setConnectedEdges(1);
         b->addListener(this);
         addAndMakeVisible(b);
         stepper.add(b);
-    }
-
-	for( int i = 0; i < 16; i++ )
-	{
-		
-	}
-	
+    }	
 	
 	//set the active vars and turn on the first step
     activeButton = 0;
@@ -191,7 +185,7 @@ void Sequencer::buttonClicked (Button* b)
 {
     if ( b == play )
     {
-        if ( b->getToggleState())
+        if ( b->getToggleState() )
 		{
 			numberOfLoopsMade = 0;
             startTimer(200);
@@ -255,7 +249,7 @@ void Sequencer::buttonClicked (Button* b)
 				stepper[ numberOfSteps[ activeSequence ] -1 ]->triggerClick();
 		}
 
-		else if( b == moreSteps && numberOfSteps[ activeSequence ] < 16 )
+		else if( b == moreSteps && numberOfSteps[ activeSequence ] < 100 )
 		{
 			//increase the number of steps in the active sequence
 			numberOfSteps.set( activeSequence, numberOfSteps[ activeSequence ] + 1 );
@@ -311,7 +305,7 @@ void Sequencer::nextStep()
 		numberOfLoopsMade++;
 		
 		//DJAktion is a little bitch
-		if ( numberOfLoopsMade > 3 )
+		if ( numberOfLoopsMade > 3 && play->getToggleState() )
 		{
 			play->triggerClick();
 		}
