@@ -7,7 +7,9 @@
 */
 
 #include "MainComponent.h"
-#include "XmlParser.h"
+#include "ChaserXmlParser.h"
+#include "ResXmlParser.h"
+#include "FileHelper.h"
 
 
 //==============================================================================
@@ -36,7 +38,7 @@ MainContentComponent::MainContentComponent()
 	copier->addListener(this);
 	
 	//create a sequence and set the oldest version it will correctly load
-	xmlSequence = new XmlSequence( "0.0.1" );
+	//	xmlSequence = new XmlSequence( "0.0.1" );
 
 	//add a menu bar
 	menuBar = new MenuBarComponent (this);
@@ -53,6 +55,9 @@ MainContentComponent::MainContentComponent()
 	
 	addKeyListener(this);
 	
+	chaseManager = new ChaseManager();
+	sliceManager = new SliceManager();
+	
 	setSize (1280, 720);
 	
 	//start a timer to update the window name
@@ -68,43 +73,61 @@ MainContentComponent::~MainContentComponent()
     slices.clear();
     previewWindow = nullptr;
     sliceList = nullptr;
-    xmlSequence = nullptr;
+	//    xmlSequence = nullptr;
 	#if JUCE_MAC
 	setMacMainMenu(nullptr);
 	#endif
 	slicesToCopy.clear();
 	currentSequenceSlices.clear();
+	
+	chaseManager = nullptr;
+	sliceManager = nullptr;
 }
 
 void MainContentComponent::timerCallback()
 {
-	//check if we had a file previously loaded
+	stopTimer();
+	/*
+	//check if we have a Chaser file previously saved
 	//if so, load that bad boy
-	//if not, load a new one called DefaultXml
-	File savedFile = xmlSequence->getXmlFileFromPreferences();
-	if (savedFile != File() && savedFile.exists() )
+	//File savedFile = xmlSequence->getXmlFileFromPreferences();
+	File prefFile = fileHelper->getPreferencesFile();
+	File lastUsedChaser = fileHelper->getLastUsedChaserFile( prefFile );
+	
+	if (lastUsedChaser != File() && lastUsedChaser.exists() )
 	{
-		xmlSequence->loadXmlFile(savedFile);
+		ChaserXmlParser::parseResolution( lastUsedChaser, resolution );
 		//this will return 1920x1080 if no resolution was saved
 		resolution = xmlSequence->getResolution();
 		reloadSliceData();
 		//if something goes wrong here, fuck it
 	}
+	
+	
 	else
+	  */
 	{
-		xmlSequence->createFreshXml( version );
-		resolution = xmlSequence->getResolution();
-		saveXml();
-		//try to load the default
-		loadDefaultAssFile();
+//		xmlSequence->createFreshXml( version );
+//		resolution = xmlSequence->getResolution();
+//		saveXml();
+		DBG( sliceManager->getSlices().size() );
+		//see if there are any ass files
+		//if so, load their slices into the slice mananger
+		File assFile = FileHelper::getAssFileAutomagically();
+		//create an array to pass the slice data into
+		//sliceManager will eventually become owner of this array
+		ResXmlParser::parseAssXml( assFile, sliceManager->getSlices(), sliceManager->getResolution());
+		
+		DBG( sliceManager->getSlices().size() );
+		//loadDefaultAssFile();
 	}
 	//set the name
-	getTopLevelComponent()->setName( xmlSequence->getXmlFile().getFileNameWithoutExtension());
+	//	getTopLevelComponent()->setName( xmlSequence->getXmlFile().getFileNameWithoutExtension());
 	
 	//resize to update preview window
 	resized();
 	
-	stopTimer();
+	
 }
 
 StringArray MainContentComponent::getMenuBarNames()
@@ -121,7 +144,7 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const juce::Strin
 	if (menuIndex == 0)
 	{
 		menu.addItem(1, "Load Arena Setup");
-		menu.addItem(2, "Reload Arena Setup", xmlSequence->getAssFile() == File()? false: true );
+		menu.addItem(2, "Reload Arena Setup", false /*xmlSequence->getAssFile() == File()*/? false: true );
 		menu.addSeparator();
 		menu.addItem(3, "New Chaser");
 		menu.addSeparator();
@@ -148,16 +171,21 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 		switch ( menuItemID )
 		{
 			case 1:
+				/*
 				xmlSequence->createFreshXml(version);
 				resolution = xmlSequence->getResolution();
 				loadAssFile();
 				saveXml();
+				 */
 				break;
 			case 2:
+				/*
 				reloadAssFile();
+				 */
 				break;
 			case 3:
 			{
+				/*
 				//create a fresh xml file
 				xmlSequence->createFreshXml(version);
 				
@@ -175,6 +203,7 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 				
 				//try to load the default assfile
 				loadDefaultAssFile();
+				 */
 				break;
 			}
 			case 4:
@@ -227,103 +256,28 @@ void MainContentComponent::clearGUI()
 	
 	sliceList->clear();
 	previewWindow->clearSlices();
-	xmlSequence->clearSlices();
+	//xmlSequence->clearSlices();
 	sequencer->setDefaultSequences();
 	resized();
 }
 
 
-void MainContentComponent::loadAssFile()
-{
-	//first check 5, then check 4
-	File presetsLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Resolume Arena 5/presets/screensetup/";
-	if ( !presetsLocation.exists() )
-		presetsLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Resolume Arena 4/presets/screensetup/";
-	
-	FileChooser fc ( "Pick an Arena setup file...", presetsLocation, "*.xml", true );
-	if ( fc.browseForFileToOpen() )
-	{
-		File f = fc.getResult();
-		if (!parseAssXml( f ) )
-			throwLoadError();
-	}
-}
 
-void MainContentComponent::loadDefaultAssFile()
-{
-	//check for the Arena 5 preset
-	File advancedLocation;
-	
-	advancedLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Resolume Arena 5/preferences/screensetup/advanced.xml";
-	if ( advancedLocation.exists() )
-	{
-		if ( AlertWindow::showOkCancelBox(AlertWindow::AlertIconType::QuestionIcon,
-										 "Res 5 setup file found!",
-										 "Would you like to load the current Arena setup file?",
-										 "OK", "Cancel") )
-		{
-			DBG("Trying to load Arena 5 file...");
-			
-			//try to get the file name of the xml that is currently loaded
-			ScopedPointer<XmlElement> xmlRoot (XmlDocument::parse ( advancedLocation ));
-			String advancedName = XmlParser::getAdvancedPresetNameFromRes5Xml( *xmlRoot );
-			
-			//if it's got a name, parse and load that file
-			if ( advancedName != String().empty )
-			{
-				File preset = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Resolume Arena 5/presets/screensetup/" + advancedName + ".xml";
-				if (!parseAssXml( preset ))
-					throwLoadError();
-			}
-			else
-			{
-				//try to load the information in the advanced file itself
-				if(!parseAssXml( advancedLocation ))
-					throwLoadError();
-			}
-		}
-	}
-	//check for the Arena 4 preset
-	else
-	{
-		advancedLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Resolume Arena 4/preferences/config.xml";
-		if ( advancedLocation.exists() )
-		{
-		
-			if ( AlertWindow::showOkCancelBox(AlertWindow::AlertIconType::QuestionIcon,
-											  "Res 4 setup file found!",
-											  "Would you like to load the current Arena setup file?",
-											  "OK", "Cancel") )
-			{
-				DBG("Trying to load Arena 4 file...");
-				//this requires parsing of the config xml
-				if ( !parseAssXml( advancedLocation ))
-					throwLoadError();
-			}
-		}
-		
-	}
-	
-	
-}
-
-void MainContentComponent::reloadAssFile()
-{
-	if (!parseAssXml( xmlSequence->getAssFile() ))
-		throwLoadError();
-}
 
 void MainContentComponent::saveXml()
 {
+	/*
 	if (!xmlSequence->save())
 	{
 		DBG("SAVE ERROR!");
 		throwSaveError();
 	}
+	 */
 }
 
 bool MainContentComponent::saveAsXml()
 {
+	/*
 	//open a save dialog
 	File chaserLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Chaser/";
 	if (!chaserLocation.exists())
@@ -339,11 +293,13 @@ bool MainContentComponent::saveAsXml()
 		getTopLevelComponent()->setName(f.getFileNameWithoutExtension());
 		return true;
 	}
+	 */
 	return false;
 }
 
 void MainContentComponent::loadXml()
 {
+	/*
 	//open a load dialog
 	File chaserLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Chaser/";
 	FileChooser fc ( "Pick a Chaser file...", chaserLocation, "*.xml", true );
@@ -363,106 +319,15 @@ void MainContentComponent::loadXml()
 			resized();
 		}
 	}
+	 */
 }
 
 
-bool MainContentComponent::parseAssXml(File f)
-{
-	if ( !f.exists() )
-	{
-		return false;
-	}
-	else
-	{
-		//check if we're loading a new file or the same file
-		//if it's new, clear the xml and create a fresh one
-		bool loadingSameFile = (f == xmlSequence->getAssFile() );
-		if ( !loadingSameFile )
-		{
-			xmlSequence->createFreshXml( version );
-		}
-		
-		DBG("Loading: " + f.getFullPathName() );
-	
-		ScopedPointer<XmlElement> xmlRoot;
-		xmlRoot = (XmlDocument::parse ( f ));
-		
-		//see if we're dealing with a res 4 or res 5 ass file
-		//then try to parse it
-		bool succesfulParse = false;
-		
-		if (xmlRoot != nullptr && xmlRoot->hasTagName ("preset"))
-			succesfulParse = XmlParser::parseRes4Xml( *xmlRoot, slices, resolution );
-		else if ( xmlRoot != nullptr && xmlRoot->hasTagName("XmlState"))
-			succesfulParse = XmlParser::parseRes5Xml( *xmlRoot, slices, resolution );
-		else if ( xmlRoot != nullptr && xmlRoot->hasTagName("ScreenSetup") )
-			succesfulParse = XmlParser::parseRes5PrefXml( *xmlRoot, slices, resolution);
-		else if ( xmlRoot != nullptr && xmlRoot->hasTagName("avenue"))
-			succesfulParse = XmlParser::parseRes4ConfigXml( *xmlRoot, slices, resolution);
 
-		
-		//if the file was susccesfully parsed
-		if ( succesfulParse )
-		{
-			//if we're loading the same file, get the enabled states from the chaserxml
-			if ( loadingSameFile )
-			{
-				Array<Slice*> prevSlices = xmlSequence->getSlices() ;
-				for ( int i = 0; i < prevSlices.size(); i++ )
-				{
-					if ( i < slices.size() )
-						slices[i]->enabled = prevSlices[i]->enabled;
-				}
-			}
-			
-			//update the previewWindow and sliceList
-			//sliceList->clearSlices();
-			previewWindow->clearSlices();
-			xmlSequence->clearSlices();
-			
-			for ( int i = 0; i < slices.size(); i++ )
-			{
-				
-				previewWindow->addSlice( slices[i] );
-				xmlSequence->addSlice ( slices[i] );
-			}
-			sliceList->addSlices( slices );
-			
-			previewWindow->resized();
-			
-			//if we're not loading the same file, reset the sequencer
-			if ( !loadingSameFile )
-			{
-				sequencer->setDefaultSequences();
-			}
-			
-			//set the previewWindow to the correct step
-			previewWindow->setSlices( xmlSequence->getStep( currentSequence, currentStep) );
-			
-			//set the resolution in the xml
-			xmlSequence->setResolution( resolution );
-			
-			//store the last used ass file in xml and save it
-			xmlSequence->setAssFile( f );
-			saveXml();
-			
-			//update the numbers
-			resized();
-			
-			return true;
-		}
-		
-		else
-		{
-			return false;
-		}
-	}
-	
-	return false;
-}
 
 void MainContentComponent::reloadSliceData()
 {
+	/*
 	//sliceList->clearSlices();
 	previewWindow->clearSlices();
 	slices.clear();
@@ -487,12 +352,14 @@ void MainContentComponent::reloadSliceData()
 	currentSequenceLength = xmlSequence->getSequenceLengths()[ currentSequence ];
 	
 	resolution = xmlSequence->getResolution();
+	 */
 	resized();
 }
 
 
 void MainContentComponent::sliceVisibilityChanged()
 {
+	/*
 	for ( int i = 0; i < slices.size(); i++ )
 	{
 		xmlSequence->updateSlice (slices[i], i);
@@ -500,12 +367,13 @@ void MainContentComponent::sliceVisibilityChanged()
 	}
 	
 	saveXml();
+	 */
 }
 
 
 void MainContentComponent::copierClicked(int multiplier)
 {
-	
+	/*
 	for ( int i = multiplier; i < currentSequenceLength; i += multiplier )
 	{
 		int nextStep = currentStep + i;
@@ -514,30 +382,37 @@ void MainContentComponent::copierClicked(int multiplier)
 		xmlSequence->setStep( currentSequence, nextStep, activeSlices );
 		saveXml();
 	}
+	 */
 }
 
 void MainContentComponent::sliceClicked( Array<int> activeSlices_)
 {
+	/*
 	activeSlices = activeSlices_;
 	xmlSequence->setStep( currentSequence, currentStep, activeSlices );
 	saveXml();
+	 */
 }
 
 void MainContentComponent::stepSelected(int step)
 {
+	/*
 	//the sequencer has been set to a new step or sequence
 	//so read out the values for this step and update the preview
 	currentStep = step;
 	activeSlices = xmlSequence->getStep( currentSequence, currentStep );
 	previewWindow->setSlices( activeSlices );
+	 */
 }
 
 void MainContentComponent::sequenceNameChanged( String newName )
 {
+	/*
 	//the sequence name has been changed
 	//save the sequence name to xml
 	xmlSequence->setSequenceName( currentSequence, newName );
 	saveXml();
+	 */
 }
 
 void MainContentComponent::sequenceSelected(int sequence)
@@ -550,6 +425,7 @@ void MainContentComponent::sequenceSelected(int sequence)
 
 void MainContentComponent::sequenceLengthChanged(int newSequenceLength)
 {
+	/*
 	//this means the current sequence has been made shorter or longer
 	//update the model var
 	currentSequenceLength = newSequenceLength;
@@ -560,6 +436,7 @@ void MainContentComponent::sequenceLengthChanged(int newSequenceLength)
 		xmlSequence->setNumberOfSteps( currentSequence, currentSequenceLength);
 		saveXml();
 	}
+	 */
 }
 
 
@@ -600,6 +477,7 @@ void MainContentComponent::pasteStep()
 
 void MainContentComponent::copySequence()
 {
+	/*
 	//copy the name
 	sequenceNameToCopy = xmlSequence->getSequenceNames()[currentSequence];
 	//create an array with an array
@@ -609,10 +487,12 @@ void MainContentComponent::copySequence()
 		Array<int> step = xmlSequence->getStep(currentSequence, i);
 		currentSequenceSlices.add( step );
 	}
+	 */
 }
 
 void MainContentComponent::pasteSequence()
 {
+	/*
 	sequenceNameChanged( String(sequenceNameToCopy + " copy"));
 	sequenceLengthChanged( currentSequenceSlices.size() );
 	for ( int i = 0; i < currentSequenceSlices.size(); i++ )
@@ -626,24 +506,10 @@ void MainContentComponent::pasteSequence()
 	sequencer->selectStep( 0 );
 	sequencer->setSequenceNames ( xmlSequence->getSequenceNames() );
 	sequencer->setSequenceLengths ( xmlSequence->getSequenceLengths() );
+	 */
 }
 
-void MainContentComponent::throwLoadError()
-{
-	AlertWindow::showMessageBoxAsync(AlertWindow::AlertIconType::WarningIcon,
-									 "Sorry!",
-									 "Something went wrong reading that file.",
-									 "Ok");
-	DBG("Error loading file...");
-}
 
-void MainContentComponent::throwSaveError()
-{
-	AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
-									  "Sorry!",
-									  "Could not save data.",
-									  "Ok");
-}
 
 void MainContentComponent::resized()
 {
@@ -662,7 +528,7 @@ void MainContentComponent::resized()
 	Rectangle<int> previewArea = Rectangle<int>{0, 0, int(getWidth() * 0.83), int((getWidth() / 16.0) * 9.0 * 0.83) };
 	previewArea.setPosition(0,  menuBarHeight);
 	
-	previewWindow->setBounds(0,0,resolution.x, resolution.y);
+	previewWindow->setBounds(0,0, sliceManager->getResolution().x, sliceManager->getResolution().y);
 	Rectangle<int> previewWindowArea = previewArea.reduced(5);
 
 	if(previewWindow->getWidth() > 0 && previewWindow->getHeight() > 0 )

@@ -14,9 +14,11 @@
 #include "Slice.h"
 #include "SliceList.h"
 #include "Sequencer.h"
-#include "XmlSequence.h"
+//#include "XmlSequence.h"
 #include "Copier.h"
 #include "ColourLookAndFeel.h"
+#include "ChaseManager.h"
+#include "SliceManager.h"
 
 
 
@@ -72,18 +74,15 @@ public:
 							 Component* originatingComponent) override;
 
 	
-	void loadAssFile();
-	void loadDefaultAssFile();
-	void reloadAssFile();
+	
 	void saveXml();
 	bool saveAsXml();
 	void loadXml();
-    bool parseAssXml ( File f );
+    
 	void reloadSliceData();
 	void clearGUI();
 	
-	void throwLoadError();
-	void throwSaveError();
+
 	
 	void copyStep();
 	void pasteStep();
@@ -108,9 +107,13 @@ private:
     ScopedPointer<Preview> previewWindow;
     ScopedPointer<SliceList> sliceList;
     ScopedPointer<Sequencer> sequencer;
-    ScopedPointer<XmlSequence> xmlSequence;
+	// ScopedPointer<XmlSequence> xmlSequence;
 	ScopedPointer<Copier> copier;
-	Point<int>resolution;
+	
+
+	ScopedPointer<ChaseManager> chaseManager;
+	ScopedPointer<SliceManager> sliceManager;
+
 
 	String version;
     

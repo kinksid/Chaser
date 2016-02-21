@@ -154,8 +154,8 @@ void XmlSequence::setPositionData(juce::XmlElement *sliceXml, Slice *slice)
 	sliceXml->setAttribute("name", slice->name);
 	sliceXml->setAttribute("enable", (int) slice->enabled );
 	
-	sliceXml->setAttribute("screenName", slice->screen);
-	sliceXml->setAttribute("screenUniqueId", slice->uniqueId );
+	sliceXml->setAttribute("screenName", slice->screenPair.second);
+	sliceXml->setAttribute("screenUniqueId", slice->screenPair.first );
 	
 	sliceXml->deleteAllChildElements();
 
@@ -199,11 +199,7 @@ void XmlSequence::clearSlices()
 
 String XmlSequence::getVersion()
 {
-	if ( chaserData != nullptr)
-		if ( chaserData->getChildByName("version") != nullptr)
-			return chaserData->getChildByName("version")->getAllSubText();
 	
-	return String();
 }
 
 void XmlSequence::setVersion(juce::String version)
@@ -359,38 +355,8 @@ File XmlSequence::getAssFile()
 	return File();
 }
 
-Array<int> XmlSequence::subDivideString(juce::String s)
-{
-	Array<int> returnIntArray;
-	StringArray vArray;
-	vArray.addTokens ( s, ".", "\"");
-	for (int i=0; i<vArray.size(); i++)
-	{
-		returnIntArray.add(vArray[i].getIntValue());
-	}
-	return returnIntArray;
-	
-}
 
-bool XmlSequence::versionCheck(juce::String savedVersion, juce::String thisVersion)
-{
-	//if the savedversion string is empty, it's always out of date
-	if ( savedVersion.isEmpty() )
-		return false;
-	
-	//versions always have three components so break them up to individual parts
-	Array<int> savedVersionInts = subDivideString ( savedVersion );
-	Array<int> thisVersionInts = subDivideString ( thisVersion );
-	
-	//check each level
-	//if they all match or are newer, we're good to go
-	if ( savedVersionInts[0] >= thisVersionInts[0] )
-		if ( savedVersionInts[1] >= thisVersionInts[1] )
-			if ( savedVersionInts[2] >= thisVersionInts[2] )
-				return true;
-	
-	return false;
-}
+
 
 
 
@@ -500,25 +466,5 @@ File XmlSequence::getXmlFile()
 	return defaultChaseFile;
 }
 
-File XmlSequence::getXmlFileFromPreferences()
-{
-	//the preferences file we'll use the userDocs
-	File docDir = File::getSpecialLocation( File::userDocumentsDirectory );
-	File prefFile = docDir.getChildFile("Chaser/preferences/preferences.xml");
-	
-	if ( prefFile.exists() )
-	{
-		XmlDocument lastUsedFile ( prefFile );
-		lastUsedFileData = lastUsedFile.getDocumentElement();
-		if (lastUsedFileData->getChildByName("lastusedfile") != nullptr )
-		{
-			File savedFile = File (lastUsedFileData->getChildByName("lastusedfile")->getAllSubText());
-			if ( savedFile.exists() )
-				return savedFile;
-		}
-		
-	}
-	
-	return File();
-}
+
 

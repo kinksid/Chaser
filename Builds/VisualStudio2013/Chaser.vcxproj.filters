@@ -8,11 +8,23 @@
     <Filter Include="Chaser\Source">
       <UniqueIdentifier>{4D4FE14F-C6D0-C274-AD22-2413280B2A28}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Chaser\Source\xml">
-      <UniqueIdentifier>{5F0FA068-A813-839B-27DA-BD078B181742}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Chaser\Source\buttons">
       <UniqueIdentifier>{4F67F556-8AAC-5B46-7AAD-A58AF08AC3D8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chaser\Source\chase">
+      <UniqueIdentifier>{4C1EFAE4-1B21-664A-CDD9-3EF80454A51A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chaser\Source\file">
+      <UniqueIdentifier>{E484ACA5-CDD7-E17C-EEAA-9CB0E9253596}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chaser\Source\gui">
+      <UniqueIdentifier>{631C78EF-DF82-5577-BF5E-BCF7ADE3558C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chaser\Source\slice">
+      <UniqueIdentifier>{D94C5484-8ECE-626B-0777-FF96CC806EDA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chaser\Source\xml">
+      <UniqueIdentifier>{5F0FA068-A813-839B-27DA-BD078B181742}</UniqueIdentifier>
     </Filter>
     <Filter Include="Juce Modules">
       <UniqueIdentifier>{422C46B7-0467-2DB0-BF3C-16DFCAFD69AC}</UniqueIdentifier>
@@ -256,31 +268,43 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\XmlParser.cpp">
+    <ClCompile Include="..\..\Source\chase\ChaseManager.cpp">
+      <Filter>Chaser\Source\chase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\file\FileHelper.cpp">
+      <Filter>Chaser\Source\file</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\gui\Copier.cpp">
+      <Filter>Chaser\Source\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\gui\Preview.cpp">
+      <Filter>Chaser\Source\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\gui\Sequencer.cpp">
+      <Filter>Chaser\Source\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\gui\SliceButton.cpp">
+      <Filter>Chaser\Source\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\gui\SliceList.cpp">
+      <Filter>Chaser\Source\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\slice\SliceManager.cpp">
+      <Filter>Chaser\Source\slice</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\xml\ChaserXmlParser.cpp">
       <Filter>Chaser\Source\xml</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Copier.cpp">
-      <Filter>Chaser\Source</Filter>
+    <ClCompile Include="..\..\Source\xml\ResXmlParser.cpp">
+      <Filter>Chaser\Source\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\xml\XmlSequence.cpp">
+      <Filter>Chaser\Source\xml</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Main.cpp">
       <Filter>Chaser\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\MainComponent.cpp">
-      <Filter>Chaser\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Preview.cpp">
-      <Filter>Chaser\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Sequencer.cpp">
-      <Filter>Chaser\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\SliceButton.cpp">
-      <Filter>Chaser\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\SliceList.cpp">
-      <Filter>Chaser\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\XmlSequence.cpp">
       <Filter>Chaser\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioDataConverters.cpp">
@@ -1383,34 +1407,46 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\XmlParser.h">
+    <ClInclude Include="..\..\Source\chase\ChaseManager.h">
+      <Filter>Chaser\Source\chase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\file\FileHelper.h">
+      <Filter>Chaser\Source\file</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\gui\ColourLookAndFeel.h">
+      <Filter>Chaser\Source\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\gui\Copier.h">
+      <Filter>Chaser\Source\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\gui\Preview.h">
+      <Filter>Chaser\Source\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\gui\Sequencer.h">
+      <Filter>Chaser\Source\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\gui\SliceButton.h">
+      <Filter>Chaser\Source\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\gui\SliceList.h">
+      <Filter>Chaser\Source\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\slice\Slice.h">
+      <Filter>Chaser\Source\slice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\slice\SliceManager.h">
+      <Filter>Chaser\Source\slice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\xml\ChaserXmlParser.h">
       <Filter>Chaser\Source\xml</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\ColourLookAndFeel.h">
-      <Filter>Chaser\Source</Filter>
+    <ClInclude Include="..\..\Source\xml\ResXmlParser.h">
+      <Filter>Chaser\Source\xml</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Copier.h">
-      <Filter>Chaser\Source</Filter>
+    <ClInclude Include="..\..\Source\xml\XmlSequence.h">
+      <Filter>Chaser\Source\xml</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\MainComponent.h">
-      <Filter>Chaser\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Preview.h">
-      <Filter>Chaser\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Sequencer.h">
-      <Filter>Chaser\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Slice.h">
-      <Filter>Chaser\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\SliceButton.h">
-      <Filter>Chaser\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\SliceList.h">
-      <Filter>Chaser\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\XmlSequence.h">
       <Filter>Chaser\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioDataConverters.h">
@@ -2641,9 +2677,6 @@
     </None>
     <None Include="..\..\JuceLibraryCode\modules\juce_gui_extra\juce_module_info">
       <Filter>Juce Modules\juce_gui_extra</Filter>
-    </None>
-    <None Include=".\icon.ico">
-      <Filter>Juce Library Code</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

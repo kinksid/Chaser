@@ -46,13 +46,13 @@ public:
 	Point<int> getResolution();
 
     void createFreshXml( String version );
-	bool versionCheck ( String savedVersion, String thisVersion );
-	Array<int> subDivideString ( String s);
+	
+	
 	
     bool save();
 	bool loadXmlFile( File f );
     File getXmlFile();
-	File getXmlFileFromPreferences();
+	
 	void setXmlFile( File f );
     
 private:

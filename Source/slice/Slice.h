@@ -11,12 +11,13 @@
 #ifndef SLICE_H_INCLUDED
 #define SLICE_H_INCLUDED
 
+#include "JuceHeader.h"
+
 //Quick class that holds a slice with all the relevant info
 
 class Slice
 {
 public:
-	
 	
 	Slice( String n, bool enable) : name ( n ), enabled ( enable )
     {
@@ -27,39 +28,27 @@ public:
 		maskRectOrientation = 0.0;
 	}
 	
-	Slice ( const Slice& slice ) : name (slice.name ), enabled(slice.enabled), inputRectPoints(slice.inputRectPoints), maskPoints(slice.maskPoints), maskRectPoints(slice.maskRectPoints), inputRectOrientation(slice.inputRectOrientation), maskRectOrientation(slice.maskRectOrientation)
-	{
-        
-	}
+	Slice ( const Slice& slice ) : name (slice.name ), enabled(slice.enabled), inputRectPoints(slice.inputRectPoints), maskPoints(slice.maskPoints), maskRectPoints(slice.maskRectPoints), inputRectOrientation(slice.inputRectOrientation), maskRectOrientation(slice.maskRectOrientation){	}
     
 	Slice() : Slice ("New Slice", false ){}
 	
-    ~Slice()
-    {
-        
-    }
-
-    struct vec4f
-    {
-        vec4f( float x, float y, float z, float w ): x(x), y(y), z(z), w(w){}
-        vec4f() : x(0.0), y(0.0), z(0.0), w(0.0){}
-        float x;
-        float y;
-        float z;
-        float w;
-    };
-    
+	~Slice(){}
+	
     String name;
 	bool enabled;
-	bool shouldDrawInPreview;
+	//when a screen is collapsed, the slice should not draw in preview
+	//i cannot use the enabled bool for this, because when the screen is uncollapsed
+	//this value should be maintained
+	bool screenIsUncollapsed;
 	
-	String screen = "Default Screen";
-	int uniqueId = 0;
-	
-	
+	//which screen and uniqued id this slice is a part of
+	std::pair<int, String> screenPair = std::make_pair(0, "Default Screen");
 	
     Array<Point<float>> inputRectPoints;
     Array<Point<float>> maskPoints;
+	
+	//currently the maskRectPoints are not being used for anything
+	//i use the inputRect of the slice to decide which parts of the slice to draw
 	Array<Point<float>> maskRectPoints;
 	
 	float inputRectOrientation;

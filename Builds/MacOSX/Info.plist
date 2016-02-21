@@ -6,9 +6,9 @@
     <key>CFBundleExecutable</key>
     <string>${EXECUTABLE_NAME}</string>
     <key>CFBundleIconFile</key>
-    <string>Icon.icns</string>
+    <string></string>
     <key>CFBundleIdentifier</key>
-    <string>nl.HybridVisuals.www</string>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
     <key>CFBundleName</key>
     <string>Chaser</string>
     <key>CFBundlePackageType</key>

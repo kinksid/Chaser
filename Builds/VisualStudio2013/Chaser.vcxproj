@@ -128,15 +128,19 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\XmlParser.cpp"/>
-    <ClCompile Include="..\..\Source\Copier.cpp"/>
+    <ClCompile Include="..\..\Source\chase\ChaseManager.cpp"/>
+    <ClCompile Include="..\..\Source\file\FileHelper.cpp"/>
+    <ClCompile Include="..\..\Source\gui\Copier.cpp"/>
+    <ClCompile Include="..\..\Source\gui\Preview.cpp"/>
+    <ClCompile Include="..\..\Source\gui\Sequencer.cpp"/>
+    <ClCompile Include="..\..\Source\gui\SliceButton.cpp"/>
+    <ClCompile Include="..\..\Source\gui\SliceList.cpp"/>
+    <ClCompile Include="..\..\Source\slice\SliceManager.cpp"/>
+    <ClCompile Include="..\..\Source\xml\ChaserXmlParser.cpp"/>
+    <ClCompile Include="..\..\Source\xml\ResXmlParser.cpp"/>
+    <ClCompile Include="..\..\Source\xml\XmlSequence.cpp"/>
     <ClCompile Include="..\..\Source\Main.cpp"/>
     <ClCompile Include="..\..\Source\MainComponent.cpp"/>
-    <ClCompile Include="..\..\Source\Preview.cpp"/>
-    <ClCompile Include="..\..\Source\Sequencer.cpp"/>
-    <ClCompile Include="..\..\Source\SliceButton.cpp"/>
-    <ClCompile Include="..\..\Source\SliceList.cpp"/>
-    <ClCompile Include="..\..\Source\XmlSequence.cpp"/>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioDataConverters.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -1151,16 +1155,20 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_extra\juce_gui_extra.cpp"/>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\XmlParser.h"/>
-    <ClInclude Include="..\..\Source\ColourLookAndFeel.h"/>
-    <ClInclude Include="..\..\Source\Copier.h"/>
+    <ClInclude Include="..\..\Source\chase\ChaseManager.h"/>
+    <ClInclude Include="..\..\Source\file\FileHelper.h"/>
+    <ClInclude Include="..\..\Source\gui\ColourLookAndFeel.h"/>
+    <ClInclude Include="..\..\Source\gui\Copier.h"/>
+    <ClInclude Include="..\..\Source\gui\Preview.h"/>
+    <ClInclude Include="..\..\Source\gui\Sequencer.h"/>
+    <ClInclude Include="..\..\Source\gui\SliceButton.h"/>
+    <ClInclude Include="..\..\Source\gui\SliceList.h"/>
+    <ClInclude Include="..\..\Source\slice\Slice.h"/>
+    <ClInclude Include="..\..\Source\slice\SliceManager.h"/>
+    <ClInclude Include="..\..\Source\xml\ChaserXmlParser.h"/>
+    <ClInclude Include="..\..\Source\xml\ResXmlParser.h"/>
+    <ClInclude Include="..\..\Source\xml\XmlSequence.h"/>
     <ClInclude Include="..\..\Source\MainComponent.h"/>
-    <ClInclude Include="..\..\Source\Preview.h"/>
-    <ClInclude Include="..\..\Source\Sequencer.h"/>
-    <ClInclude Include="..\..\Source\Slice.h"/>
-    <ClInclude Include="..\..\Source\SliceButton.h"/>
-    <ClInclude Include="..\..\Source\SliceList.h"/>
-    <ClInclude Include="..\..\Source\XmlSequence.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioDataConverters.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioSampleBuffer.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_FloatVectorOperations.h"/>
@@ -1572,7 +1580,6 @@
     <None Include="..\..\JuceLibraryCode\modules\juce_graphics\juce_module_info"/>
     <None Include="..\..\JuceLibraryCode\modules\juce_gui_basics\juce_module_info"/>
     <None Include="..\..\JuceLibraryCode\modules\juce_gui_extra\juce_module_info"/>
-    <None Include=".\icon.ico"/>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include=".\resources.rc"/>

@@ -16,36 +16,6 @@
 #include "ColourLookAndFeel.h"
 
 //==============================================================================
-/*
-*/
-
-/*
-class SliceList    : public Component, public ListBoxModel, public ChangeBroadcaster
-{
-public:
-    SliceList();
-    ~SliceList();
-
-    int getNumRows();
-    virtual void paintListBoxItem (int rowNumber, Graphics& g, int width, int height, bool rowIsSelected);
-    virtual void listBoxItemClicked (int row, const MouseEvent&);
-    
-    void paint (Graphics&);
-    void resized();
-    
-    void addSlice( Slice* slice );
-    void clearSlices();
-    void updateStates();
-
-private:
-    OwnedArray<Slice> slices;
-    ListBox sliceList;
-	ColourLookAndFeel claf;
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SliceList)
-};
- */
-
 
 
 class SlicePropertyButton : public BooleanPropertyComponent
@@ -110,7 +80,7 @@ public:
 	
 	void addSlices( OwnedArray<Slice>& slices );
 	void clear();
-	void updateStates();
+	//void updateStates();
 	
 	class Listener
 	{
@@ -135,8 +105,7 @@ private:
 		NamedArray() {}
 		~NamedArray() {}
 		
-		String name;
-		int uniqueId;
+		std::pair<int, String> screenPair;
 		Array<PropertyComponent*> array;
 		
 	};
