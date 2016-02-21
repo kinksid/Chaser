@@ -16,60 +16,32 @@
 #include "ColourLookAndFeel.h"
 
 //==============================================================================
+class SliceList;
 
-
-class SlicePropertyButton : public BooleanPropertyComponent
+class MyPropertyPanel : public PropertyPanel
 {
 public:
-	SlicePropertyButton(Slice* slice) : BooleanPropertyComponent(slice->name, slice->name, slice->name ), slice(slice)
-	{
-		state = slice->enabled;
-	}
-	~SlicePropertyButton(){}
+	MyPropertyPanel( SliceList& parent );
+	~MyPropertyPanel();
 	
-	void buttonClicked ( Button* b ) override
-	{
-		setState( !getState() );
-		b->setToggleState( getState(), dontSendNotification );
-		slice->enabled = getState();
-		
-		Component::BailOutChecker checker (this);
-		if (! checker.shouldBailOut())
-			listeners.callChecked ( checker, &SlicePropertyButton::Listener::sliceToggled );
-	}
-	
-	void setState (bool newState) override
-	{
-		state = newState;
-	}
-	
-	bool getState() const override
-	{
-		return state;
-	}
-	
-	class Listener
-	{
-		
-	public:
-		virtual ~Listener() {}
-		virtual void sliceToggled () = 0;
-		
-	};
-	
-	void addListener ( Listener* const l ) { listeners.add ( l ); }
-	void removeListener ( Listener* const l ) { listeners.remove (l ); }
-	
+	//I need this to get a call back for when one of the sections is closed or opened
+	void resized() override;
 	
 private:
-	Slice* slice;
-	bool state;
-	
-	ListenerList<Listener> listeners;
-	
+	SliceList& parent;
 };
 
-class SliceList : public Component, public SlicePropertyButton::Listener
+struct NamedArray
+{
+public:
+	NamedArray() {}
+	~NamedArray() {}
+	
+	std::pair<int, String> screenPair;
+	Array<PropertyComponent*> sliceToggles;
+};
+
+class SliceList : public Component
 {
 public:
 	SliceList();
@@ -80,49 +52,55 @@ public:
 	
 	void addSlices( OwnedArray<Slice>& slices );
 	void clear();
-	//void updateStates();
 	
-	class Listener
-	{
-		
-	public:
-		virtual ~Listener() {}
-		virtual void sliceVisibilityChanged () = 0;
-		
-	};
+	void sliceVisibilityChanged();
 	
-	void addListener ( Listener* const l ) { listeners.add ( l ); }
-	void removeListener ( Listener* const l ) { listeners.remove (l ); }
-	
-	virtual void sliceToggled () override;
-	
-
+	Array<Slice*> getSlicesFromSection ( int i );
 	
 private:
-	struct NamedArray
-	{
-	public:
-		NamedArray() {}
-		~NamedArray() {}
-		
-		std::pair<int, String> screenPair;
-		Array<PropertyComponent*> array;
-		
-	};
-	Array<Slice*> slices;
+	
 	ColourLookAndFeel claf;
 	Array<int> uniqueIds;
 	OwnedArray<NamedArray> sections;
 	
-	PropertyPanel panel;
-	
-	ListenerList<Listener> listeners;
-	
-	
+	ScopedPointer<MyPropertyPanel> panel;
 	
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SliceList)
 	
 };
+
+
+class SlicePropertyButton : public BooleanPropertyComponent
+{
+public:
+	SlicePropertyButton( SliceList& parent, Slice& slice );
+	~SlicePropertyButton();
+	
+	void buttonClicked ( Button* b ) override;
+	void setState (bool newState) override;
+	bool getState() const override;
+
+	Slice& getSlice();
+	
+	void paint (Graphics& g) override
+	{
+		PropertyComponent::paint (g);
+		
+//		g.setColour (findColour (backgroundColourId));
+//		g.fillRect (button.getBounds());
+//		
+//		g.setColour (findColour (ComboBox::outlineColourId));
+//		g.drawRect (button.getBounds());
+	}
+	
+private:
+	SliceList& parent;
+	Slice& slice;
+	bool state;	
+};
+
+
+
 
 
 #endif  // SLICELIST_H_INCLUDED

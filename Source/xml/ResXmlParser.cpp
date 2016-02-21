@@ -28,15 +28,6 @@ bool ResXmlParser::parseAssXml(File f, OwnedArray<Slice>& slices, Point<int>& re
 	}
 	else
 	{
-		//TODO get back to this
-		//check if we're loading a new file or the same file
-		//if it's new, clear the xml and create a fresh one
-		//		bool loadingSameFile = (f == xmlSequence->getAssFile() );
-		//		if ( !loadingSameFile )
-		//		{
-		//			xmlSequence->createFreshXml( version );
-		//		}
-		
 		DBG("Trying to parse: " + f.getFullPathName() );
 		
 		ScopedPointer<XmlElement> xmlRoot;
@@ -59,67 +50,7 @@ bool ResXmlParser::parseAssXml(File f, OwnedArray<Slice>& slices, Point<int>& re
 	}
 }
 
-/*
-		//if the file was susccesfully parsed
-		if ( succesfulParse )
-		{
-			//if we're loading the same file, get the enabled states from the chaserxml
-			if ( loadingSameFile )
-			{
-				Array<Slice*> prevSlices = xmlSequence->getSlices() ;
-				for ( int i = 0; i < prevSlices.size(); i++ )
-				{
-					if ( i < slices.size() )
-						slices[i]->enabled = prevSlices[i]->enabled;
-				}
-			}
-			
-			//update the previewWindow and sliceList
-			//sliceList->clearSlices();
-			previewWindow->clearSlices();
-			xmlSequence->clearSlices();
-			
-			for ( int i = 0; i < slices.size(); i++ )
-			{
-				
-				previewWindow->addSlice( slices[i] );
-				xmlSequence->addSlice ( slices[i] );
-			}
-			sliceList->addSlices( slices );
-			
-			previewWindow->resized();
-			
-			//if we're not loading the same file, reset the sequencer
-			if ( !loadingSameFile )
-			{
-				sequencer->setDefaultSequences();
-			}
-			
-			//set the previewWindow to the correct step
-			previewWindow->setSlices( xmlSequence->getStep( currentSequence, currentStep) );
-			
-			//set the resolution in the xml
-			xmlSequence->setResolution( resolution );
-			
-			//store the last used ass file in xml and save it
-			xmlSequence->setAssFile( f );
-			saveXml();
-			
-			//update the numbers
-			resized();
-			
-			return true;
-		}
-		
-		else
-		{
-			return false;
-		}
-	}
-	
-	return false;
-}
-*/
+
 
 
 bool ResXmlParser::parseRes4ConfigXml(juce::XmlElement &xmlTreeToParse, OwnedArray<Slice>& slices, Point<int> &resolution)

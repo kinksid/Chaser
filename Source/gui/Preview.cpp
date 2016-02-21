@@ -64,7 +64,15 @@ void Preview::setSlices(Array<int> activeSlices)
 	resized();
 }
 
-void Preview::addSlice( Slice* slice )
+void Preview::createSliceButtons(OwnedArray<Slice> &slices)
+{
+	for ( int i = 0; i < slices.size(); i++ )
+	{
+		addSlice( *slices[i]);
+	}
+}
+
+void Preview::addSlice( Slice& slice )
 {
 	SliceButton* newButton = new SliceButton ( slice, Point<int> (getWidth(), getHeight()) );
     newButton->setLookAndFeel(sliceLaf);

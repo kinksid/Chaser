@@ -27,7 +27,6 @@ MainContentComponent::MainContentComponent()
     
     sliceList = new SliceList();
     addAndMakeVisible(sliceList);
-	sliceList->addListener(this);
     
     sequencer = new Sequencer();
     addAndMakeVisible(sequencer);
@@ -110,7 +109,6 @@ void MainContentComponent::timerCallback()
 //		xmlSequence->createFreshXml( version );
 //		resolution = xmlSequence->getResolution();
 //		saveXml();
-		DBG( sliceManager->getSlices().size() );
 		//see if there are any ass files
 		//if so, load their slices into the slice mananger
 		File assFile = FileHelper::getAssFileAutomagically();
@@ -118,7 +116,13 @@ void MainContentComponent::timerCallback()
 		//sliceManager will eventually become owner of this array
 		ResXmlParser::parseAssXml( assFile, sliceManager->getSlices(), sliceManager->getResolution());
 		
-		DBG( sliceManager->getSlices().size() );
+		//now populate the previewwindow with buttons for these slices
+		previewWindow->createSliceButtons( sliceManager->getSlices() );
+		previewWindow->resized();
+		
+		//now populate the slicelist with entries for these slices
+		sliceList->addSlices( sliceManager->getSlices() );
+		sliceList->resized();
 		//loadDefaultAssFile();
 	}
 	//set the name
@@ -357,18 +361,7 @@ void MainContentComponent::reloadSliceData()
 }
 
 
-void MainContentComponent::sliceVisibilityChanged()
-{
-	/*
-	for ( int i = 0; i < slices.size(); i++ )
-	{
-		xmlSequence->updateSlice (slices[i], i);
-		previewWindow->update(slices[i], i );
-	}
-	
-	saveXml();
-	 */
-}
+
 
 
 void MainContentComponent::copierClicked(int multiplier)

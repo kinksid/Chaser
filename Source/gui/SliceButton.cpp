@@ -12,13 +12,13 @@
 #include "SliceButton.h"
 
 
-SliceButton::SliceButton(Slice* s, Point<int> scale) : ShapeButton ( s->name, Colours::transparentBlack, Colours::transparentBlack, Colours::transparentBlack ), slice(s)
+SliceButton::SliceButton(Slice& s, Point<int> scale) : ShapeButton ( s.name, Colours::transparentBlack, Colours::transparentBlack, Colours::transparentBlack ), slice(s)
 {
-	setButtonText( s->name );
+	setButtonText( s.name );
 	//enable loads the state from the ass xml file
 	//it can still be edited via the slicelist
-	setVisible( s->enabled );
-	name = s->name;
+	setVisible( s.enabled );
+	name = s.name;
 	createPath( scale );
 	setClickingTogglesState( true );
 	setToggleState( false, sendNotification );
@@ -36,13 +36,13 @@ void SliceButton::createPath( Point<int> scale )
 	//if so, it's a regular slice with a mask or a polyslice
 	//and the mask points should be used for the path
 	//otherwise it's a regular slice and the inputrect points should be used for the path
-	if ( slice->maskPoints.size() > 0 )
+	if ( slice.maskPoints.size() > 0 )
 	{
-		path = makePath(slice->maskPoints, scale);
+		path = makePath(slice.maskPoints, scale);
 	}
 	else
 	{
-		path = makePath(slice->inputRectPoints, scale);
+		path = makePath(slice.inputRectPoints, scale);
 	}
 }
 
@@ -122,6 +122,9 @@ void SliceButton::resized()
 	createPath( Point<int>(getParentWidth(), getParentHeight() ));
 	Rectangle<int> bounds = path.getBounds().toType<int>();
 	setBounds( bounds );
+	
+	//update the visibilty
+	setVisible( slice.enabled && slice.screenIsUncollapsed );
 }
 
 

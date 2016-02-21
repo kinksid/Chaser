@@ -39,7 +39,7 @@ public:
 	//when a screen is collapsed, the slice should not draw in preview
 	//i cannot use the enabled bool for this, because when the screen is uncollapsed
 	//this value should be maintained
-	bool screenIsUncollapsed;
+	bool screenIsUncollapsed = true;
 	
 	//which screen and uniqued id this slice is a part of
 	std::pair<int, String> screenPair = std::make_pair(0, "Default Screen");

@@ -77,7 +77,9 @@ public:
     void update(Slice* slice, int i );
     
     void clearSlices();
-    void addSlice( Slice* slice);
+	
+	void createSliceButtons ( OwnedArray<Slice>& slices );
+	
     
     void setSlices ( Array<int> activeSlices );
 	
@@ -96,6 +98,7 @@ public:
     
 
 private:
+	void addSlice( Slice& slice);
     OwnedArray<SliceButton> sliceButtons;
     ScopedPointer<SliceLookAndFeel> sliceLaf;
 	ListenerList<Listener> previewListeners;

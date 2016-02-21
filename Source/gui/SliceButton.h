@@ -24,7 +24,7 @@ class SliceButton    : public ShapeButton
 {
 public:
 	//SliceButton ( String n, bool enable, double l, double t, double r, double b );
-	SliceButton ( Slice* s, Point<int> scale );
+	SliceButton ( Slice& s, Point<int> scale );
     ~SliceButton();
 	
 	//bool enabled;
@@ -41,7 +41,7 @@ public:
 
 private:
 	Path path;
-	Slice* slice;
+	Slice& slice;
 	Path makePath( Array<Point<float>>& points, Point<int> scale );
 	
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SliceButton)
