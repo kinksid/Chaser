@@ -10,6 +10,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Preview.h"
+#include "MainComponent.h"
+
 
 //==============================================================================
 Preview::Preview()
@@ -32,14 +34,18 @@ void Preview::buttonClicked(Button* b)
 	for ( int i = 0; i < sliceButtons.size(); i++ )
 	{
 		if ( sliceButtons[i]->getToggleState() )
-		{
 			activeSlices.add(i);
-		}
 	}
+	
+	/*
 	//let the listeners know
 	Component::BailOutChecker checker (this);
 	if (! checker.shouldBailOut())
 		previewListeners.callChecked ( checker, &Listener::sliceClicked, activeSlices );
+	 */
+	
+	MainContentComponent* parent = findParentComponentOfClass<MainContentComponent>();
+	parent->chaseManager.setStep(0, 0, activeSlices );
 }
 
 void Preview::setSlices(Array<int> activeSlices)

@@ -15,7 +15,7 @@
 #include "Slice.h"
 
 
-typedef Array<Slice*> SliceArray; //the active slices in a step
+typedef Array<int> SliceArray; //the active slices in a step
 typedef std::map<int, SliceArray> StepMap; //the step and its active slices
 typedef std::map<int, StepMap> SequenceMap; //the sequence and its steps
 
@@ -37,9 +37,14 @@ public:
 	void setName( String name );
 	String getName ();
 	
+	int currentStep;
+	int currentSequence;
+	
 private:
 	String chaserName;
 	SequenceMap sequenceMap;
+	
+	
 };
 
 

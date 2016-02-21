@@ -13,7 +13,7 @@
 
 
 //==============================================================================
-MainContentComponent::MainContentComponent()
+MainContentComponent::MainContentComponent() : chaseManager( *new ChaseManager()), sliceManager ( *new SliceManager())
 {
 	laf = new ColourLookAndFeel();
 	
@@ -54,8 +54,8 @@ MainContentComponent::MainContentComponent()
 	
 	addKeyListener(this);
 	
-	chaseManager = new ChaseManager();
-	sliceManager = new SliceManager();
+//	chaseManager = new ChaseManager();
+//	sliceManager = new SliceManager();
 	
 	setSize (1280, 720);
 	
@@ -79,8 +79,8 @@ MainContentComponent::~MainContentComponent()
 	slicesToCopy.clear();
 	currentSequenceSlices.clear();
 	
-	chaseManager = nullptr;
-	sliceManager = nullptr;
+//	chaseManager = nullptr;
+//	sliceManager = nullptr;
 }
 
 void MainContentComponent::timerCallback()
@@ -114,14 +114,14 @@ void MainContentComponent::timerCallback()
 		File assFile = FileHelper::getAssFileAutomagically();
 		//create an array to pass the slice data into
 		//sliceManager will eventually become owner of this array
-		ResXmlParser::parseAssXml( assFile, sliceManager->getSlices(), sliceManager->getResolution());
+		ResXmlParser::parseAssXml( assFile, sliceManager.getSlices(), sliceManager.getResolution());
 		
 		//now populate the previewwindow with buttons for these slices
-		previewWindow->createSliceButtons( sliceManager->getSlices() );
+		previewWindow->createSliceButtons( sliceManager.getSlices() );
 		previewWindow->resized();
 		
 		//now populate the slicelist with entries for these slices
-		sliceList->addSlices( sliceManager->getSlices() );
+		sliceList->addSlices( sliceManager.getSlices() );
 		sliceList->resized();
 		//loadDefaultAssFile();
 	}
@@ -521,7 +521,7 @@ void MainContentComponent::resized()
 	Rectangle<int> previewArea = Rectangle<int>{0, 0, int(getWidth() * 0.83), int((getWidth() / 16.0) * 9.0 * 0.83) };
 	previewArea.setPosition(0,  menuBarHeight);
 	
-	previewWindow->setBounds(0,0, sliceManager->getResolution().x, sliceManager->getResolution().y);
+	previewWindow->setBounds(0,0, sliceManager.getResolution().x, sliceManager.getResolution().y);
 	Rectangle<int> previewWindowArea = previewArea.reduced(5);
 
 	if(previewWindow->getWidth() > 0 && previewWindow->getHeight() > 0 )

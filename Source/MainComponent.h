@@ -84,6 +84,9 @@ public:
 	void copySequence();
 	void pasteSequence();
 	
+	ChaseManager& chaseManager;
+	SliceManager& sliceManager;
+	
 private:
 	ScopedPointer<MenuBarComponent> menuBar;
 	
@@ -106,8 +109,7 @@ private:
 	ScopedPointer<Copier> copier;
 	
 
-	ScopedPointer<ChaseManager> chaseManager;
-	ScopedPointer<SliceManager> sliceManager;
+	
 
 
 	String version;
