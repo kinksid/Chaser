@@ -84,8 +84,8 @@ public:
 	void copySequence();
 	void pasteSequence();
 	
-	ChaseManager& chaseManager;
-	SliceManager& sliceManager;
+	ScopedPointer<ChaseManager> chaseManager;
+	ScopedPointer<SliceManager> sliceManager;
 	
 private:
 	ScopedPointer<MenuBarComponent> menuBar;
@@ -100,7 +100,7 @@ private:
 	
     ScopedPointer<ColourLookAndFeel> laf;
     
-    OwnedArray<Slice> slices;
+	//OwnedArray<Slice> slices;
     
     ScopedPointer<Preview> previewWindow;
     ScopedPointer<SliceList> sliceList;

@@ -35,16 +35,6 @@ private:
 	SliceList& parent;
 };
 
-//struct NamedArray
-//{
-//public:
-//	NamedArray() {}
-//	~NamedArray() {}
-//	
-//	std::pair<int, String> screenPair;
-//	Array<PropertyComponent*> sliceToggles;
-//};
-
 class SliceList : public Component
 {
 public:
@@ -64,8 +54,6 @@ public:
 private:
 	
 	ColourLookAndFeel claf;
-	//Array<int> uniqueIds;
-	//OwnedArray<NamedArray> sections;
 	Sections sections;
 	
 	ScopedPointer<MyPropertyPanel> panel;
@@ -90,12 +78,6 @@ public:
 	void paint (Graphics& g) override
 	{
 		PropertyComponent::paint (g);
-		
-//		g.setColour (findColour (backgroundColourId));
-//		g.fillRect (button.getBounds());
-//		
-//		g.setColour (findColour (ComboBox::outlineColourId));
-//		g.drawRect (button.getBounds());
 	}
 	
 private:

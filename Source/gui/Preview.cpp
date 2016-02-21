@@ -45,7 +45,7 @@ void Preview::buttonClicked(Button* b)
 	 */
 	
 	MainContentComponent* parent = findParentComponentOfClass<MainContentComponent>();
-	parent->chaseManager.setStep(0, 0, activeSlices );
+	parent->chaseManager->setStep(0, 0, activeSlices );
 }
 
 void Preview::setSlices(Array<int> activeSlices)
@@ -74,7 +74,7 @@ void Preview::createSliceButtons(OwnedArray<Slice> &slices)
 {
 	for ( int i = 0; i < slices.size(); i++ )
 	{
-		addSlice( *slices[i]);
+		addSlice( *slices[i] );
 	}
 }
 
