@@ -111,7 +111,10 @@ void SliceButton::paintButton(juce::Graphics &g, bool isMouseOverButton, bool is
 		Path scaledToPreview = getPath();
 		g.fillPath ( scaledToPreview, trans);
 		
-		g.setColour (claf.outlineColour);
+		//draw the name because DJAktion is a little bitch
+		g.setColour(claf.outlineColour);
+		g.drawFittedText(name, r.toType<int>(), Justification::centred, 1);
+		
 		g.strokePath( scaledToPreview, PathStrokeType (1.0), trans);
 	}
 

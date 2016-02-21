@@ -14,8 +14,12 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Slice.h"
 #include "ColourLookAndFeel.h"
+#include <map>
 
 //==============================================================================
+
+typedef std::map<ScreenPair, Array<PropertyComponent*>> Sections;
+
 class SliceList;
 
 class MyPropertyPanel : public PropertyPanel
@@ -31,15 +35,15 @@ private:
 	SliceList& parent;
 };
 
-struct NamedArray
-{
-public:
-	NamedArray() {}
-	~NamedArray() {}
-	
-	std::pair<int, String> screenPair;
-	Array<PropertyComponent*> sliceToggles;
-};
+//struct NamedArray
+//{
+//public:
+//	NamedArray() {}
+//	~NamedArray() {}
+//	
+//	std::pair<int, String> screenPair;
+//	Array<PropertyComponent*> sliceToggles;
+//};
 
 class SliceList : public Component
 {
@@ -60,8 +64,9 @@ public:
 private:
 	
 	ColourLookAndFeel claf;
-	Array<int> uniqueIds;
-	OwnedArray<NamedArray> sections;
+	//Array<int> uniqueIds;
+	//OwnedArray<NamedArray> sections;
+	Sections sections;
 	
 	ScopedPointer<MyPropertyPanel> panel;
 	

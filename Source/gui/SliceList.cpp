@@ -29,11 +29,10 @@ void MyPropertyPanel::resized()
 	//now check the states of all the sections
 	for ( int i = 0; i < getSectionNames().size(); i++ )
 	{
-		for ( int j = 0; j < parent.getSlicesFromSection(i).size(); j++)
+		Array<Slice*> slices = parent.getSlicesFromSection(i);
+		for ( int j = 0; j < slices.size(); j++)
 		{
-			//screen order is reversed in the list
-			int currentScreen = getSectionNames().size() - 1 - i;
-			parent.getSlicesFromSection( currentScreen )[j]->screenIsUncollapsed = isSectionOpen( i );
+			slices[j]->screenIsUncollapsed = isSectionOpen( i );
 		}
 	}
 	
@@ -85,13 +84,16 @@ SliceList::~SliceList()
 
 }
 
-Array<Slice*> SliceList::getSlicesFromSection(int i)
+Array<Slice*> SliceList::getSlicesFromSection(int section)
 {
 	Array<Slice*> returnArray;
 	
-	for ( int j = 0; j < sections[i]->sliceToggles.size(); j++ )
+	Sections::iterator s = sections.begin();
+	for(int i = 0; i < section; i++)
+		s++;
+	for ( int j = 0; j < s->second.size(); j++ )
 	{
-		returnArray.add ( &static_cast<SlicePropertyButton*>(sections[i]->sliceToggles[j])->getSlice() );
+		returnArray.add ( &static_cast<SlicePropertyButton*>(s->second[j])->getSlice() );
 	}
 	
 	return returnArray;
@@ -113,42 +115,47 @@ void SliceList::addSlices( OwnedArray<Slice>& slices )
 	
 	for ( int i = 0; i < slices.size(); i++ )
 	{
-		int id = slices[i]->screenPair.first;
+		ScreenPair screenPair = slices[i]->screenPair;
 		
-		//make a new section for each uniqued id
-		if ( !uniqueIds.contains( id ))
-		{
-			uniqueIds.add(id);
-			NamedArray* newSection = new NamedArray();
-			DBG(slices[i]->screenPair.second);
-			newSection->screenPair = slices[i]->screenPair;
-			sections.add ( newSection );
-		}
+		//create a new SlicePropertyButton
+		SlicePropertyButton* newComponent = new SlicePropertyButton( *this, *slices[i] );
+		newComponent->setColour(BooleanPropertyComponent::backgroundColourId, claf.backgroundColour);
+		newComponent->setState( slices[i]->enabled );
+		//sections[j]->sliceToggles.add( newComponent );
+		
+		sections[screenPair].add(newComponent);
 	}
 	
-	//now go through the slices again
-	//if their unique id matches the sections
-	//add it to the array for that section
-	for ( int i = 0; i < slices.size(); i++ )
-	{
-		int id = slices[i]->screenPair.first;
-		
-		for ( int j = 0; j < sections.size(); j++ )
-		{
-			if ( id == sections[j]->screenPair.first )
-			{
-				//create a new SlicePropertyButton
-				SlicePropertyButton* newComponent = new SlicePropertyButton( *this, *slices[i] );
-				newComponent->setColour(BooleanPropertyComponent::backgroundColourId, claf.backgroundColour);
-				newComponent->setState( slices[i]->enabled );
-				sections[j]->sliceToggles.add( newComponent );
-			}
-		}
-	}
+//		//make a new section for each uniqued id
+//		if ( !uniqueIds.contains( id ))
+//		{
+//			uniqueIds.add(id);
+//			NamedArray* newSection = new NamedArray();
+//			DBG(slices[i]->screenPair.second);
+//			newSection->screenPair = slices[i]->screenPair;
+//			sections.add ( newSection );
+//		}
+//	}
+//	
+//	//now go through the slices again
+//	//if their unique id matches the sections
+//	//add it to the array for that section
+//	for ( int i = 0; i < slices.size(); i++ )
+//	{
+//		int id = slices[i]->screenPair.first;
+//		
+//		for ( int j = 0; j < sections.size(); j++ )
+//		{
+//			if ( id == sections[j]->screenPair.first )
+//			{
+//				
+//			}
+//		}
+//	}
 	
 	//now go through all the arrays again and create sections out of them
-	for ( int i = sections.size() - 1; i >= 0 ; i-- )
-		panel->addSection( sections[i]->screenPair.second, sections[i]->sliceToggles );
+	for ( auto const &s : sections )
+		panel->addSection( s.first.second, s.second );
 	
 	
 }
@@ -161,7 +168,6 @@ void SliceList::sliceVisibilityChanged()
 
 void SliceList::clear()
 {
-	uniqueIds.clear();
 	sections.clear();
 	panel->clear();
 }

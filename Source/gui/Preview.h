@@ -73,14 +73,10 @@ public:
     void resized();
     
     virtual void buttonClicked (Button*);
-    
-    void update(Slice* slice, int i );
-    
-    void clearSlices();
 	
 	void createSliceButtons ( OwnedArray<Slice>& slices );
+    void clearSlices();
 	
-    
     void setSlices ( Array<int> activeSlices );
 	
 	class Listener

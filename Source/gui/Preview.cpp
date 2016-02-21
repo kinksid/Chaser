@@ -94,10 +94,7 @@ void Preview::clearSlices()
     sliceButtons.clear();
 }
 
-void Preview::update(Slice* slice, int i)
-{
-    sliceButtons[i]->setVisible( slice->enabled );
-}
+
 
 void Preview::paint (Graphics& g)
 {
@@ -115,12 +112,7 @@ void Preview::paint (Graphics& g)
 
 void Preview::resized()
 {
-    
     for ( int i = 0; i < sliceButtons.size() ; i++ )
-    {
 		sliceButtons[i]->resized();
-		//sliceButtons[i]->setBoundsRelative(sliceButtons[i]->proportionalX, sliceButtons[i]->proportionalY, sliceButtons[i]->proportionalW, sliceButtons[i]->proportionalH);
-    }
-
 }
 

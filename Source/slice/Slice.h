@@ -14,6 +14,7 @@
 #include "JuceHeader.h"
 
 //Quick class that holds a slice with all the relevant info
+typedef std::pair<int, String> ScreenPair;
 
 class Slice
 {
@@ -42,7 +43,7 @@ public:
 	bool screenIsUncollapsed = true;
 	
 	//which screen and uniqued id this slice is a part of
-	std::pair<int, String> screenPair = std::make_pair(0, "Default Screen");
+	ScreenPair screenPair = std::make_pair(0, "Default Screen");
 	
     Array<Point<float>> inputRectPoints;
     Array<Point<float>> maskPoints;
