@@ -45,10 +45,10 @@ void Preview::buttonClicked(Button* b)
 	 */
 	
 	MainContentComponent* parent = findParentComponentOfClass<MainContentComponent>();
-	parent->chaseManager->setStep(0, 0, activeSlices );
+	parent->chaseManager->setStep( activeSlices );
 }
 
-void Preview::setSlices(Array<int> activeSlices)
+void Preview::setActiveSlices(Array<int> activeSlices)
 {
     //turn all the slices off
     for ( int i = 0; i < sliceButtons.size(); i++ )

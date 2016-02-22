@@ -10,41 +10,14 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Sequencer.h"
+#include "MainComponent.h"
 
 
 //==============================================================================
-Sequencer::Sequencer()
+Sequencer::Sequencer( MainContentComponent& parent ): parent ( parent )
 {
 
-    for ( int i = 0; i < 16; i++ )
-    {
-        //create 16 buttons for the step sequencer
-        Button* b = new TextButton( String (i + 1) );
-        b->setColour(TextButton::buttonColourId, claf.backgroundColour);
-        b->setColour(TextButton::buttonOnColourId, claf.primaryColour);
-        b->setRadioGroupId(1);
-        b->setClickingTogglesState(true);
-        if ( i == 0 )
-            b->setConnectedEdges(2);
-        if ( i > 0 && i < 15 )
-            b->setConnectedEdges(3);
-        if ( i == 15 )
-            b->setConnectedEdges(1);
-        b->addListener(this);
-        addAndMakeVisible(b);
-        stepper.add(b);
-    }
-
-	for( int i = 0; i < 16; i++ )
-	{
-		
-	}
 	
-	
-	//set the active vars and turn on the first step
-    activeButton = 0;
-	activeSequence = 0;
-    stepper[0]->setToggleState(true, sendNotification);
 
     //drawable svg buttons
     ScopedPointer<XmlElement> drawPlayXml (XmlDocument::parse (BinaryData::play_svg));
@@ -88,7 +61,7 @@ Sequencer::Sequencer()
     
     //sequence name label
     sequenceName = new Label("sequencename");
-    sequenceName->setText(sequenceNames[activeSequence], dontSendNotification);
+	//sequenceName->setText(sequenceNames[activeSequence], dontSendNotification);
     sequenceName->setEditable(true);
 	sequenceName->addListener(this);
     
@@ -100,9 +73,10 @@ Sequencer::Sequencer()
     addAndMakeVisible(sequenceName);
 	
 	//sequence number label
-	sequenceNumber = new Label("sequencenumber");
-	sequenceNumber->setText( "1:", dontSendNotification);
-	sequenceNumber->setEditable(false);
+	sequenceNumber = new TextEditor("sequencenumber");
+	sequenceNumber->setText(String(parent.chaseManager->getCurrentSequence() + 1), dontSendNotification);
+	sequenceNumber->addListener( this );
+	sequenceNumber->setInputFilter(new TextEditor::LengthAndCharacterRestriction(0, "1234567890"), true );
 
 	
 	sequenceNumber->setColour(Label::outlineColourId, claf.outlineColour.darker());
@@ -112,74 +86,67 @@ Sequencer::Sequencer()
 	
 	addAndMakeVisible(sequenceNumber);
 	
-	setDefaultSequences();
+	setButtonCount( parent.chaseManager->getLastStep() );
+	
+	
+	//sanity check to turn on the first step
+	if ( stepper.size() )
+		stepper[0]->setToggleState(true, sendNotification);
 }
+
 
 Sequencer::~Sequencer()
 {
-    
+	
 }
 
-void Sequencer::setSequenceLengths(Array<int> lengths)
+
+void Sequencer::addButton()
 {
-	for ( int i = 0; i < lengths.size(); i++ )
-	{
-		if ( i < numberOfSteps.size() )
-			numberOfSteps.set( i, lengths[i] );
-	}
-	
-	//so the buttons get drawn again
-	resized();
-	
-	//let the listeners know
-	Component::BailOutChecker checker (this);
-	if (! checker.shouldBailOut())
-		listeners.callChecked ( checker, &Sequencer::Listener::sequenceLengthChanged, numberOfSteps[ activeSequence ] );
+	//create 16 buttons for the step sequencer
+	Button* b = new TextButton( String (stepper.size() + 1) );
+	b->setColour(TextButton::buttonColourId, claf.backgroundColour);
+	b->setColour(TextButton::buttonOnColourId, claf.primaryColour);
+	b->setRadioGroupId(1);
+	b->setClickingTogglesState(true);
+	//	if ( stepper.size() == 0 )
+	//		b->setConnectedEdges(2);
+	//	else if ( stepper.size)
+	//
+	//	if ( i > 0 && i < 15 )
+	//		b->setConnectedEdges(3);
+	//	if ( i == 15 )
+	//		b->setConnectedEdges(1);
+	b->addListener(this);
+	addAndMakeVisible(b);
+	stepper.add(b);
 }
 
-void Sequencer::setSequenceNames(juce::StringArray seqNames)
+void Sequencer::removeButton()
 {
-	sequenceNames = seqNames;
-	//update the label
-	sequenceName->setText(sequenceNames[activeSequence], dontSendNotification );
+	stepper.removeLast();
 }
 
-void Sequencer::setDefaultSequences()
+void Sequencer::setButtonCount( int count )
 {
-	stopTimer();
-	
-	sequenceNames.clear();
-	numberOfSteps.clear();
-	
-	for ( int i = 0; i < 16; i++ )
+	if ( count > 0 ) //can't have less than zero buttons
 	{
-		//fill the sequence names array with default names
-		String seqName = "Sequence " + String ( i+1 );
-		sequenceNames.add(seqName);
-
-		//set each sequence to be 16 steps
-		numberOfSteps.add( 16 );
+		while ( stepper.size() <= count + 1 )
+			addButton();
+		while ( stepper.size() > count + 1 )
+			removeButton();
+		
+		//if we got out of the range
+		//trigger the last available button
+		//this will also update the chaseManager
+		if ( parent.chaseManager->getCurrentStep() >= stepper.size() )
+			stepper.getLast()->triggerClick();
+		
+		resized();
 	}
-	
-	activeSequence = 0;
-	activeButton = 0;
-	
-	//update the label
-	sequenceName->setText(sequenceNames[activeSequence], dontSendNotification);
-	
-	//let the listeners know
-	Component::BailOutChecker checker (this);
-	if (! checker.shouldBailOut())
-	{
-		listeners.callChecked ( checker, &Sequencer::Listener::sequenceSelected, activeSequence );
-		listeners.callChecked ( checker, &Sequencer::Listener::sequenceLengthChanged, numberOfSteps[ activeSequence ] );
-	}
-	
-	//always set the step to be the first step
-	stepper[0]->triggerClick();
-	
-	resized();
 }
+
+
 
 void Sequencer::paint (Graphics& g)
 {
@@ -204,86 +171,91 @@ void Sequencer::buttonClicked (Button* b)
 			play->triggerClick();
 		
 		if ( b == previous )
-		{
-			//only change the sequence when the first step is active
-			if( activeButton == 0 )
-			{
-				activeSequence--;
-				if( activeSequence < 0 )
-					activeSequence = 15;
-			}
-		}
+			parent.chaseManager->skipToPreviousSequence();
+
 		
 		else if ( b == next )
-		{
-			activeSequence++;
-			if ( activeSequence > 15 )
-				activeSequence = 0;
-		}
+			parent.chaseManager->skipToNextSequence();
+		
+		//retrigger the current step, chaserManager makes sure this is 0
+		stepper[parent.chaseManager->getCurrentStep()]->triggerClick();
+		
+		//check that we have enough steps
+		setButtonCount( parent.chaseManager->getLastStep());
 		
 		//update the sequence name and redraw the component
-		sequenceName->setText( sequenceNames[ activeSequence ], dontSendNotification );
-		sequenceNumber->setText( String(activeSequence + 1) + ": ", dontSendNotification);
-		resized();
-		
-		//let the listeners know
-		Component::BailOutChecker checker (this);
-		if (! checker.shouldBailOut())
-		{
-			listeners.callChecked ( checker, &Sequencer::Listener::sequenceSelected, activeSequence );
-			//the sequence lenght might also have changed
-			listeners.callChecked ( checker, &Sequencer::Listener::sequenceLengthChanged, numberOfSteps[ activeSequence ] );
-		}
-		
-		//always set the step to be the first step
-		stepper[0]->triggerClick();
+		sequenceNumber->setText(String( parent.chaseManager->getCurrentSequence() + 1), dontSendNotification );
 	}
 	
 
 	else if ( b == lessSteps || b == moreSteps )
 	{
-		if( b == lessSteps && numberOfSteps[activeSequence] > 1 )
+		if( b == lessSteps )
 		{
-			//decrease the number of steps in the active sequence
-			numberOfSteps.set( activeSequence, numberOfSteps[ activeSequence ] - 1 );
-			
-			//if we were on a button that is no longer in range, trigger the previous step
-			if( activeButton > numberOfSteps[ activeSequence ] - 1 )
-				stepper[ numberOfSteps[ activeSequence ] -1 ]->triggerClick();
+			setButtonCount( parent.chaseManager->removeStep() );
 		}
 
-		else if( b == moreSteps && numberOfSteps[ activeSequence ] < 16 )
+		else if( b == moreSteps )
 		{
-			//increase the number of steps in the active sequence
-			numberOfSteps.set( activeSequence, numberOfSteps[ activeSequence ] + 1 );
+			//add an empty step to the chaseManager
+			setButtonCount( parent.chaseManager->addStep() );
+			
 		}
 		
-		resized();
+		
 		//let the listeners know
-		Component::BailOutChecker checker (this);
-		if (! checker.shouldBailOut())
-			listeners.callChecked ( checker, &Sequencer::Listener::sequenceLengthChanged, numberOfSteps[ activeSequence ] );
+//		Component::BailOutChecker checker (this);
+//		if (! checker.shouldBailOut())
+//			listeners.callChecked ( checker, &Sequencer::Listener::sequenceLengthChanged, numberOfSteps[ activeSequence ] );
 	}
     
     else
     {
-        activeButton = stepper.indexOf( b );
         if( b->getToggleState() )
 		{
-			Component::BailOutChecker checker (this);
-			if (! checker.shouldBailOut())
-				listeners.callChecked ( checker, &Sequencer::Listener::stepSelected, activeButton );
+			
+			parent.chaseManager->skipToStep(stepper.indexOf( b ));
+			parent.previewWindow->setActiveSlices(parent.chaseManager->getStep());
+
+//			Component::BailOutChecker checker (this);
+//			if (! checker.shouldBailOut())
+//				listeners.callChecked ( checker, &Sequencer::Listener::stepSelected, activeButton );
 		}
     }
 }
 
+void Sequencer::textEditorEscapeKeyPressed(juce::TextEditor &editor )
+{
+	if ( sequenceNumber == &editor )
+		sequenceNumber->setText( String(parent.chaseManager->getCurrentSequence() + 1));
+	
+	unfocusAllComponents();
+}
+
+
+void Sequencer::textEditorReturnKeyPressed(juce::TextEditor &editor )
+{
+	if ( sequenceNumber == &editor )
+	{
+		parent.chaseManager->skipToSequence( sequenceNumber->getText().getIntValue() - 1 );
+		
+		//retrigger the current step, chaserManager makes sure this is 0
+		stepper[parent.chaseManager->getCurrentStep()]->triggerClick();
+		
+		//check that we have enough steps
+		setButtonCount( parent.chaseManager->getLastStep());
+	}
+	unfocusAllComponents();
+}
+
 void Sequencer::labelTextChanged (Label* labelThatHasChanged)
 {
-	sequenceNames.set(activeSequence, labelThatHasChanged->getText());
 	
-	Component::BailOutChecker checker (this);
-	if (! checker.shouldBailOut())
-		listeners.callChecked ( checker, &Sequencer::Listener::sequenceNameChanged, labelThatHasChanged->getText() );
+//	sequenceNames.set(activeSequence, labelThatHasChanged->getText());
+//	
+//	Component::BailOutChecker checker (this);
+//	if (! checker.shouldBailOut())
+//		listeners.callChecked ( checker, &Sequencer::Listener::sequenceNameChanged, labelThatHasChanged->getText() );
 	
 }
 
@@ -299,42 +271,27 @@ void Sequencer::timerCallback()
 
 void Sequencer::nextStep()
 {
-	activeButton++;
-	activeButton = int(fmod( activeButton, numberOfSteps[activeSequence] ));
-	stepper[activeButton]->triggerClick();
+	stepper[parent.chaseManager->skipToNextStep()]->triggerClick();
 }
 
 void Sequencer::previousStep()
 {
-	activeButton--;
-	if ( activeButton < 0 )
-		activeButton = numberOfSteps[activeSequence] - 1;
-	stepper[activeButton]->triggerClick();
-
+	int previousStep = parent.chaseManager->skipToPreviousStep();
+	stepper[previousStep]->triggerClick();
 }
 
 void Sequencer::selectStep(int i)
 {
-	if ( i < numberOfSteps[activeSequence] && i > -1 )
-	{
-		activeButton = i;
-		stepper[activeButton]->triggerClick();
-	}
+	parent.chaseManager->skipToStep( i );
 }
 
 void Sequencer::resized()
 {
 	
-	float w = (1.0f / float( numberOfSteps[ activeSequence ]) * 0.817f); //the magic number math is there so the 16 buttons align perfectly with the preview window
+	float w = (1.0f / float( stepper.size() ) * 0.817f); //the magic number math is there so the buttons align perfectly with the preview window
     for(int i = 0; i < stepper.size() ; i++ )
     {
-		if( i < numberOfSteps[ activeSequence ] )
-		{
-			stepper[ i ]->setVisible( true );
-			stepper[ i ]->setBoundsRelative( i * w, 0.0, w, 1.0 );
-		}
-		else
-			stepper[ i ]->setVisible( false );
+		stepper[ i ]->setBoundsRelative( i * w, 0.0, w, 1.0 );
     }
 
 	float sequenceControlButtonWidth = 0.0632526f;

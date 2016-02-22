@@ -77,7 +77,7 @@ public:
 	void createSliceButtons ( OwnedArray<Slice>& slices );
     void clearSlices();
 	
-    void setSlices ( Array<int> activeSlices );
+    void setActiveSlices ( Array<int> activeSlices );
 	
 	class Listener
 	{

@@ -13,53 +13,46 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ColourLookAndFeel.h"
+class MainContentComponent;
 
 //==============================================================================
 /*
 */
-class Sequencer    : public Component, public Button::Listener, public Label::Listener, public Timer//, public ChangeBroadcaster
+class Sequencer    :	public Component,
+						public Button::Listener,
+						public Label::Listener,
+						public Timer,
+						public TextEditor::Listener
 {
 public:
-    Sequencer();
+	Sequencer( MainContentComponent& parent );
     ~Sequencer();
 
-    void paint (Graphics&);
-    void resized();
+    void paint (Graphics&) override;
+    void resized() override;
     
-    virtual void buttonClicked (Button*);
-    virtual void buttonStateChanged (Button*);
+    virtual void buttonClicked (Button*) override;
+    virtual void buttonStateChanged (Button*) override;
 	
-	virtual void labelTextChanged (Label* labelThatHasChanged);
+	void labelTextChanged (Label* labelThatHasChanged) override;
+	void textEditorEscapeKeyPressed (TextEditor&) override;
+	void textEditorReturnKeyPressed (TextEditor&) override;
     
-    virtual void timerCallback();
+    virtual void timerCallback() override;
     
 
-	void setSequenceLengths ( Array<int> lengths );
-	void setSequenceNames( StringArray seqNames );
-	void setDefaultSequences();
-
-	class Listener
-	{
-		
-	public:
-		virtual ~Listener() {}
-		virtual void stepSelected ( int step ) = 0;
-		virtual void sequenceNameChanged ( String newName ) = 0;
-		virtual void sequenceSelected ( int sequence ) = 0;
-		virtual void sequenceLengthChanged ( int newSequenceLength ) = 0;
-	};
-	
-	void addListener ( Listener* const l ) { listeners.add ( l ); }
-	void removeListener ( Listener* const l ) { listeners.remove (l ); }
 	
 	void nextStep();
 	void previousStep();
 	void selectStep( int i );
 	
 private:
-	int activeButton;
-	int activeSequence;
+	void addButton();
+	void removeButton();
 	
+	void setButtonCount( int count );
+	
+	MainContentComponent& parent;
     OwnedArray<Button> stepper;
     ScopedPointer<DrawableButton> play;
     ScopedPointer<DrawableButton> next;
@@ -67,13 +60,9 @@ private:
 
 	ScopedPointer<Button> lessSteps;
 	ScopedPointer<Button> moreSteps;
-
-	ListenerList<Listener> listeners;
-    
-	Array<int> numberOfSteps;
+	
     ScopedPointer<Label> sequenceName;
-	ScopedPointer<Label> sequenceNumber;
-    StringArray sequenceNames;
+	ScopedPointer<TextEditor> sequenceNumber;
 	
 	ColourLookAndFeel claf;
     

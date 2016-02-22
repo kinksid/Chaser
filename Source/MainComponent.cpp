@@ -28,9 +28,8 @@ MainContentComponent::MainContentComponent() : chaseManager( new ChaseManager())
     sliceList = new SliceList();
     addAndMakeVisible(sliceList);
     
-    sequencer = new Sequencer();
+    sequencer = new Sequencer(*this);
     addAndMakeVisible(sequencer);
-    sequencer->addListener(this);
 	
 	copier = new Copier();
 	addAndMakeVisible(copier);
@@ -261,7 +260,7 @@ void MainContentComponent::clearGUI()
 	sliceList->clear();
 	previewWindow->clearSlices();
 	//xmlSequence->clearSlices();
-	sequencer->setDefaultSequences();
+	//sequencer->setDefaultSequences();
 	resized();
 }
 
@@ -387,50 +386,7 @@ void MainContentComponent::sliceClicked( Array<int> activeSlices_)
 	 */
 }
 
-void MainContentComponent::stepSelected(int step)
-{
-	/*
-	//the sequencer has been set to a new step or sequence
-	//so read out the values for this step and update the preview
-	currentStep = step;
-	activeSlices = xmlSequence->getStep( currentSequence, currentStep );
-	previewWindow->setSlices( activeSlices );
-	 */
-}
 
-void MainContentComponent::sequenceNameChanged( String newName )
-{
-	/*
-	//the sequence name has been changed
-	//save the sequence name to xml
-	xmlSequence->setSequenceName( currentSequence, newName );
-	saveXml();
-	 */
-}
-
-void MainContentComponent::sequenceSelected(int sequence)
-{
-	//when the sequence is changed
-	//the first step is always triggered as well
-	//so the preview state is updated by this click
-	currentSequence = sequence;
-}
-
-void MainContentComponent::sequenceLengthChanged(int newSequenceLength)
-{
-	/*
-	//this means the current sequence has been made shorter or longer
-	//update the model var
-	currentSequenceLength = newSequenceLength;
-	
-	//save it to xml
-	if ( xmlSequence->getSequenceLengths().size() > currentSequence )
-	{
-		xmlSequence->setNumberOfSteps( currentSequence, currentSequenceLength);
-		saveXml();
-	}
-	 */
-}
 
 
 
@@ -465,7 +421,7 @@ void MainContentComponent::copyStep()
 void MainContentComponent::pasteStep()
 {
 	sliceClicked( slicesToCopy );
-	previewWindow->setSlices( activeSlices );
+	previewWindow->setActiveSlices( slicesToCopy );
 }
 
 void MainContentComponent::copySequence()

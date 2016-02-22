@@ -29,7 +29,6 @@
 */
 class MainContentComponent   :  public Component,
 								public MenuBarModel,
-								public Sequencer::Listener,
 								public Preview::Listener,
 								public Copier::Listener,
 								public KeyListener,
@@ -51,13 +50,7 @@ public:
 									   const String& menuName) override;
 	virtual void menuItemSelected (int menuItemID,
 								   int topLevelMenuIndex) override;
-	
-	//sequencer listener methods
-	virtual void stepSelected ( int step ) override;
-	virtual void sequenceNameChanged ( String newName ) override;
-	virtual void sequenceSelected ( int sequence ) override;
-	virtual void sequenceLengthChanged ( int newSequenceLength ) override;
-	
+		
 	//preview listener methods
 	virtual void sliceClicked ( Array<int> activeSlices ) override;
 	
@@ -87,6 +80,8 @@ public:
 	ScopedPointer<ChaseManager> chaseManager;
 	ScopedPointer<SliceManager> sliceManager;
 	
+	ScopedPointer<Preview> previewWindow;
+	
 private:
 	ScopedPointer<MenuBarComponent> menuBar;
 	
@@ -102,7 +97,7 @@ private:
     
 	//OwnedArray<Slice> slices;
     
-    ScopedPointer<Preview> previewWindow;
+	
     ScopedPointer<SliceList> sliceList;
     ScopedPointer<Sequencer> sequencer;
 	// ScopedPointer<XmlSequence> xmlSequence;
