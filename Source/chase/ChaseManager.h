@@ -39,9 +39,6 @@ public:
 	void setName( String name );
 	String getName ();
 	
-	int skipToNextSequence();
-	int skipToPreviousSequence();
-	
 	void skipToSequence ( int i );
 	void skipToStep ( int i );
 	
@@ -49,11 +46,21 @@ public:
 	int skipToNextStep();
 	int skipToPreviousStep();
 	
+	//will return the new current sequence
+	int skipToNextSequence();
+	int skipToPreviousSequence();
+	
 	//will return the new max amount of steps in the current sequence
+	//steps are always added and removed from the end of the sequence
 	int addStep();
 	int removeStep();
 	
+	//will return the new max amount of sequences
+	int addSequence( );
+	int removeCurrentSequence( );
+	
 	int getLastStep();
+	int getLastSequence();
 	
 	int getCurrentStep();
 	int getCurrentSequence();

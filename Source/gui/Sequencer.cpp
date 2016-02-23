@@ -244,6 +244,10 @@ void Sequencer::textEditorReturnKeyPressed(juce::TextEditor &editor )
 		
 		//check that we have enough steps
 		setButtonCount( parent.chaseManager->getLastStep());
+		
+		//update the text, in case we wrapped the sequence count
+		if ( sequenceNumber == &editor )
+			sequenceNumber->setText( String(parent.chaseManager->getCurrentSequence() + 1));
 	}
 	unfocusAllComponents();
 }

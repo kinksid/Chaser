@@ -17,8 +17,8 @@ ChaseManager::ChaseManager()
 	currentSequence = -1;
 	skipToNextSequence();
 	
-//	//fill the first sequences with 16 steps
-//	sequenceMap[0][15] = SliceIndexArray{};
+	//set the default max sequence with the default max steps
+	sequenceMap[15][15] = SliceIndexArray{};
 }
 
 ChaseManager::~ChaseManager()
@@ -48,7 +48,6 @@ SliceIndexArray ChaseManager::getStep()
 
 void ChaseManager::clearAll()
 {
-	//TODO not quite sure if this will leak Slice*
 	sequenceMap.clear();
 }
 
@@ -73,6 +72,9 @@ void ChaseManager::skipToSequence(int i)
 {
 	currentSequence = i;
 	
+	if ( currentSequence > getLastSequence() )
+		currentSequence = getLastSequence();
+	
 	fillSequence();
 	
 	//when skipping sequences, the current step always resets
@@ -83,6 +85,8 @@ int ChaseManager::skipToNextSequence()
 {
 	currentSequence++;
 	
+	if ( currentSequence > getLastSequence() )
+		currentSequence = 0;
 	fillSequence();
 	
 	//when skipping sequences, the current step always resets
@@ -94,8 +98,8 @@ int ChaseManager::skipToNextSequence()
 int ChaseManager::skipToPreviousSequence()
 {
 	currentSequence--;
-	if ( currentSequence < 0 && !sequenceMap.empty())
-		currentSequence = sequenceMap.rbegin()->first;
+	if ( currentSequence < 0 )
+		currentSequence = getLastSequence();
 	
 	fillSequence();
 	
@@ -154,6 +158,11 @@ int ChaseManager::removeStep()
 int ChaseManager::getLastStep()
 {
 	return sequenceMap[currentSequence].rbegin()->first;
+}
+
+int ChaseManager::getLastSequence()
+{
+	return sequenceMap.rbegin()->first;
 }
 
 int ChaseManager::getCurrentStep()
