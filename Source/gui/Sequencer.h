@@ -21,8 +21,7 @@ class MainContentComponent;
 class Sequencer    :	public Component,
 						public Button::Listener,
 						public Label::Listener,
-						public Timer,
-						public TextEditor::Listener
+						public Timer
 {
 public:
 	Sequencer( MainContentComponent& parent );
@@ -35,8 +34,6 @@ public:
     virtual void buttonStateChanged (Button*) override;
 	
 	void labelTextChanged (Label* labelThatHasChanged) override;
-	void textEditorEscapeKeyPressed (TextEditor&) override;
-	void textEditorReturnKeyPressed (TextEditor&) override;
     
     virtual void timerCallback() override;
     
@@ -62,7 +59,7 @@ private:
 	ScopedPointer<Button> moreSteps;
 	
     ScopedPointer<Label> sequenceName;
-	ScopedPointer<TextEditor> sequenceNumber;
+	ScopedPointer<Label> sequenceNumber;
 	
 	void updateSequenceSettings ();
 	

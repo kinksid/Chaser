@@ -69,15 +69,13 @@ Sequencer::Sequencer( MainContentComponent& parent ): parent ( parent )
 	sequenceName->setColour(TextEditor::ColourIds::highlightColourId, claf.primaryColour);
     addAndMakeVisible(sequenceName);
 	
-	//sequence number editor
-	//has to be an editor because labels can't have inputfilters
-	sequenceNumber = new TextEditor("sequencenumber");
+	//sequence number label
+	sequenceNumber = new Label("sequencenumber");
 	sequenceNumber->addListener( this );
-	sequenceNumber->setInputFilter(new TextEditor::LengthAndCharacterRestriction(0, "1234567890"), true );
-	sequenceNumber->setSelectAllWhenFocused( true );
-	sequenceNumber->setColour(TextEditor::outlineColourId, claf.outlineColour.darker());
-	sequenceNumber->setColour(TextEditor::backgroundColourId, claf.backgroundColour);
-	sequenceNumber->setColour(TextEditor::textColourId, claf.textColour.darker());
+	sequenceNumber->setEditable( true );
+	sequenceNumber->setColour(Label::outlineColourId, claf.outlineColour.darker());
+	sequenceNumber->setColour(Label::backgroundColourId, claf.backgroundColour);
+	sequenceNumber->setColour(Label::textColourId, claf.textColour.darker());
 	sequenceNumber->setColour(TextEditor::ColourIds::highlightColourId, claf.primaryColour);
 	addAndMakeVisible(sequenceNumber);
 	
@@ -161,29 +159,18 @@ void Sequencer::buttonClicked (Button* b)
     }
 }
 
-void Sequencer::textEditorEscapeKeyPressed(juce::TextEditor &editor )
+void Sequencer::labelTextChanged (Label* labelThatHasChanged)
 {
-	if ( sequenceNumber == &editor )
-		sequenceNumber->setText( String(parent.chaseManager->getCurrentSequence() + 1));
+	if ( labelThatHasChanged == sequenceName )
+		parent.chaseManager->setCurrentSequenceName( labelThatHasChanged->getText() );
 	
-	unfocusAllComponents();
-}
-
-
-void Sequencer::textEditorReturnKeyPressed(juce::TextEditor &editor )
-{
-	if ( sequenceNumber == &editor )
+	if ( sequenceNumber == labelThatHasChanged )
 	{
-		parent.chaseManager->skipToSequence( sequenceNumber->getText().getIntValue() - 1 );
+		if ( sequenceNumber->getText().getIntValue() != 0 )
+			parent.chaseManager->skipToSequence( sequenceNumber->getText().getIntValue() - 1 );
 		
 		updateSequenceSettings();
 	}
-	unfocusAllComponents();
-}
-
-void Sequencer::labelTextChanged (Label* labelThatHasChanged)
-{
-	parent.chaseManager->setCurrentSequenceName( labelThatHasChanged->getText() );
 //	sequenceNames.set(activeSequence, labelThatHasChanged->getText());
 //	
 //	Component::BailOutChecker checker (this);
