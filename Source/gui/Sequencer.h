@@ -64,6 +64,8 @@ private:
     ScopedPointer<Label> sequenceName;
 	ScopedPointer<TextEditor> sequenceNumber;
 	
+	void updateSequenceSettings ();
+	
 	ColourLookAndFeel claf;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Sequencer)

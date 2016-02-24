@@ -14,11 +14,13 @@ ChaseManager::ChaseManager()
 {
 	setName( "Default Chaser" );
 	
-	currentSequence = -1;
-	skipToNextSequence();
+	currentSequence = 15;
+	fillSequence();
+	currentSequence = 0;
+	fillSequence();
 	
-	//set the default max sequence with the default max steps
-	sequenceMap[15][15] = SliceIndexArray{};
+//	//set the default max sequence with the default max steps
+//	sequenceMap[15][15] = SliceIndexArray{};
 }
 
 ChaseManager::~ChaseManager()
@@ -65,7 +67,10 @@ void ChaseManager::fillSequence()
 {
 	//make sure the sequence is filled
 	if ( sequenceMap[currentSequence].size() == 0)
+	{
 		sequenceMap[currentSequence][15] = SliceIndexArray{};
+		nameMap[currentSequence] = "Sequence " + String (currentSequence + 1);
+	}
 }
 
 void ChaseManager::skipToSequence(int i)
@@ -173,4 +178,14 @@ int ChaseManager::getCurrentStep()
 int ChaseManager::getCurrentSequence()
 {
 	return currentSequence;
+}
+
+String ChaseManager::getCurrentSequenceName()
+{
+	return nameMap[currentSequence];
+}
+
+void ChaseManager::setCurrentSequenceName(juce::String newName)
+{
+	nameMap[currentSequence] = newName;
 }

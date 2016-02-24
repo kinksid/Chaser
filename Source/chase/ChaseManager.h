@@ -14,10 +14,10 @@
 #include <map>
 #include "Slice.h"
 
-
 typedef Array<int> SliceIndexArray; //the active slices in a step
 typedef std::map<int, SliceIndexArray> StepMap; //the step and its active slices
 typedef std::map<int, StepMap> SequenceMap; //the sequence and its steps
+typedef std::map<int, String> NameMap;
 
 
 //ChaseManager gives access to the sequences, their steps and the active slices in the step
@@ -65,6 +65,9 @@ public:
 	int getCurrentStep();
 	int getCurrentSequence();
 	
+	String getCurrentSequenceName();
+	void setCurrentSequenceName( String newName );
+	
 	
 	
 private:
@@ -75,6 +78,7 @@ private:
 	String chaserName;
 	SequenceMap sequenceMap;
 	StepMap stepMap;
+	NameMap nameMap;
 	
 };
 
