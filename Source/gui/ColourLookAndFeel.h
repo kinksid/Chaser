@@ -136,10 +136,13 @@ public:
 		
 		const int textX = (int) tickWidth + 5;
 		
-		g.drawFittedText (button.getButtonText(),
-						  textX, 0,
-						  button.getWidth() - textX - 2, button.getHeight(),
-						  Justification::centredLeft, 10);
+		if ( button.getWidth() - textX - 2 > 0 )
+		{
+			g.drawFittedText (button.getButtonText(),
+							  textX, 0,
+							  button.getWidth() - textX - 2, button.getHeight(),
+							  Justification::centredLeft, 10);
+		}
 	}
 
 
