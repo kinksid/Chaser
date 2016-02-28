@@ -29,8 +29,6 @@
 */
 class MainContentComponent   :  public Component,
 								public MenuBarModel,
-								public Preview::Listener,
-								public Copier::Listener,
 								public KeyListener,
 								public Timer
 
@@ -50,12 +48,7 @@ public:
 									   const String& menuName) override;
 	virtual void menuItemSelected (int menuItemID,
 								   int topLevelMenuIndex) override;
-		
-	//preview listener methods
-	virtual void sliceClicked ( Array<int> activeSlices ) override;
-	
-	//copier listener methods
-	virtual void copierClicked ( int m ) override;
+			
 	
 	//keyboard listener
 	virtual bool keyPressed (const KeyPress& key,

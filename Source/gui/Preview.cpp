@@ -37,15 +37,8 @@ void Preview::buttonClicked(Button* b)
 			activeSlices.add(i);
 	}
 	
-	/*
-	//let the listeners know
-	Component::BailOutChecker checker (this);
-	if (! checker.shouldBailOut())
-		previewListeners.callChecked ( checker, &Listener::sliceClicked, activeSlices );
-	 */
-	
 	MainContentComponent* parent = findParentComponentOfClass<MainContentComponent>();
-	parent->chaseManager->setStep( activeSlices );
+	parent->chaseManager->setCurrentStep( activeSlices );
 }
 
 void Preview::setActiveSlices(Array<int> activeSlices)
@@ -73,12 +66,10 @@ void Preview::setActiveSlices(Array<int> activeSlices)
 void Preview::createSliceButtons(OwnedArray<Slice> &slices)
 {
 	for ( int i = 0; i < slices.size(); i++ )
-	{
-		addSlice( *slices[i] );
-	}
+		addSliceButton( *slices[i] );
 }
 
-void Preview::addSlice( Slice& slice )
+void Preview::addSliceButton( Slice& slice )
 {
 	SliceButton* newButton = new SliceButton ( slice, Point<int> (getWidth(), getHeight()) );
     newButton->setLookAndFeel(sliceLaf);
@@ -91,6 +82,7 @@ void Preview::addSlice( Slice& slice )
         addAndMakeVisible( newButton );
     else
         addChildComponent( newButton );
+	
 	//flip the order, so it matches the order in Resolume
 	newButton->toBack();
 }
@@ -104,7 +96,6 @@ void Preview::clearSlices()
 
 void Preview::paint (Graphics& g)
 {
-    
     g.fillAll (Colours::black);   // clear the background
     
     g.setColour (sliceLaf->outlineColour);

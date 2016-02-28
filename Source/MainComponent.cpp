@@ -23,7 +23,6 @@ MainContentComponent::MainContentComponent() : chaseManager( new ChaseManager())
 	
     previewWindow = new Preview();
     addAndMakeVisible( previewWindow );
-	previewWindow->addListener(this);
     
     sliceList = new SliceList();
     addAndMakeVisible(sliceList);
@@ -33,7 +32,6 @@ MainContentComponent::MainContentComponent() : chaseManager( new ChaseManager())
 	
 	copier = new Copier();
 	addAndMakeVisible(copier);
-	copier->addListener(this);
 	
 	//create a sequence and set the oldest version it will correctly load
 	//	xmlSequence = new XmlSequence( "0.0.1" );
@@ -325,9 +323,6 @@ void MainContentComponent::loadXml()
 	 */
 }
 
-
-
-
 void MainContentComponent::reloadSliceData()
 {
 	/*
@@ -359,37 +354,6 @@ void MainContentComponent::reloadSliceData()
 	resized();
 }
 
-
-
-
-
-void MainContentComponent::copierClicked(int multiplier)
-{
-	/*
-	for ( int i = multiplier; i < currentSequenceLength; i += multiplier )
-	{
-		int nextStep = currentStep + i;
-		if ( nextStep >= currentSequenceLength )
-			nextStep -= currentSequenceLength;
-		xmlSequence->setStep( currentSequence, nextStep, activeSlices );
-		saveXml();
-	}
-	 */
-}
-
-void MainContentComponent::sliceClicked( Array<int> activeSlices_)
-{
-	/*
-	activeSlices = activeSlices_;
-	xmlSequence->setStep( currentSequence, currentStep, activeSlices );
-	saveXml();
-	 */
-}
-
-
-
-
-
 bool MainContentComponent::keyPressed(const juce::KeyPress &key, juce::Component *originatingComponent)
 {
 	
@@ -420,7 +384,6 @@ void MainContentComponent::copyStep()
 
 void MainContentComponent::pasteStep()
 {
-	sliceClicked( slicesToCopy );
 	previewWindow->setActiveSlices( slicesToCopy );
 }
 
