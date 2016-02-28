@@ -19,6 +19,15 @@ class MainContentComponent;
 //==============================================================================
 /*
 */
+
+class NoKeyViewport : public Viewport
+{
+public:
+	NoKeyViewport() : Viewport() {}
+	~NoKeyViewport(){}
+	bool keyPressed (const KeyPress&) override {}
+};
+
 class Sequencer    :	public Component,
 						public Button::Listener,
 						public Label::Listener,
@@ -40,7 +49,7 @@ public:
 	
 	void nextStep();
 	void previousStep();
-	void selectStep( int i );
+//	void selectStep( int i );
 	
 private:
 	
@@ -51,7 +60,8 @@ private:
     ScopedPointer<DrawableButton> next;
     ScopedPointer<DrawableButton> previous;
 	
-	ScopedPointer<Stepper> stepper;
+	Stepper* stepper;
+	ScopedPointer<NoKeyViewport> viewport;
 
 	ScopedPointer<Button> lessSteps;
 	ScopedPointer<Button> moreSteps;

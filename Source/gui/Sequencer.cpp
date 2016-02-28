@@ -17,7 +17,9 @@
 Sequencer::Sequencer( MainContentComponent& parent ): parent ( parent )
 {
 	stepper = new Stepper( *parent.chaseManager );
-	addAndMakeVisible( stepper );
+	viewport = new NoKeyViewport();
+	viewport->setViewedComponent( stepper, true );
+	addAndMakeVisible( viewport );
 	
     //drawable svg buttons
     ScopedPointer<XmlElement> drawPlayXml (XmlDocument::parse (BinaryData::play_svg));
@@ -180,20 +182,20 @@ void Sequencer::timerCallback()
 
 void Sequencer::nextStep()
 {
-	int nextStep = parent.chaseManager->skipToNextStep();
-	stepper->triggerButton( nextStep );
+	parent.chaseManager->skipToNextStep();
+	updateSequenceSettings();
 }
 
 void Sequencer::previousStep()
 {
-	int previousStep = parent.chaseManager->skipToPreviousStep();
-	stepper->triggerButton( previousStep );
+	parent.chaseManager->skipToPreviousStep();
+	updateSequenceSettings();
 }
 
-void Sequencer::selectStep(int i)
-{
-	parent.chaseManager->skipToStep( i );
-}
+//void Sequencer::selectStep(int i)
+//{
+//	parent.chaseManager->skipToStep( i );
+//}
 
 void Sequencer::updateSequenceSettings()
 {
@@ -205,10 +207,16 @@ void Sequencer::updateSequenceSettings()
 	
 	//retrigger the current step
 	stepper->triggerButton(parent.chaseManager->getCurrentStepIndex());
-	
+
 	//update the sequence name component
 	sequenceName->setText( parent.chaseManager->getCurrentSequenceName(), dontSendNotification);
 	sequenceNumber->setText(String( parent.chaseManager->getCurrentSequenceIndex() + 1), dontSendNotification );
+	
+	resized();
+	
+	//scroll the scrollbar into view if necessarry
+	float propX = float(parent.chaseManager->getCurrentStepIndex()) / float(parent.chaseManager->getLastStepIndex());
+	viewport->setViewPositionProportionately ( propX, 0.5);
 	
 }
 
@@ -216,7 +224,13 @@ void Sequencer::resized()
 {
 	float sequenceControlButtonWidth = 0.0632526f;
 
-	stepper->setBoundsRelative(0.0, 0.0, 1.0f - sequenceControlButtonWidth * 2.875, 1.0);
+	viewport->setBoundsRelative(0.0, 0.0, 1.0f - sequenceControlButtonWidth * 2.9, 1.0);
+	
+	stepper->setBounds( 0.0, 0.0, fmaxf(viewport->getWidth(), stepper->getButtonCount() * 40), viewport->getMaximumVisibleHeight());
+	//using this call twice makes sure the stepper resizes itself again after the viewport has added scrollbars
+	if ( stepper->getHeight() != viewport->getMaximumVisibleHeight() )
+		stepper->setBounds( 0.0, 0.0, fmaxf(viewport->getWidth(), stepper->getButtonCount() * 40), viewport->getMaximumVisibleHeight());
+
 	
 	previous->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 2.7f, 0.225f, sequenceControlButtonWidth * 0.9f, 0.6f );
 	play->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 1.8f, 0.225f, sequenceControlButtonWidth * 0.9f, 0.6f );
