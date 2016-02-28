@@ -55,6 +55,16 @@ Sequencer::Sequencer( MainContentComponent& parent ): parent ( parent )
 	moreSteps->addListener( this );
 	moreSteps->setColour(TextButton::buttonColourId, claf.backgroundColour);
 	addAndMakeVisible( moreSteps );
+	
+	//step number label
+	stepNumber = new Label("stepNumber");
+	stepNumber->addListener( this );
+	stepNumber->setEditable( true );
+	stepNumber->setColour(Label::outlineColourId, claf.outlineColour.darker());
+	stepNumber->setColour(Label::backgroundColourId, claf.backgroundColour);
+	stepNumber->setColour(Label::textColourId, claf.textColour.darker());
+	stepNumber->setColour(TextEditor::ColourIds::highlightColourId, claf.primaryColour);
+	addAndMakeVisible(stepNumber);
     
     //sequence name label
     sequenceName = new Label("sequencename");
@@ -121,11 +131,12 @@ void Sequencer::buttonClicked (Button* b)
 	else if ( b == lessSteps || b == moreSteps )
 	{
 		if( b == lessSteps )
-			setButtonCount( parent.chaseManager->removeStep() );
+			parent.chaseManager->removeStep();
 
-		else if( b == moreSteps )
-			//add an empty step to the chaseManager
-			setButtonCount( parent.chaseManager->addStep() );
+		else if ( b == moreSteps )
+			parent.chaseManager->addStep();
+		
+		updateSequenceSettings();
 	}
     else
     {
@@ -142,11 +153,21 @@ void Sequencer::labelTextChanged (Label* labelThatHasChanged)
 	if ( labelThatHasChanged == sequenceName )
 		parent.chaseManager->setCurrentSequenceName( labelThatHasChanged->getText() );
 	
-	if ( labelThatHasChanged == sequenceNumber )
+	else if ( labelThatHasChanged == sequenceNumber )
 	{
-		if ( sequenceNumber->getText().getIntValue() != 0 )
-			parent.chaseManager->skipToSequence( sequenceNumber->getText().getIntValue() - 1 );
+		int sequenceToJumpTo = sequenceNumber->getText().getIntValue();
+		if ( sequenceToJumpTo > 0  )
+			parent.chaseManager->skipToSequence( sequenceToJumpTo );
 		
+		//calling update here will make sure the values in the labels will update correctly, even if an unaccepted value was entered
+		updateSequenceSettings();
+	}
+	
+	else if ( labelThatHasChanged == stepNumber )
+	{
+		int desiredStepCount = stepNumber->getText().getIntValue();
+		if ( desiredStepCount > 0 )
+			parent.chaseManager->setStepCount( desiredStepCount );
 		updateSequenceSettings();
 	}
 }
@@ -196,13 +217,14 @@ void Sequencer::removeButton()
 	stepper.removeLast();
 }
 
-void Sequencer::setButtonCount( int count )
+void Sequencer::setButtonCount()
 {
-	if ( count > 0 ) //can't have less than zero buttons
-	{
-		while ( stepper.size() <= count + 1 )
+	int count = parent.chaseManager->getLastStepIndex() + 1;
+//	if ( count > 1 ) //can't have less than one button
+//	{
+		while ( stepper.size() < count )
 			addButton();
-		while ( stepper.size() > count + 1 )
+		while ( stepper.size() > count )
 			removeButton();
 		
 		//if we got out of the range
@@ -212,20 +234,24 @@ void Sequencer::setButtonCount( int count )
 			stepper.getLast()->triggerClick();
 		
 		resized();
-	}
+//	}
 }
 
 void Sequencer::updateSequenceSettings()
 {
 	//check that we have enough steps
-	setButtonCount( parent.chaseManager->getLastStepIndex());
+	setButtonCount();
+	
+	//update the stepnumber label
+	stepNumber->setText( String(parent.chaseManager->getLastStepIndex() + 1), dontSendNotification );
 	
 	//retrigger the current step
 	stepper[parent.chaseManager->getCurrentStepIndex()]->triggerClick();
 	
-	//update the sequence name and redraw the component
+	//update the sequence name component
 	sequenceName->setText( parent.chaseManager->getCurrentSequenceName(), dontSendNotification);
 	sequenceNumber->setText(String( parent.chaseManager->getCurrentSequenceIndex() + 1), dontSendNotification );
+	
 }
 
 void Sequencer::resized()
@@ -245,6 +271,8 @@ void Sequencer::resized()
 	sequenceNumber->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 2.65f, 0.05f, sequenceControlButtonWidth * 0.4f, 0.24f);
 	sequenceName->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 2.2f, 0.05f, sequenceControlButtonWidth * 2.15f, 0.24f );
 
-	lessSteps->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 2.7f, 0.75f, sequenceControlButtonWidth *  1.35f, 0.2f );
-	moreSteps->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 1.4f, 0.75f, sequenceControlButtonWidth *  1.35f, 0.2f );
+	lessSteps->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 2.7f, 0.75f, sequenceControlButtonWidth, 0.2f );
+	moreSteps->setBoundsRelative( 1.0f - sequenceControlButtonWidth, 0.75f, sequenceControlButtonWidth, 0.2f );
+	
+	stepNumber->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 1.65f, 0.775f, sequenceControlButtonWidth * 0.6f, 0.15f );
 }

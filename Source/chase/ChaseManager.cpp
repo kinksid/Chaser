@@ -35,7 +35,7 @@ void ChaseManager::setStep(int sequence, int step, SliceIndexArray activeSlices)
 
 void ChaseManager::setCurrentStep(SliceIndexArray activeSlices)
 {
-	setStep ( currentSequence, currentStep, activeSlices );
+	setStep ( currentSequence, getCurrentStepIndex(), activeSlices );
 }
 
 SliceIndexArray ChaseManager::getStepSlices(int sequence, int step)
@@ -45,7 +45,7 @@ SliceIndexArray ChaseManager::getStepSlices(int sequence, int step)
 
 SliceIndexArray ChaseManager::getCurrentStepSlices()
 {
-	return getStepSlices( currentSequence, currentStep );
+	return getStepSlices( currentSequence, getCurrentStepIndex() );
 }
 
 void ChaseManager::clearAll()
@@ -143,6 +143,16 @@ int ChaseManager::skipToPreviousStep()
 	return currentStep;
 }
 
+int ChaseManager::setStepCount(int i)
+{
+	while ( i > getLastStepIndex() + 1 )
+		addStep();
+	while ( i < getLastStepIndex() + 1 )
+		removeStep();
+	
+	return getLastStepIndex();
+}
+
 int ChaseManager::addStep()
 {
 	int lastStep = getLastStepIndex();
@@ -154,7 +164,7 @@ int ChaseManager::addStep()
 int ChaseManager::removeStep()
 {
 	//only remove as long as we still have more than 1 step
-	if ( sequenceMap[currentSequence].size() > 1 )
+	if ( getLastStepIndex() > 0 )
 	{
 		//make sure the second to last step exists
 		if(sequenceMap[currentSequence][getLastStepIndex()-1].size() == 0)
@@ -164,11 +174,14 @@ int ChaseManager::removeStep()
 		sequenceMap[currentSequence].erase( std::prev( sequenceMap[currentSequence].end() ) );
 	}
 	
+	
+	
 	return getLastStepIndex();
 }
 
 int ChaseManager::getLastStepIndex()
 {
+	DBG(sequenceMap[currentSequence].rbegin()->first);
 	return sequenceMap[currentSequence].rbegin()->first;
 }
 
@@ -179,6 +192,10 @@ int ChaseManager::getLastSequenceIndex()
 
 int ChaseManager::getCurrentStepIndex()
 {
+	//check if we're still in bounds
+	if ( currentStep > getLastStepIndex() )
+		currentStep = getLastStepIndex();
+	
 	return currentStep;
 }
 

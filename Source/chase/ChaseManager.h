@@ -54,6 +54,7 @@ public:
 	//steps are always added and removed from the end of the sequence
 	int addStep();
 	int removeStep();
+	int setStepCount ( int i );
 	
 	//will return the new max amount of sequences
 	int addSequence( );

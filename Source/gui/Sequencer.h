@@ -47,7 +47,7 @@ private:
 	void addButton();
 	void removeButton();
 	
-	void setButtonCount( int count );
+	void setButtonCount();
 	
 	MainContentComponent& parent;
     OwnedArray<Button> stepper;
@@ -60,6 +60,7 @@ private:
 	
     ScopedPointer<Label> sequenceName;
 	ScopedPointer<Label> sequenceNumber;
+	ScopedPointer<Label> stepNumber;
 	
 	void updateSequenceSettings ();
 	
