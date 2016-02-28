@@ -65,7 +65,8 @@ String ChaseManager::getName()
 
 void ChaseManager::fillSequence()
 {
-	//make sure the sequence is empty
+	//first make sure the sequence is empty
+	//otherwise we can just leave it
 	if ( sequenceMap[currentSequence].size() == 0)
 	{
 		sequenceMap[currentSequence][15] = SliceIndexArray{};
