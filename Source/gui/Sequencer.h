@@ -13,6 +13,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ColourLookAndFeel.h"
+#include "Stepper.h"
 class MainContentComponent;
 
 //==============================================================================
@@ -36,24 +37,21 @@ public:
 	void labelTextChanged (Label* labelThatHasChanged) override;
     
     virtual void timerCallback() override;
-    
-
 	
 	void nextStep();
 	void previousStep();
 	void selectStep( int i );
 	
 private:
-	void addButton();
-	void removeButton();
 	
-	void setButtonCount();
 	
 	MainContentComponent& parent;
-    OwnedArray<Button> stepper;
+    
     ScopedPointer<DrawableButton> play;
     ScopedPointer<DrawableButton> next;
     ScopedPointer<DrawableButton> previous;
+	
+	ScopedPointer<Stepper> stepper;
 
 	ScopedPointer<Button> lessSteps;
 	ScopedPointer<Button> moreSteps;

@@ -35,6 +35,8 @@
         <FILE id="yTzOeG" name="SliceButton.h" compile="0" resource="0" file="Source/gui/SliceButton.h"/>
         <FILE id="OmOI7H" name="SliceList.cpp" compile="1" resource="0" file="Source/gui/SliceList.cpp"/>
         <FILE id="YPASnp" name="SliceList.h" compile="0" resource="0" file="Source/gui/SliceList.h"/>
+        <FILE id="ZtXr4A" name="Stepper.cpp" compile="1" resource="0" file="Source/gui/Stepper.cpp"/>
+        <FILE id="X4ON1R" name="Stepper.h" compile="0" resource="0" file="Source/gui/Stepper.h"/>
       </GROUP>
       <GROUP id="{5B7D2C02-D7B0-E697-CAD0-B4A97C629A62}" name="slice">
         <FILE id="jpckbH" name="Slice.h" compile="0" resource="0" file="Source/slice/Slice.h"/>

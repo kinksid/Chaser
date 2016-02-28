@@ -258,10 +258,10 @@ Array<Slice*> XmlSequence::getSlices()
 		forEachXmlChildElement(*positionData, slice)
 		{
 			Slice* newSlice = new Slice (slice->getStringAttribute("name", "Unnamed Slice"), slice->getIntAttribute("enable", 0) != 0 );
-			if ( slice->hasAttribute("screenName"))
-				newSlice->screen = slice->getStringAttribute("screenName");
-			if ( slice->hasAttribute("screenUniqueId"))
-				newSlice->uniqueId = slice->getIntAttribute("screenUniqueId");
+//			if ( slice->hasAttribute("screenName"))
+//				newSlice->screen = slice->getStringAttribute("screenName");
+//			if ( slice->hasAttribute("screenUniqueId"))
+//				newSlice->uniqueId = slice->getIntAttribute("screenUniqueId");
 			forEachXmlChildElement(*slice, pointData)
 			{
 				forEachXmlChildElement(*pointData, point)
@@ -374,7 +374,7 @@ bool XmlSequence::loadXmlFile( File f )
 		//read in the xml data
 		XmlDocument dataDoc ( f );
 		chaserData = dataDoc.getDocumentElement();
-		if (versionCheck(getVersion(), versionThreshold))
+//		if (versionCheck(getVersion(), versionThreshold))
 		{
 			if (chaserData->getChildByName("sequenceData") != nullptr)
 			{
@@ -416,7 +416,7 @@ bool XmlSequence::loadXmlFile( File f )
 	
 		}
 		
-		else
+		//else
 			return false;
 	}
 	
@@ -454,7 +454,7 @@ void XmlSequence::setXmlFile( File f )
 
 File XmlSequence::getXmlFile()
 {
-	File savedFileName = getXmlFileFromPreferences();
+	File savedFileName;// = getXmlFileFromPreferences();
 	if ( savedFileName != File() )
 		return savedFileName;
 	

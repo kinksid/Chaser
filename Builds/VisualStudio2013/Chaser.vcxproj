@@ -135,6 +135,7 @@
     <ClCompile Include="..\..\Source\gui\Sequencer.cpp"/>
     <ClCompile Include="..\..\Source\gui\SliceButton.cpp"/>
     <ClCompile Include="..\..\Source\gui\SliceList.cpp"/>
+    <ClCompile Include="..\..\Source\gui\Stepper.cpp"/>
     <ClCompile Include="..\..\Source\slice\SliceManager.cpp"/>
     <ClCompile Include="..\..\Source\xml\ChaserXmlParser.cpp"/>
     <ClCompile Include="..\..\Source\xml\ResXmlParser.cpp"/>
@@ -1163,6 +1164,7 @@
     <ClInclude Include="..\..\Source\gui\Sequencer.h"/>
     <ClInclude Include="..\..\Source\gui\SliceButton.h"/>
     <ClInclude Include="..\..\Source\gui\SliceList.h"/>
+    <ClInclude Include="..\..\Source\gui\Stepper.h"/>
     <ClInclude Include="..\..\Source\slice\Slice.h"/>
     <ClInclude Include="..\..\Source\slice\SliceManager.h"/>
     <ClInclude Include="..\..\Source\xml\ChaserXmlParser.h"/>

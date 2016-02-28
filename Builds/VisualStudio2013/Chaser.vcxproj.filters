@@ -289,6 +289,9 @@
     <ClCompile Include="..\..\Source\gui\SliceList.cpp">
       <Filter>Chaser\Source\gui</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\gui\Stepper.cpp">
+      <Filter>Chaser\Source\gui</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\slice\SliceManager.cpp">
       <Filter>Chaser\Source\slice</Filter>
     </ClCompile>
@@ -1429,6 +1432,9 @@
       <Filter>Chaser\Source\gui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\gui\SliceList.h">
+      <Filter>Chaser\Source\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\gui\Stepper.h">
       <Filter>Chaser\Source\gui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\slice\Slice.h">
