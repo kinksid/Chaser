@@ -171,7 +171,13 @@ int ChaseManager::removeStep()
 			sequenceMap[currentSequence][getLastStepIndex()-1] = SliceIndexArray{};
 		
 		//delete the last one
-		sequenceMap[currentSequence].erase( std::prev( sequenceMap[currentSequence].end() ) );
+		//can't use std::prev because 10.7 can't use c++11
+		StepMap::iterator it = sequenceMap[currentSequence].end();
+		if ( it != sequenceMap[currentSequence].begin() )
+		{
+			it--;
+			sequenceMap[currentSequence].erase( it );
+		}
 	}
 	
 	
@@ -181,7 +187,6 @@ int ChaseManager::removeStep()
 
 int ChaseManager::getLastStepIndex()
 {
-	DBG(sequenceMap[currentSequence].rbegin()->first);
 	return sequenceMap[currentSequence].rbegin()->first;
 }
 
