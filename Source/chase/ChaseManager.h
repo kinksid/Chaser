@@ -30,9 +30,9 @@ public:
 	~ChaseManager();
 	
 	void setStep ( int sequence, int step, SliceIndexArray activeSlices );
-	void setStep ( SliceIndexArray activeSlices );
-	SliceIndexArray getStep ( int sequence, int step );
-	SliceIndexArray getStep ();
+	void setCurrentStep ( SliceIndexArray activeSlices );
+	SliceIndexArray getStepSlices ( int sequence, int step );
+	SliceIndexArray getCurrentStepSlices ();
 	
 	void clearAll();
 	
@@ -59,11 +59,11 @@ public:
 	int addSequence( );
 	int removeCurrentSequence( );
 	
-	int getLastStep();
-	int getLastSequence();
+	int getLastStepIndex();
+	int getLastSequenceIndex();
 	
-	int getCurrentStep();
-	int getCurrentSequence();
+	int getCurrentStepIndex();
+	int getCurrentSequenceIndex();
 	
 	String getCurrentSequenceName();
 	void setCurrentSequenceName( String newName );

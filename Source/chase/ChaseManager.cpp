@@ -33,19 +33,19 @@ void ChaseManager::setStep(int sequence, int step, SliceIndexArray activeSlices)
 	sequenceMap[sequence][step] = activeSlices;
 }
 
-void ChaseManager::setStep(SliceIndexArray activeSlices)
+void ChaseManager::setCurrentStep(SliceIndexArray activeSlices)
 {
 	setStep ( currentSequence, currentStep, activeSlices );
 }
 
-SliceIndexArray ChaseManager::getStep(int sequence, int step)
+SliceIndexArray ChaseManager::getStepSlices(int sequence, int step)
 {
 	return sequenceMap[sequence][step];
 }
 
-SliceIndexArray ChaseManager::getStep()
+SliceIndexArray ChaseManager::getCurrentStepSlices()
 {
-	return getStep( currentSequence, currentStep );
+	return getStepSlices( currentSequence, currentStep );
 }
 
 void ChaseManager::clearAll()
@@ -65,7 +65,7 @@ String ChaseManager::getName()
 
 void ChaseManager::fillSequence()
 {
-	//make sure the sequence is filled
+	//make sure the sequence is empty
 	if ( sequenceMap[currentSequence].size() == 0)
 	{
 		sequenceMap[currentSequence][15] = SliceIndexArray{};
@@ -77,9 +77,10 @@ void ChaseManager::skipToSequence(int i)
 {
 	currentSequence = i;
 	
-	if ( currentSequence > getLastSequence() )
-		currentSequence = getLastSequence();
+	if ( currentSequence > getLastSequenceIndex() )
+		currentSequence = getLastSequenceIndex();
 	
+	//make sure the sequence is filled
 	fillSequence();
 	
 	//when skipping sequences, the current step always resets
@@ -90,8 +91,10 @@ int ChaseManager::skipToNextSequence()
 {
 	currentSequence++;
 	
-	if ( currentSequence > getLastSequence() )
+	if ( currentSequence > getLastSequenceIndex() )
 		currentSequence = 0;
+	
+	//make sure the sequence is filled
 	fillSequence();
 	
 	//when skipping sequences, the current step always resets
@@ -104,8 +107,9 @@ int ChaseManager::skipToPreviousSequence()
 {
 	currentSequence--;
 	if ( currentSequence < 0 )
-		currentSequence = getLastSequence();
+		currentSequence = getLastSequenceIndex();
 	
+	//make sure the sequence is filled
 	fillSequence();
 	
 	//when skipping sequences, the current step always resets
@@ -122,60 +126,63 @@ void ChaseManager::skipToStep(int i)
 int ChaseManager::skipToNextStep()
 {
 	currentStep++;
-	if ( currentStep > getLastStep() )
+	
+	if ( currentStep > getLastStepIndex() )
 		currentStep = 0;
+	
 	return currentStep;
 }
 
 int ChaseManager::skipToPreviousStep()
 {
 	currentStep--;
+	
 	if ( currentStep < 0  )
-		currentStep = getLastStep();
+		currentStep = getLastStepIndex();
 	
 	return currentStep;
 }
 
 int ChaseManager::addStep()
 {
-	int lastStep = getLastStep();
+	int lastStep = getLastStepIndex();
 	sequenceMap[currentSequence][lastStep + 1] = SliceIndexArray{};
 	
-	return getLastStep();
-
+	return getLastStepIndex();
 }
 
 int ChaseManager::removeStep()
 {
-	//as long as we still have more than 1 step
+	//only remove as long as we still have more than 1 step
 	if ( sequenceMap[currentSequence].size() > 1 )
 	{
 		//make sure the second to last step exists
-		if(sequenceMap[currentSequence][getLastStep()-1].size() == 0)
-			sequenceMap[currentSequence][getLastStep()-1] = SliceIndexArray{};
+		if(sequenceMap[currentSequence][getLastStepIndex()-1].size() == 0)
+			sequenceMap[currentSequence][getLastStepIndex()-1] = SliceIndexArray{};
+		
 		//delete the last one
 		sequenceMap[currentSequence].erase( std::prev( sequenceMap[currentSequence].end() ) );
 	}
 	
-	return getLastStep();
+	return getLastStepIndex();
 }
 
-int ChaseManager::getLastStep()
+int ChaseManager::getLastStepIndex()
 {
 	return sequenceMap[currentSequence].rbegin()->first;
 }
 
-int ChaseManager::getLastSequence()
+int ChaseManager::getLastSequenceIndex()
 {
 	return sequenceMap.rbegin()->first;
 }
 
-int ChaseManager::getCurrentStep()
+int ChaseManager::getCurrentStepIndex()
 {
 	return currentStep;
 }
 
-int ChaseManager::getCurrentSequence()
+int ChaseManager::getCurrentSequenceIndex()
 {
 	return currentSequence;
 }
