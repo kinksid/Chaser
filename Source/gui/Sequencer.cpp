@@ -10,7 +10,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Sequencer.h"
-#include "MainComponent.h"
+#include "../MainComponent.h"
 
 
 //==============================================================================

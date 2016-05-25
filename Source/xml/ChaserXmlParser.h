@@ -12,7 +12,7 @@
 #define CHASERXMLPARSER_H_INCLUDED
 
 #include "JuceHeader.h"
-#include "Slice.h"
+#include "../slice/Slice.h"
 #include <map>
 
 //helper class to parse the data in a chaser file

@@ -12,7 +12,7 @@
 #define STEPPER_H_INCLUDED
 
 #include "../../JuceLibraryCode/JuceHeader.h"
-#include "ChaseManager.h"
+#include "../chase/ChaseManager.h"
 
 //==============================================================================
 /*

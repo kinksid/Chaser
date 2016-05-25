@@ -10,7 +10,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Copier.h"
-#include "MainComponent.h"
+#include "../MainComponent.h"
 
 //==============================================================================
 Copier::Copier()

@@ -7,9 +7,9 @@
 */
 
 #include "MainComponent.h"
-#include "ChaserXmlParser.h"
-#include "ResXmlParser.h"
-#include "FileHelper.h"
+#include "xml/ChaserXmlParser.h"
+#include "xml/ResXmlParser.h"
+#include "file/FileHelper.h"
 
 
 //==============================================================================

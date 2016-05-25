@@ -10,15 +10,15 @@
 #define MAINCOMPONENT_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Preview.h"
-#include "Slice.h"
-#include "SliceList.h"
-#include "Sequencer.h"
+#include "gui/Preview.h"
+#include "slice/Slice.h"
+#include "gui/SliceList.h"
+#include "gui/Sequencer.h"
 //#include "XmlSequence.h"
-#include "Copier.h"
-#include "ColourLookAndFeel.h"
-#include "ChaseManager.h"
-#include "SliceManager.h"
+#include "gui/Copier.h"
+#include "gui/ColourLookAndFeel.h"
+#include "chase/ChaseManager.h"
+#include "slice/SliceManager.h"
 
 
 

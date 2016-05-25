@@ -12,7 +12,7 @@
 #define SLICELIST_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Slice.h"
+#include "../slice/Slice.h"
 #include "ColourLookAndFeel.h"
 #include <map>
 

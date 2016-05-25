@@ -11,7 +11,7 @@
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "Stepper.h"
 #include "ColourLookAndFeel.h"
-#include "MainComponent.h"
+#include "../MainComponent.h"
 
 //==============================================================================
 Stepper::Stepper( ChaseManager& chaser ) : chaser( chaser )

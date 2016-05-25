@@ -9,7 +9,7 @@
 */
 
 #include "FileHelper.h"
-#include "ResXmlParser.h"
+#include "../xml/ResXmlParser.h"
 
 
 FileHelper::FileHelper()

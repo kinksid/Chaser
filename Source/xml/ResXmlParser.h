@@ -12,7 +12,7 @@
 #define RESXMLPARSER_H_INCLUDED
 
 #include "JuceHeader.h"
-#include "Slice.h"
+#include "../slice/Slice.h"
 
 //helper class to parse xml data in the various resolume files
 

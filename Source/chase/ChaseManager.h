@@ -12,7 +12,7 @@
 #define CHASEMANAGER_H_INCLUDED
 
 #include <map>
-#include "Slice.h"
+#include "../JuceHeader.h"
 
 typedef Array<int> SliceIndexArray; //the active slices in a step
 typedef std::map<int, SliceIndexArray> StepMap; //the step and its active slices

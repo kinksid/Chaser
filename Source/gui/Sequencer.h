@@ -25,7 +25,7 @@ class NoKeyViewport : public Viewport
 public:
 	NoKeyViewport() : Viewport() {}
 	~NoKeyViewport(){}
-	bool keyPressed (const KeyPress&) override {}
+	bool keyPressed(const KeyPress&) override { return false; }
 };
 
 class Sequencer    :	public Component,
