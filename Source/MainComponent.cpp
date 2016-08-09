@@ -8,6 +8,7 @@
 
 #include "MainComponent.h"
 #include "XmlParser.h"
+#include "SvgFile.h"
 
 
 //==============================================================================
@@ -64,6 +65,17 @@ MainContentComponent::MainContentComponent()
 	reloadSliceData();
 	
     setSize (1280, 720);
+    
+    SvgFile svgFile;
+    svgFile.setResolution( 1920, 1080);
+ 
+    
+    File desktopDir = File::getSpecialLocation(File::SpecialLocationType::userDesktopDirectory);
+    File fileName = desktopDir.getChildFile("bla.svg");
+    if( svgFile.save( fileName ))
+        DBG("SVG file written");
+    else
+        DBG("SVG write failed");
 	
 	//start a timer to update the window name
 	startTimer( 1000 );
