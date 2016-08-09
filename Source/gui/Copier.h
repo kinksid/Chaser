@@ -14,7 +14,8 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ColourLookAndFeel.h"
 
-//==============================================================================
+
+
 /*
  
  This class is used to copy the current step to other steps
@@ -31,22 +32,10 @@ public:
 	//component functions
     void paint (Graphics&);
     void resized();
-	
-	class Listener
-	{
-		
-	public:
-		virtual ~Listener() {}
-		virtual void copierClicked ( int m ) = 0;
-	};
-	
-	void addListener ( Listener* const l ) { listeners.add ( l ); }
-	void removeListener ( Listener* const l ) { listeners.remove (l ); }
 
 private:
 	OwnedArray<Button> buttons;
 	
-	ListenerList<Listener> listeners;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Copier)
 };
 

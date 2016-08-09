@@ -1,49 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="ZsFZkw" name="Chaser" projectType="guiapp" version="1.0.2"
+<JUCERPROJECT id="ZsFZkw" name="Chaser" projectType="guiapp" version="1.0.7"
               bundleIdentifier="nl.HybridVisuals.www" includeBinaryInAppConfig="1"
-              jucerVersion="3.2.0" companyName="Hybrid Visuals" companyWebsite="www.hybridvisuals.nl"
+              jucerVersion="4.1.0" companyName="Hybrid Visuals" companyWebsite="www.hybridvisuals.nl"
               companyEmail="joris@hybridvisuals.nl">
   <MAINGROUP id="cFMW0p" name="Chaser">
     <GROUP id="{6A6FFF85-7097-63A1-1439-46EFB4CC7C8A}" name="Source">
-      <GROUP id="{B151BC57-8C1B-FF2D-EFAB-07D351892EAF}" name="xml">
-        <FILE id="LruGIZ" name="XmlParser.cpp" compile="1" resource="0" file="Source/XmlParser.cpp"/>
-        <FILE id="Pxzc9n" name="XmlParser.h" compile="0" resource="0" file="Source/XmlParser.h"/>
+      <GROUP id="{A45A8A90-99DF-A3ED-9483-B22CEDC95B4C}" name="buttons">
+        <FILE id="y0Yjpu" name="ICON-B.png" compile="0" resource="1" file="Source/buttons/ICON-B.png"/>
+        <FILE id="bhzqgn" name="next.svg" compile="0" resource="1" file="Source/buttons/next.svg"/>
+        <FILE id="lPPbmz" name="pause.svg" compile="0" resource="1" file="Source/buttons/pause.svg"/>
+        <FILE id="rWr7T5" name="play.svg" compile="0" resource="1" file="Source/buttons/play.svg"/>
+        <FILE id="lT6yRf" name="previous.svg" compile="0" resource="1" file="Source/buttons/previous.svg"/>
       </GROUP>
-      <GROUP id="{88757B7B-82EB-6E35-F2AE-6CD7FE11630B}" name="buttons">
-        <FILE id="nlEqXv" name="next.svg" compile="0" resource="1" file="Source/buttons/next.svg"/>
-        <FILE id="RPZmlx" name="pause.svg" compile="0" resource="1" file="Source/buttons/pause.svg"/>
-        <FILE id="iOs9w4" name="play.svg" compile="0" resource="1" file="Source/buttons/play.svg"/>
-        <FILE id="a3fRRI" name="previous.svg" compile="0" resource="1" file="Source/buttons/previous.svg"/>
+      <GROUP id="{4807E048-881E-11D8-3736-96083286EC03}" name="chase">
+        <FILE id="ZpQ9Zf" name="ChaseManager.cpp" compile="1" resource="0"
+              file="Source/chase/ChaseManager.cpp"/>
+        <FILE id="TuKu3e" name="ChaseManager.h" compile="0" resource="0" file="Source/chase/ChaseManager.h"/>
       </GROUP>
-      <FILE id="Yz7TVe" name="ColourLookAndFeel.h" compile="0" resource="0"
-            file="Source/ColourLookAndFeel.h"/>
-      <FILE id="feROqu" name="Copier.cpp" compile="1" resource="0" file="Source/Copier.cpp"/>
-      <FILE id="KuVhh1" name="Copier.h" compile="0" resource="0" file="Source/Copier.h"/>
-      <FILE id="LUvmwf" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
-      <FILE id="FXhUXW" name="MainComponent.cpp" compile="1" resource="0"
+      <GROUP id="{B9931B1D-3FF5-02A6-D53E-3ED1AA9FBA62}" name="file">
+        <FILE id="Pm85xs" name="FileHelper.cpp" compile="1" resource="0" file="Source/file/FileHelper.cpp"/>
+        <FILE id="vUmztl" name="FileHelper.h" compile="0" resource="0" file="Source/file/FileHelper.h"/>
+      </GROUP>
+      <GROUP id="{3DFBAD7C-FAB1-579F-D0DB-236E023842FF}" name="gui">
+        <FILE id="tGm7Wb" name="ColourLookAndFeel.h" compile="0" resource="0"
+              file="Source/gui/ColourLookAndFeel.h"/>
+        <FILE id="DMp4Xs" name="Copier.cpp" compile="1" resource="0" file="Source/gui/Copier.cpp"/>
+        <FILE id="n5iXtJ" name="Copier.h" compile="0" resource="0" file="Source/gui/Copier.h"/>
+        <FILE id="nszcyH" name="Preview.cpp" compile="1" resource="0" file="Source/gui/Preview.cpp"/>
+        <FILE id="OM00JM" name="Preview.h" compile="0" resource="0" file="Source/gui/Preview.h"/>
+        <FILE id="WMlvLX" name="Sequencer.cpp" compile="1" resource="0" file="Source/gui/Sequencer.cpp"/>
+        <FILE id="jA2Ero" name="Sequencer.h" compile="0" resource="0" file="Source/gui/Sequencer.h"/>
+        <FILE id="HovDuI" name="SliceButton.cpp" compile="1" resource="0" file="Source/gui/SliceButton.cpp"/>
+        <FILE id="yTzOeG" name="SliceButton.h" compile="0" resource="0" file="Source/gui/SliceButton.h"/>
+        <FILE id="OmOI7H" name="SliceList.cpp" compile="1" resource="0" file="Source/gui/SliceList.cpp"/>
+        <FILE id="YPASnp" name="SliceList.h" compile="0" resource="0" file="Source/gui/SliceList.h"/>
+        <FILE id="ZtXr4A" name="Stepper.cpp" compile="1" resource="0" file="Source/gui/Stepper.cpp"/>
+        <FILE id="X4ON1R" name="Stepper.h" compile="0" resource="0" file="Source/gui/Stepper.h"/>
+      </GROUP>
+      <GROUP id="{5B7D2C02-D7B0-E697-CAD0-B4A97C629A62}" name="slice">
+        <FILE id="jpckbH" name="Slice.h" compile="0" resource="0" file="Source/slice/Slice.h"/>
+        <FILE id="KehXBB" name="SliceManager.cpp" compile="1" resource="0"
+              file="Source/slice/SliceManager.cpp"/>
+        <FILE id="R3egOX" name="SliceManager.h" compile="0" resource="0" file="Source/slice/SliceManager.h"/>
+      </GROUP>
+      <GROUP id="{1378AC68-4293-88BD-BFEC-611A8E42B263}" name="xml">
+        <FILE id="AimPU0" name="ChaserXmlParser.cpp" compile="1" resource="0"
+              file="Source/xml/ChaserXmlParser.cpp"/>
+        <FILE id="VsRtpa" name="ChaserXmlParser.h" compile="0" resource="0"
+              file="Source/xml/ChaserXmlParser.h"/>
+        <FILE id="QezdwG" name="ResXmlParser.cpp" compile="1" resource="0"
+              file="Source/xml/ResXmlParser.cpp"/>
+        <FILE id="tw0ja7" name="ResXmlParser.h" compile="0" resource="0" file="Source/xml/ResXmlParser.h"/>
+        <FILE id="MDCZNm" name="XmlSequence.cpp" compile="1" resource="0" file="Source/xml/XmlSequence.cpp"/>
+        <FILE id="hGOzrZ" name="XmlSequence.h" compile="0" resource="0" file="Source/xml/XmlSequence.h"/>
+      </GROUP>
+      <FILE id="yxntaa" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="L42adL" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
-      <FILE id="MYBCsZ" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
-      <FILE id="mtEzIQ" name="Preview.cpp" compile="1" resource="0" file="Source/Preview.cpp"/>
-      <FILE id="abt0aR" name="Preview.h" compile="0" resource="0" file="Source/Preview.h"/>
-      <FILE id="I2bm3h" name="Sequencer.cpp" compile="1" resource="0" file="Source/Sequencer.cpp"/>
-      <FILE id="uKwl6d" name="Sequencer.h" compile="0" resource="0" file="Source/Sequencer.h"/>
-      <FILE id="jOVm0y" name="Slice.h" compile="0" resource="0" file="Source/Slice.h"/>
-      <FILE id="YU2578" name="SliceButton.cpp" compile="1" resource="0" file="Source/SliceButton.cpp"/>
-      <FILE id="B8sLwi" name="SliceButton.h" compile="0" resource="0" file="Source/SliceButton.h"/>
-      <FILE id="xF3c4l" name="SliceList.cpp" compile="1" resource="0" file="Source/SliceList.cpp"/>
-      <FILE id="gAorDp" name="SliceList.h" compile="0" resource="0" file="Source/SliceList.h"/>
-      <FILE id="raqOhp" name="XmlSequence.cpp" compile="1" resource="0" file="Source/XmlSequence.cpp"/>
-      <FILE id="NCF4qg" name="XmlSequence.h" compile="0" resource="0" file="Source/XmlSequence.h"/>
+      <FILE id="c2p4r3" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX" smallIcon="" bigIcon="">
+    <XCODE_MAC targetFolder="Builds/MacOSX" smallIcon="CaJ0AR" bigIcon="CaJ0AR">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
                        isDebug="1" optimisation="1" targetName="Chaser"/>
-        <CONFIGURATION name="Release" osxSDK="10.6 SDK" osxCompatibility="10.6 SDK"
-                       osxArchitecture="64BitIntel" isDebug="0" optimisation="2" targetName="Chaser"/>
+        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.7 SDK" osxArchitecture="64BitIntel"
+                       isDebug="0" optimisation="2" targetName="Chaser"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="JuceLibraryCode/modules"/>
@@ -57,7 +81,7 @@
         <MODULEPATH id="juce_gui_extra" path="JuceLibraryCode/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <VS2013 targetFolder="Builds/VisualStudio2013">
+    <VS2013 targetFolder="Builds/VisualStudio2013" smallIcon="CaJ0AR" bigIcon="CaJ0AR">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
                        isDebug="1" optimisation="1" targetName="Chaser"/>
@@ -76,25 +100,6 @@
         <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
       </MODULEPATHS>
     </VS2013>
-    <VS2015 targetFolder="Builds/VisualStudio2015">
-      <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="1" optimisation="1" targetName="Chaser"/>
-        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="0" optimisation="3" targetName="Chaser"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
-      </MODULEPATHS>
-    </VS2015>
   </EXPORTFORMATS>
   <MODULES>
     <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="1"/>

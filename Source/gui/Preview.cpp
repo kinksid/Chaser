@@ -10,6 +10,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Preview.h"
+#include "../MainComponent.h"
+
 
 //==============================================================================
 Preview::Preview()
@@ -17,6 +19,7 @@ Preview::Preview()
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
     sliceLaf = new SliceLookAndFeel();
+	sliceButtons.clear();
 }
 
 Preview::~Preview()
@@ -31,17 +34,14 @@ void Preview::buttonClicked(Button* b)
 	for ( int i = 0; i < sliceButtons.size(); i++ )
 	{
 		if ( sliceButtons[i]->getToggleState() )
-		{
 			activeSlices.add(i);
-		}
 	}
-	//let the listeners know
-	Component::BailOutChecker checker (this);
-	if (! checker.shouldBailOut())
-		previewListeners.callChecked ( checker, &Listener::sliceClicked, activeSlices );
+	
+	MainContentComponent* parent = findParentComponentOfClass<MainContentComponent>();
+	parent->chaseManager->setCurrentStep( activeSlices );
 }
 
-void Preview::setSlices(Array<int> activeSlices)
+void Preview::setActiveSlices(Array<int> activeSlices)
 {
     //turn all the slices off
     for ( int i = 0; i < sliceButtons.size(); i++ )
@@ -63,22 +63,28 @@ void Preview::setSlices(Array<int> activeSlices)
 	resized();
 }
 
-void Preview::addSlice( Slice* slice )
+void Preview::createSliceButtons(OwnedArray<Slice> &slices)
 {
-    SliceButton* newButton = new SliceButton ( slice );
-    
-    newButton->setLookAndFeel(sliceLaf);
-    newButton->setColour(TextButton::buttonColourId, sliceLaf->backgroundColour);
-    newButton->setColour(TextButton::buttonOnColourId, sliceLaf->primaryColour);
-    newButton->setColour(TextButton::textColourOffId, sliceLaf->textColour);
-    newButton->setColour(TextButton::textColourOnId, sliceLaf->textOnColour);
-    newButton->addListener(this);
-    sliceButtons.add( newButton );
+	for ( int i = 0; i < slices.size(); i++ )
+		addSliceButton( *slices[i] );
+}
 
-    if ( newButton->enabled )
+void Preview::addSliceButton( Slice& slice )
+{
+	SliceButton* newButton = new SliceButton ( slice, Point<int> (getWidth(), getHeight()) );
+    newButton->setLookAndFeel(sliceLaf);
+	newButton->setColours(sliceLaf->backgroundColour, sliceLaf->textColour, sliceLaf->primaryColour);
+    newButton->addListener(this);
+
+    sliceButtons.add( newButton );
+	
+    if ( newButton->isVisible() )
         addAndMakeVisible( newButton );
     else
         addChildComponent( newButton );
+	
+	//flip the order, so it matches the order in Resolume
+	newButton->toBack();
 }
 
 void Preview::clearSlices()
@@ -86,14 +92,10 @@ void Preview::clearSlices()
     sliceButtons.clear();
 }
 
-void Preview::update(Slice* slice, int i)
-{
-    sliceButtons[i]->setVisible( slice->enabled );
-}
+
 
 void Preview::paint (Graphics& g)
 {
-    
     g.fillAll (Colours::black);   // clear the background
     
     g.setColour (sliceLaf->outlineColour);
@@ -107,11 +109,7 @@ void Preview::paint (Graphics& g)
 
 void Preview::resized()
 {
-    
-    for ( int i = 0; i < sliceButtons.size(); i++ )
-    {
-        sliceButtons[i]->setBoundsRelative(sliceButtons[i]->proportionalX, sliceButtons[i]->proportionalY, sliceButtons[i]->proportionalW, sliceButtons[i]->proportionalH);
-    }
-
+    for ( int i = 0; i < sliceButtons.size() ; i++ )
+		sliceButtons[i]->resized();
 }
 

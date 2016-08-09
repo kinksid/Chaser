@@ -7,145 +7,161 @@
 */
 
 #include "MainComponent.h"
-#include "XmlParser.h"
-#include "SvgFile.h"
+#include "xml/ChaserXmlParser.h"
+#include "xml/ResXmlParser.h"
+#include "file/FileHelper.h"
 
 
 //==============================================================================
-MainContentComponent::MainContentComponent()
+MainContentComponent::MainContentComponent() : chaseManager( new ChaseManager()), sliceManager ( new SliceManager())
 {
 	laf = new ColourLookAndFeel();
+	
     setLookAndFeel(laf);
 	
 	version = ProjectInfo::versionString;
 	
     previewWindow = new Preview();
     addAndMakeVisible( previewWindow );
-	previewWindow->addListener(this);
     
     sliceList = new SliceList();
     addAndMakeVisible(sliceList);
-    sliceList->addChangeListener(this);
     
-    sequencer = new Sequencer();
+    sequencer = new Sequencer(*this);
     addAndMakeVisible(sequencer);
-    sequencer->addListener(this);
 	
 	copier = new Copier();
 	addAndMakeVisible(copier);
-	copier->addListener(this);
 	
+	//create a sequence and set the oldest version it will correctly load
+	//	xmlSequence = new XmlSequence( "0.0.1" );
+
 	//add a menu bar
 	menuBar = new MenuBarComponent (this);
-	#if JUCE_WINDOWS
+#if JUCE_WINDOWS
 	addAndMakeVisible( menuBar );
-	#elif JUCE_MAC
+#elif JUCE_MAC
 	setMacMainMenu(this);
-	#endif
+#endif
     
 	//init the model vars
 	currentSequence = 0;
 	currentStep = 0;
 	currentSequenceLength = 16;
 	
-	//create a sequence and set the oldest version it will correctly load
-	xmlSequence = new XmlSequence( "0.0.1" );
+	addKeyListener(this);
 	
-	//check if we had a file previously loaded
-	//if so, load that bad boy
-	//if not, ask to load a new one
-	if (xmlSequence->getXmlFile() != File())
-	{
-		xmlSequence->loadXmlFile(xmlSequence->getXmlFile());
-		//if something goes wrong here, fuck it
-	}
-	else
-		xmlSequence->createFreshXml( version );
-
-	reloadSliceData();
+//	chaseManager = new ChaseManager();
+//	sliceManager = new SliceManager();
 	
-    setSize (1280, 720);
-    
-    SvgFile svgFile;
-    svgFile.setResolution( 1920, 1080);
- 
-    
-    File desktopDir = File::getSpecialLocation(File::SpecialLocationType::userDesktopDirectory);
-    File fileName = desktopDir.getChildFile("bla.svg");
-    if( svgFile.save( fileName ))
-        DBG("SVG file written");
-    else
-        DBG("SVG write failed");
+	setSize (1280, 720);
 	
 	//start a timer to update the window name
 	startTimer( 1000 );
+	
+	slicesToCopy.clear();
+	currentSequenceSlices.clear();
+	sequenceNameToCopy = String().empty;
 }
 
 MainContentComponent::~MainContentComponent()
 {
-    slices.clear();
+	// slices.clear();
     previewWindow = nullptr;
     sliceList = nullptr;
-    xmlSequence = nullptr;
+	//    xmlSequence = nullptr;
 	#if JUCE_MAC
 	setMacMainMenu(nullptr);
 	#endif
+	slicesToCopy.clear();
+	currentSequenceSlices.clear();
+	
+	chaseManager = nullptr;
+	sliceManager = nullptr;
 }
 
 void MainContentComponent::timerCallback()
 {
-	//set the name
-	getTopLevelComponent()->setName( xmlSequence->getXmlFile().getFileNameWithoutExtension());
-	
 	stopTimer();
-}
-
-void MainContentComponent::reloadSliceData()
-{
-	sliceList->clearSlices();
-	previewWindow->clearSlices();
-	slices.clear();
+	/*
+	//check if we have a Chaser file previously saved
+	//if so, load that bad boy
+	//File savedFile = xmlSequence->getXmlFileFromPreferences();
+	File prefFile = fileHelper->getPreferencesFile();
+	File lastUsedChaser = fileHelper->getLastUsedChaserFile( prefFile );
 	
-	//load the slices from the xml if they exist
-	Array<Slice> slicesInXml = xmlSequence->getSlices();
-	for ( int i = 0; i < slicesInXml.size(); i++ )
+	if (lastUsedChaser != File() && lastUsedChaser.exists() )
 	{
-		Slice* s = new Slice ( slicesInXml[i] );
-		previewWindow->addSlice (s) ;
-		sliceList->addSlice( s );
-		slices.add(s);
+		ChaserXmlParser::parseResolution( lastUsedChaser, resolution );
+		//this will return 1920x1080 if no resolution was saved
+		resolution = xmlSequence->getResolution();
+		reloadSliceData();
+		//if something goes wrong here, fuck it
 	}
 	
-	//update the view for the first step
-	activeSlices = xmlSequence->getStep( currentSequence, currentStep );
-	previewWindow->setSlices( activeSlices );
-	sequencer->setSequenceNames ( xmlSequence->getSequenceNames() );
-	sequencer->setSequenceLengths ( xmlSequence->getSequenceLengths() );
-	currentSequenceLength = xmlSequence->getSequenceLengths()[ currentSequence ];
 	
+	else
+	  */
+	{
+//		xmlSequence->createFreshXml( version );
+//		resolution = xmlSequence->getResolution();
+//		saveXml();
+		//see if there are any ass files
+		//if so, load their slices into the slice mananger
+		File assFile = FileHelper::getAssFileAutomagically();
+		//create an array to pass the slice data into
+		//sliceManager will eventually become owner of this array
+		ResXmlParser::parseAssXml( assFile, sliceManager->getSlices(), sliceManager->getResolution());
+		
+		//now populate the previewwindow with buttons for these slices
+		previewWindow->createSliceButtons( sliceManager->getSlices() );
+		previewWindow->resized();
+		
+		//now populate the slicelist with entries for these slices
+		sliceList->addSlices( sliceManager->getSlices() );
+		sliceList->resized();
+		//loadDefaultAssFile();
+	}
+	//set the name
+	//	getTopLevelComponent()->setName( xmlSequence->getXmlFile().getFileNameWithoutExtension());
+	
+	//resize to update preview window
 	resized();
+	
+	
 }
 
 StringArray MainContentComponent::getMenuBarNames()
 {
-	const char* const names[] = { "File", nullptr };
+	const char* const names[] = { "File", "Edit", nullptr };
 	return StringArray (names);
 }
 
 PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const juce::String &menuName)
 {
+	
 	PopupMenu menu;
 	
 	if (menuIndex == 0)
 	{
-		menu.addItem(1, "New");
-		menu.addItem(2, "Load");
-		menu.addItem(3, "Save");
-		menu.addItem(4, "Save as...");
+		menu.addItem(1, "Load Arena Setup");
+		menu.addItem(2, "Reload Arena Setup", false /*xmlSequence->getAssFile() == File()*/? false: true );
 		menu.addSeparator();
-		menu.addItem(5, "Reload ASS file");
+		menu.addItem(3, "New Chaser");
+		menu.addSeparator();
+		menu.addItem(4, "Load Chaser");
+		menu.addItem(5, "Save Chaser as...");
 	}
-
+	
+	else if ( menuIndex == 1 )
+	{
+		menu.addItem(1, "Copy Step " + KeyPress('c', ModifierKeys::commandModifier, NULL).getTextDescriptionWithIcons());
+		menu.addItem(2, "Paste Step " + KeyPress('v', ModifierKeys::commandModifier, NULL).getTextDescriptionWithIcons());
+		menu.addSeparator();
+		menu.addItem(3, "Copy Sequence");
+		menu.addItem(4, "Paste Sequence");
+	}
+	
 	return menu;
 }
 
@@ -156,22 +172,76 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 		switch ( menuItemID )
 		{
 			case 1:
+				/*
 				xmlSequence->createFreshXml(version);
-				saveAsXml();
+				resolution = xmlSequence->getResolution();
 				loadAssFile();
+				saveXml();
+				 */
 				break;
 			case 2:
-				loadXml();
+				/*
+				reloadAssFile();
+				 */
 				break;
 			case 3:
-				saveXml();
+			{
+				/*
+				//create a fresh xml file
+				xmlSequence->createFreshXml(version);
+				
+				//set the filename to DefaultChaserxml
+				File docDir = File::getSpecialLocation( File::userDocumentsDirectory );
+				File defaultChaseFile = docDir.getChildFile("Chaser/DefaultChaser.xml");
+				xmlSequence->setXmlFile( defaultChaseFile );
+				getTopLevelComponent()->setName(defaultChaseFile.getFileNameWithoutExtension());
+				
+				//read out the resolution
+				resolution = xmlSequence->getResolution();
+				
+				//this will make sure nothing is loaded and everything is empty
+				clearGUI();
+				
+				//try to load the default assfile
+				loadDefaultAssFile();
+				 */
 				break;
+			}
 			case 4:
-				saveAsXml();
+				loadXml();
 				break;
 			case 5:
-				reloadAssFile();
+				saveAsXml();
 				break;
+				/*
+			case 6:
+				saveAsXml();
+				break;
+				 */
+
+			case 0:
+			default:
+				return;
+		}
+	}
+	
+	else if ( topLevelMenuIndex == 1 )
+	{
+		switch ( menuItemID )
+		{
+			case 1:
+				copyStep();
+				break;
+			case 2:
+				pasteStep();
+				break;
+			case 3:
+				copySequence();
+				break;
+			case 4:
+				pasteSequence();
+				break;
+
 			case 0:
 			default:
 				return;
@@ -179,29 +249,36 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 	}
 }
 
-void MainContentComponent::loadAssFile()
+void MainContentComponent::clearGUI()
 {
-	File presetsLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Resolume Arena 5/presets/screensetup/";
-	FileChooser fc ( "Pick an ASS file...", presetsLocation, "*.xml", true );
-	if ( fc.browseForFileToOpen() )
-	{
-		File f = fc.getResult();
-		parseXml( f );
-	}
+	//clear the previewWindow and sliceList
+	//empty the xmlSequence
+	//reset the sequencer
+	
+	sliceList->clear();
+	previewWindow->clearSlices();
+	//xmlSequence->clearSlices();
+	//sequencer->setDefaultSequences();
+	resized();
 }
 
-void MainContentComponent::reloadAssFile()
-{
-	parseXml( xmlSequence->getAssFile() );
-}
+
+
 
 void MainContentComponent::saveXml()
 {
-	xmlSequence->save();
+	/*
+	if (!xmlSequence->save())
+	{
+		DBG("SAVE ERROR!");
+		throwSaveError();
+	}
+	 */
 }
 
-void MainContentComponent::saveAsXml()
+bool MainContentComponent::saveAsXml()
 {
+	/*
 	//open a save dialog
 	File chaserLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Chaser/";
 	if (!chaserLocation.exists())
@@ -212,17 +289,21 @@ void MainContentComponent::saveAsXml()
 		File f = fc.getResult();
 		
 		xmlSequence->setXmlFile( f );
-		xmlSequence->save();
+		saveXml();
 		
 		getTopLevelComponent()->setName(f.getFileNameWithoutExtension());
+		return true;
 	}
+	 */
+	return false;
 }
 
 void MainContentComponent::loadXml()
 {
+	/*
 	//open a load dialog
 	File chaserLocation = File::getSpecialLocation( File::SpecialLocationType::userDocumentsDirectory ).getFullPathName() + "/Chaser/";
-	FileChooser fc ( "Pick a chaser file...", chaserLocation, "*.xml", true );
+	FileChooser fc ( "Pick a Chaser file...", chaserLocation, "*.xml", true );
 	
 	if ( fc.browseForFileToOpen() )
 	{
@@ -230,173 +311,116 @@ void MainContentComponent::loadXml()
 	
 		if ( !xmlSequence->loadXmlFile( f ))
 		{
-			AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
-											  "Sorry!",
-											  "Couldn't load that file.",
-											  "Ok");
+			throwLoadError();
 		}
 		else
 		{
 			reloadSliceData();
 			getTopLevelComponent()->setName(f.getFileNameWithoutExtension());
+			resized();
 		}
 	}
+	 */
 }
 
-
-
-void MainContentComponent::changeListenerCallback (ChangeBroadcaster* source)
+void MainContentComponent::reloadSliceData()
 {
-    if ( source == sliceList )
-    {
-        for ( int i = 0; i < slices.size(); i++ )
-        {
-			xmlSequence->updateSlice (slices[i], i);
-            previewWindow->update(slices[i], i );
-        }
-		
-		saveXml();
-    }
-}
-
-void MainContentComponent::copierClicked(int multiplier)
-{
+	/*
+	//sliceList->clearSlices();
+	previewWindow->clearSlices();
+	slices.clear();
 	
-	for ( int i = multiplier; i < currentSequenceLength; i += multiplier )
+	//load the slices from the xml if they exist
+	Array<Slice*> slicesInXml = xmlSequence->getSlices();
+	for ( int i = 0; i < slicesInXml.size(); i++ )
 	{
-		int nextStep = currentStep + i;
-		if ( nextStep >= currentSequenceLength )
-			nextStep -= currentSequenceLength;
-		xmlSequence->setStep( currentSequence, nextStep, activeSlices );
-		xmlSequence->save();
+		Slice* s = slicesInXml[i];
+		previewWindow->addSlice (s) ;
+		
+		slices.add(s);
 	}
-}
-
-void MainContentComponent::sliceClicked( Array<int> activeSlices_)
-{
-	activeSlices = activeSlices_;
-	xmlSequence->setStep( currentSequence, currentStep, activeSlices );
-	xmlSequence->save();
-}
-
-void MainContentComponent::stepSelected(int step)
-{
-	//the sequencer has been set to a new step or sequence
-	//so read out the values for this step and update the preview
-	currentStep = step;
+	
+	sliceList->addSlices( slices );
+	
+	//update the view for the first step
 	activeSlices = xmlSequence->getStep( currentSequence, currentStep );
 	previewWindow->setSlices( activeSlices );
-}
-
-void MainContentComponent::sequenceNameChanged( String newName )
-{
-	//the sequence name has been changed
-	//save the sequence name to xml
-	xmlSequence->setSequenceName( currentSequence, newName );
-	xmlSequence->save();
-}
-
-void MainContentComponent::sequenceSelected(int sequence)
-{
-	//when the sequence is changed
-	//the first step is always triggered as well
-	//so the preview state is updated by this click
-	currentSequence = sequence;
-}
-
-void MainContentComponent::sequenceLengthChanged(int newSequenceLength)
-{
-	//this means the current sequence has been made shorter or longer
-	//update the model var
-	currentSequenceLength = newSequenceLength;
+	sequencer->setSequenceNames ( xmlSequence->getSequenceNames() );
+	sequencer->setSequenceLengths ( xmlSequence->getSequenceLengths() );
+	currentSequenceLength = xmlSequence->getSequenceLengths()[ currentSequence ];
 	
-	//save it to xml
-	xmlSequence->setNumberOfSteps( currentSequence, currentSequenceLength);
-	xmlSequence->save();
-	
+	resolution = xmlSequence->getResolution();
+	 */
+	resized();
 }
 
-
-void MainContentComponent::parseXml(File f)
+bool MainContentComponent::keyPressed(const juce::KeyPress &key, juce::Component *originatingComponent)
 {
-    if ( !f.exists() )
-    {
-		//because we're using a file selection dialog to choose new ASS files
-		//a non-existant file could only happen on a reload action
-		AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
-										  "Sorry!",
-										  "Couldn't reload that file. It looks like it's gone.",
-										  "Ok");
-        DBG("Error loading file...");
-        return;
-    }
-    else
-    {
-		//check if we're loading a new file or the same file
-		//if it's new, clear the xml and create a fresh one
-		bool loadingSameFile = (f == xmlSequence->getAssFile() );
-		if ( !loadingSameFile )
-		{
-			xmlSequence->createFreshXml( version );
-		}
+	
+	if ( key == KeyPress::leftKey )
+	{
+		sequencer->previousStep();
+	}
+	else if ( key == KeyPress::rightKey )
+	{
+		sequencer->nextStep();
+	}
+	else if ( key == KeyPress ('c', ModifierKeys::commandModifier, NULL) )
+	{
+		copyStep();
+	}
+	else if ( key ==  KeyPress ('v', ModifierKeys::commandModifier, NULL))
+	{
+		pasteStep();
+	}
 		
-        DBG("Loading: " + f.getFullPathName() );
-        XmlDocument xmlDoc ( f );
-		
-        ScopedPointer<XmlElement> xmlRoot (XmlDocument::parse ( f ));
-        
-        //see if we're dealing with a res 4 or res 5 ass file
-        //then try to parse it
-		bool succesfulParse;
-		
-        if (xmlRoot != nullptr && xmlRoot->hasTagName ("preset"))
-			succesfulParse = XmlParser::parseRes4Xml( *xmlRoot, slices );
-        else if ( xmlRoot != nullptr && xmlRoot->hasTagName("XmlState"))
-            succesfulParse = XmlParser::parseRes5Xml( *xmlRoot, slices );
-		
-        //if the file was susccesfully parsed
-		if ( succesfulParse )
-		{
-			//if we're loading the same file, get the enabled states from the chaserxml
-			if ( loadingSameFile )
-			{
-				Array<Slice> prevSlices = xmlSequence->getSlices() ;
-				for ( int i = 0; i < prevSlices.size(); i++ )
-				{
-					if ( i < slices.size() )
-						slices[i]->enabled = prevSlices[i].enabled;
-				}
-			}
-			
-            //update the previewWindow and sliceList
-            sliceList->clearSlices();
-            previewWindow->clearSlices();
-            xmlSequence->clearSlices();
-			
-            for ( int i = 0; i < slices.size(); i++ )
-            {
-                sliceList->addSlice( slices[i] );
-                previewWindow->addSlice( slices[i] );
-                xmlSequence->addSlice ( slices[i] );
-            }
-			
-            previewWindow->resized();
-
-			//if we're not loading the same file, reset the sequencer
-			if ( !loadingSameFile )
-			{
-				sequencer->setDefaultSequences();
-			}
-			
-			//set the previewWindow to the correct step
-			previewWindow->setSlices( xmlSequence->getStep( currentSequence, currentStep) );
-
-			//store the last used ass file in xml and save it
-            xmlSequence->setAssFile( f );
-			xmlSequence->save();
-		}
-    }
+	return true;
 }
+
+void MainContentComponent::copyStep()
+{
+	slicesToCopy = activeSlices;
+}
+
+void MainContentComponent::pasteStep()
+{
+	previewWindow->setActiveSlices( slicesToCopy );
+}
+
+void MainContentComponent::copySequence()
+{
+	/*
+	//copy the name
+	sequenceNameToCopy = xmlSequence->getSequenceNames()[currentSequence];
+	//create an array with an array
+	currentSequenceSlices.clear();
+	for ( int i = 0; i < currentSequenceLength; i++ )
+	{
+		Array<int> step = xmlSequence->getStep(currentSequence, i);
+		currentSequenceSlices.add( step );
+	}
+	 */
+}
+
+void MainContentComponent::pasteSequence()
+{
+	/*
+	sequenceNameChanged( String(sequenceNameToCopy + " copy"));
+	sequenceLengthChanged( currentSequenceSlices.size() );
+	for ( int i = 0; i < currentSequenceSlices.size(); i++ )
+	{
+		stepSelected( i );
+		sliceClicked( currentSequenceSlices[i] );
+		previewWindow->setSlices( activeSlices );
+	}
+	
+	//update the views
+	sequencer->selectStep( 0 );
+	sequencer->setSequenceNames ( xmlSequence->getSequenceNames() );
+	sequencer->setSequenceLengths ( xmlSequence->getSequenceLengths() );
+	 */
+}
+
 
 
 void MainContentComponent::resized()
@@ -404,7 +428,7 @@ void MainContentComponent::resized()
 
 	Rectangle<int> area (getLocalBounds());
 	
-	float menuBarHeight;
+	int menuBarHeight = 0;
 	#if JUCE_WINDOWS
 	menuBarHeight = LookAndFeel::getDefaultLookAndFeel().getDefaultMenuBarHeight();
 	#elif JUCE_MAC
@@ -412,14 +436,17 @@ void MainContentComponent::resized()
 	#endif
 	
 	menuBar->setBounds (area.removeFromTop (menuBarHeight));
+
+	Rectangle<int> previewArea = Rectangle<int>{0, 0, int(getWidth() * 0.83), int((getWidth() / 16.0) * 9.0 * 0.83) };
+	previewArea.setPosition(0,  menuBarHeight);
 	
-	AffineTransform scalePreview = AffineTransform::scale(0.83, (9.0 / 16.0) * 0.83 );
-	Rectangle<int> previewArea = Rectangle<int>{0,0,getWidth(),getWidth()};
-	previewArea = previewArea.transformedBy( scalePreview );
-	previewArea.setPosition(0.0, menuBarHeight);
-    previewWindow->setBounds(previewArea.reduced(5));
+	previewWindow->setBounds(0,0, sliceManager->getResolution().x, sliceManager->getResolution().y);
+	Rectangle<int> previewWindowArea = previewArea.reduced(5);
+
+	if(previewWindow->getWidth() > 0 && previewWindow->getHeight() > 0 )
+		previewWindow->setBoundsToFit( previewWindowArea.getX(), previewWindowArea.getY(), previewWindowArea.getWidth(), previewWindowArea.getHeight(), Justification::centred, false);
 	
-	Rectangle<int> sliceArea = Rectangle<int> { previewArea.getWidth(), int(menuBarHeight), area.getWidth() - previewArea.getWidth(), previewArea.getHeight()};
+	Rectangle<int> sliceArea = Rectangle<int> { previewArea.getWidth(), menuBarHeight, area.getWidth() - previewArea.getWidth(), previewArea.getHeight()};
 	sliceList->setBounds(sliceArea.reduced(5));
 
 	Rectangle<int> bottomArea = area.removeFromBottom( area.getHeight() - previewArea.getHeight() );

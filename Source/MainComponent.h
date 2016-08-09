@@ -10,13 +10,15 @@
 #define MAINCOMPONENT_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Preview.h"
-#include "Slice.h"
-#include "SliceList.h"
-#include "Sequencer.h"
-#include "XmlSequence.h"
-#include "Copier.h"
-#include "ColourLookAndFeel.h"
+#include "gui/Preview.h"
+#include "slice/Slice.h"
+#include "gui/SliceList.h"
+#include "gui/Sequencer.h"
+//#include "XmlSequence.h"
+#include "gui/Copier.h"
+#include "gui/ColourLookAndFeel.h"
+#include "chase/ChaseManager.h"
+#include "slice/SliceManager.h"
 
 
 
@@ -27,10 +29,7 @@
 */
 class MainContentComponent   :  public Component,
 								public MenuBarModel,
-								public ChangeListener,
-								public Sequencer::Listener,
-								public Preview::Listener,
-								public Copier::Listener,
+								public KeyListener,
 								public Timer
 
 {
@@ -39,41 +38,43 @@ public:
     MainContentComponent();
     ~MainContentComponent();
 
-    void resized();
-	
-    virtual void changeListenerCallback (ChangeBroadcaster* source);
-	
-	virtual void timerCallback();
+    void resized() override;
+
+	virtual void timerCallback() override;
 	
 	//menubar methods
-	virtual StringArray getMenuBarNames();
+	virtual StringArray getMenuBarNames() override;
 	virtual PopupMenu getMenuForIndex (int topLevelMenuIndex,
-									   const String& menuName);
+									   const String& menuName) override;
 	virtual void menuItemSelected (int menuItemID,
-								   int topLevelMenuIndex);
+								   int topLevelMenuIndex) override;
+			
 	
-	//sequencer listener methods
-	virtual void stepSelected ( int step );
-	virtual void sequenceNameChanged ( String newName );
-	virtual void sequenceSelected ( int sequence );
-	virtual void sequenceLengthChanged ( int newSequenceLength );
+	//keyboard listener
+	virtual bool keyPressed (const KeyPress& key,
+							 Component* originatingComponent) override;
+
 	
-	//preview listener methods
-	virtual void sliceClicked ( Array<int> activeSlices );
 	
-	//copier listener methods
-	virtual void copierClicked ( int m );
-	
-	void loadAssFile();
-	void reloadAssFile();
 	void saveXml();
-	void saveAsXml();
+	bool saveAsXml();
 	void loadXml();
-    void parseXml ( File f );
+    
 	void reloadSliceData();
-
+	void clearGUI();
 	
 
+	
+	void copyStep();
+	void pasteStep();
+	void copySequence();
+	void pasteSequence();
+	
+	ScopedPointer<ChaseManager> chaseManager;
+	ScopedPointer<SliceManager> sliceManager;
+	
+	ScopedPointer<Preview> previewWindow;
+	
 private:
 	ScopedPointer<MenuBarComponent> menuBar;
 	
@@ -81,17 +82,24 @@ private:
 	int currentSequence;
 	int currentSequenceLength;
 	Array<int> activeSlices;
+	Array<int> slicesToCopy;
+	Array<Array<int>> currentSequenceSlices;
+	String sequenceNameToCopy;
 	
     ScopedPointer<ColourLookAndFeel> laf;
     
-    OwnedArray<Slice> slices;
+	//OwnedArray<Slice> slices;
     
-    ScopedPointer<Preview> previewWindow;
+	
     ScopedPointer<SliceList> sliceList;
     ScopedPointer<Sequencer> sequencer;
-    ScopedPointer<XmlSequence> xmlSequence;
+	// ScopedPointer<XmlSequence> xmlSequence;
 	ScopedPointer<Copier> copier;
 	
+
+	
+
+
 	String version;
     
     //==============================================================================

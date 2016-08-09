@@ -35,8 +35,8 @@
 namespace ProjectInfo
 {
     const char* const  projectName    = "Chaser";
-    const char* const  versionString  = "1.0.2";
-    const int          versionNumber  = 0x10002;
+    const char* const  versionString  = "1.0.7";
+    const int          versionNumber  = 0x10007;
 }
 #endif
 

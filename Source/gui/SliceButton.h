@@ -12,31 +12,38 @@
 #define SLICEBUTTON_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Slice.h"
+#include "../slice/Slice.h"
+#include "ColourLookAndFeel.h"
 
 
 //==============================================================================
 /*
 */
-class SliceButton    : public TextButton
+
+class SliceButton    : public ShapeButton
 {
 public:
-    SliceButton ( String n, bool enable, double l, double t, double r, double b );
-    SliceButton ( Slice* s );
+	//SliceButton ( String n, bool enable, double l, double t, double r, double b );
+	SliceButton ( Slice& s, Point<int> scale );
     ~SliceButton();
-    
-    double proportionalX;
-    double proportionalY;
-    double proportionalW;
-    double proportionalH;
-    bool enabled;
+	
+	//bool enabled;
     String name;
     
     void update();
+	Path getPath();
+	void createPath( Point<int> scale);
+	
+	//overridden functions for ShapeButton
+	bool hitTest(int x, int y) override;
+	void paintButton (Graphics& g, bool isMouseOverButton, bool isButtonDown) override;
+	void resized() override;
 
 private:
-    
-    
+	Path path;
+	Slice& slice;
+	Path makePath( Array<Point<float>>& points, Point<int> scale );
+	
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SliceButton)
 };
 

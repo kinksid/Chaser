@@ -11,7 +11,7 @@
 #ifndef XMLSEQUENCE_H_INCLUDED
 #define XMLSEQUENCE_H_INCLUDED
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Slice.h"
+#include "../slice/Slice.h"
 
 //TODO add node with positions for all slices
 
@@ -28,7 +28,7 @@ public:
     void clearSlices();
     void addSlice ( Slice* slice );
 	void updateSlice ( Slice* slice, int i);
-    Array<Slice> getSlices();
+    Array<Slice*> getSlices();
 	
 	StringArray getSequenceNames();
 	void setSequenceName ( int sequenceNumber, String name );
@@ -41,14 +41,18 @@ public:
     
     void setAssFile ( File f );
     File getAssFile();
+	
+	void setResolution( Point<int> resolution );
+	Point<int> getResolution();
 
     void createFreshXml( String version );
-	bool versionCheck ( String savedVersion, String thisVersion );
-	Array<int> subDivideString ( String s);
 	
-    void save();
+	
+	
+    bool save();
 	bool loadXmlFile( File f );
     File getXmlFile();
+	
 	void setXmlFile( File f );
     
 private:
@@ -58,9 +62,11 @@ private:
     XmlElement* sequenceData;
     XmlElement* positionData;
 	StringArray sequenceNames;
+	Point<int> resolution;
 	
-	void addElement(XmlElement* elementToAddTo, String nameOfNewElement, String valueOfNewElement);
-
+	void addElement(XmlElement* elementToAddTo, String nameOfNewElement, String valueOfNewElement, bool replace);
+	void setPositionData(XmlElement* sliceXml, Slice* s);
+	void addPointsToXml(Array<Point<float>>& points, XmlElement* pointDataElement);
 };
 
 

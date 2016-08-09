@@ -10,6 +10,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Copier.h"
+#include "../MainComponent.h"
 
 //==============================================================================
 Copier::Copier()
@@ -29,29 +30,36 @@ Copier::Copier()
 
 Copier::~Copier()
 {
+	
 }
 
 void Copier::buttonClicked(Button* b)
 {
-	int multiplier = pow(2, buttons.indexOf( b ));
-	//let the listeners know
-	Component::BailOutChecker checker (this);
-	if (! checker.shouldBailOut())
-		listeners.callChecked ( checker, &Listener::copierClicked, multiplier );
+	int multiplier = int(pow(2, buttons.indexOf( b )));
+	
+	MainContentComponent* parent = findParentComponentOfClass<MainContentComponent>();
+	ChaseManager* chaser = parent->chaseManager;
+	int copiesThatFitInSequence = floor((chaser->getLastStepIndex() + 1) / multiplier);
+	for ( int i = 1; i < copiesThatFitInSequence; i++ )
+	{
+		int nextStep = chaser->getCurrentStepIndex() + i  * multiplier;
+		if ( nextStep >= chaser->getLastStepIndex() + 1 )
+			nextStep -= chaser->getLastStepIndex() + 1;
+		
+		chaser->setStep( chaser->getCurrentSequenceIndex(), nextStep, chaser->getCurrentStepSlices());
+	 }
 }
 
 void Copier::paint (Graphics& g)
 {
-	ColourLookAndFeel claf;
-    g.setColour (claf.backgroundColour);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+
 }
 
 void Copier::resized()
 {
-	float h = 1.0 / buttons.size() - 0.01;
+	float h = 1.0f / buttons.size() - 0.01f;
 	for ( int i = 0; i < buttons.size(); i++ )
 	{
-		buttons[i]->setBoundsRelative(0.01, 0.01 + i * h + 0.01, 0.98, h);
+		buttons[i]->setBoundsRelative(0.01f, 0.01f + i * h + 0.01f, 0.98f, h);
 	}
 }

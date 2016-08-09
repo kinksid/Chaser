@@ -73,33 +73,23 @@ public:
     void resized();
     
     virtual void buttonClicked (Button*);
-    
-    void update(Slice* slice, int i );
-    
+	
+	void createSliceButtons ( OwnedArray<Slice>& slices );
     void clearSlices();
-    void addSlice( Slice* slice);
-    
-    void setSlices ( Array<int> activeSlices );
 	
-	class Listener
-	{
-		
-	public:
-		virtual ~Listener() {}
-		virtual void sliceClicked ( Array<int> ) = 0;
-		
-	};
-	
-	void addListener ( Listener* const l ) { previewListeners.add ( l ); }
-	void removeListener ( Listener* const l ) { previewListeners.remove (l ); }
+    void setActiveSlices ( Array<int> activeSlices );
+
 
     
 
 private:
+	
+	void addSliceButton( Slice& slice);
+	
     OwnedArray<SliceButton> sliceButtons;
     ScopedPointer<SliceLookAndFeel> sliceLaf;
-	ListenerList<Listener> previewListeners;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Preview)
+	
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Preview)
 };
 
 
