@@ -41,7 +41,7 @@ int Stepper::getButtonCount()
 
 void Stepper::triggerButton(int buttonIndex)
 {
-	if ( stepper.size() > buttonIndex )
+	if ( stepper.size() > buttonIndex && buttonIndex >= 0 )
 		stepper[buttonIndex]->triggerClick();
 }
 
