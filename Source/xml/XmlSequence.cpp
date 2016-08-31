@@ -199,7 +199,7 @@ void XmlSequence::clearSlices()
 
 String XmlSequence::getVersion()
 {
-	
+	return String();
 }
 
 void XmlSequence::setVersion(juce::String version)
