@@ -21,21 +21,7 @@ public:
     XmlSequence( String version );
     ~XmlSequence();
     
-    void setStep ( int sequence, int step, Array<int> activeSlices );
-    Array<int> getStep ( int sequence, int step );
-
-	
-    void clearSlices();
-    void addSlice ( Slice* slice );
-	void updateSlice ( Slice* slice, int i);
-    Array<Slice*> getSlices();
-	
-	StringArray getSequenceNames();
-	void setSequenceName ( int sequenceNumber, String name );
-	
-	void setNumberOfSteps( int sequenceNumber, int numberOfSteps );
-	Array<int> getSequenceLengths();
-
+    
 	String getVersion();
 	void setVersion ( String version );
     
@@ -46,8 +32,6 @@ public:
 	Point<int> getResolution();
 
     void createFreshXml( String version );
-	
-	
 	
     bool save();
 	bool loadXmlFile( File f );
@@ -61,8 +45,6 @@ private:
 	ScopedPointer<XmlElement> lastUsedFileData;
     XmlElement* sequenceData;
     XmlElement* positionData;
-	StringArray sequenceNames;
-	Point<int> resolution;
 	
 	void addElement(XmlElement* elementToAddTo, String nameOfNewElement, String valueOfNewElement, bool replace);
 	void setPositionData(XmlElement* sliceXml, Slice* s);

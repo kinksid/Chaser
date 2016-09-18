@@ -49,21 +49,16 @@ public:
 	virtual void menuItemSelected (int menuItemID,
 								   int topLevelMenuIndex) override;
 			
-	
 	//keyboard listener
 	virtual bool keyPressed (const KeyPress& key,
 							 Component* originatingComponent) override;
 
-	
-	
 	void saveXml();
 	bool saveAsXml();
 	void loadXml();
     
 	void reloadSliceData();
 	void clearGUI();
-	
-
 	
 	void copyStep();
 	void pasteStep();
@@ -87,9 +82,6 @@ private:
 	String sequenceNameToCopy;
 	
     ScopedPointer<ColourLookAndFeel> laf;
-    
-	//OwnedArray<Slice> slices;
-    
 	
     ScopedPointer<SliceList> sliceList;
     ScopedPointer<Sequencer> sequencer;

@@ -82,7 +82,7 @@ void Stepper::setButtonCount()
 	resized();
 }
 
-void Stepper::paint (Graphics& g)
+void Stepper::paint (Graphics& )
 {
 	
 }

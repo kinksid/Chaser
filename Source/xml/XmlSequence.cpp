@@ -32,122 +32,6 @@ void XmlSequence::addElement(juce::XmlElement *elementToAddTo, juce::String name
 	newElement->addTextElement( valueOfNewElement );
 	elementToAddTo->addChildElement( newElement );
 }
-void XmlSequence::setStep(int sequence, int step, Array<int> activeSlices)
-{
-
-    XmlElement* currentStep = sequenceData->getChildElement( sequence )->getChildElement( step );
-    currentStep->deleteAllChildElements();
-    
-    //add child elements for each active slice in this step
-    for ( int i = 0; i < activeSlices.size(); i++ )
-    {
-        
-        //DBG("Added to XML: "+ String(i));
-		addElement( currentStep, "slice", String( activeSlices[i]), false);
-    }
-}
-
-Array<int> XmlSequence::getStep(int sequence, int step)
-{
-	Array<int> activeSlices;
-	if (sequenceData != nullptr)
-	{
-		if (sequenceData->getChildElement(sequence) != nullptr)
-		{
-			if (sequenceData->getChildElement(sequence)->getChildElement(step) != nullptr)
-			{
-				XmlElement* currentStep = sequenceData->getChildElement(sequence)->getChildElement(step);
-
-				//read out the the list of ints associated with this step
-				for (int i = 0; i < currentStep->getNumChildElements(); i++)
-				{
-					activeSlices.add(currentStep->getChildElement(i)->getAllSubText().getIntValue());
-				}
-			}
-		}
-		
-	}
-    return activeSlices;
-}
-
-StringArray XmlSequence::getSequenceNames()
-{
-	StringArray names;
-	if (sequenceData != nullptr)
-	{
-		if (sequenceData->getNumChildElements() > 0)
-		{
-			forEachXmlChildElement(*sequenceData, sequence)
-			{
-				names.add(sequence->getStringAttribute("name", "Unnamed Sequence"));
-			}
-		}
-	}
-
-	
-	return names;
-}
-
-void XmlSequence::setSequenceName( int sequenceNumber, String name)
-{
-	if( sequenceData->getNumChildElements() > sequenceNumber )
-	{
-		XmlElement* sequence = sequenceData->getChildElement( sequenceNumber );
-		sequence->setAttribute("name", name );
-	}
-}
-
-void XmlSequence::setNumberOfSteps( int sequenceNumber, int numberOfSteps )
-{
-	if( sequenceData->getNumChildElements() > sequenceNumber )
-	{
-		XmlElement* sequence = sequenceData->getChildElement( sequenceNumber );
-		sequence->setAttribute( "maxsteps", numberOfSteps );
-	}
-}
-
-Array<int> XmlSequence::getSequenceLengths()
-{
-	Array<int> lengths;
-	if (sequenceData != nullptr)
-	{
-		if (sequenceData->getNumChildElements() > 0)
-		{
-			forEachXmlChildElement(*sequenceData, sequence)
-			{
-				lengths.add(sequence->getIntAttribute("maxsteps", 16));
-			}
-		}
-	}
-
-	
-	return lengths;
-}
-
-void XmlSequence::addSlice(Slice* slice)
-{
-    
-    if ( positionData == nullptr )
-    {
-        positionData = new XmlElement("positionData");
-        chaserData->addChildElement(positionData);
-    }
-
-    XmlElement* sliceXml = new XmlElement("slice");
-	setPositionData(sliceXml, slice);
-    positionData->addChildElement(sliceXml);
-
-}
-
-void XmlSequence::updateSlice(Slice *slice, int i )
-{
-	XmlElement* sliceXml = positionData->getChildElement(i);
-	if ( sliceXml != nullptr )
-	{
-		setPositionData(sliceXml, slice);
-	}
-	
-}
 
 void XmlSequence::setPositionData(juce::XmlElement *sliceXml, Slice *slice)
 {
@@ -172,11 +56,6 @@ void XmlSequence::setPositionData(juce::XmlElement *sliceXml, Slice *slice)
 	addPointsToXml(slice->maskRectPoints, maskRect);
 	maskRect->setAttribute("orientation", slice->maskRectOrientation);
 	sliceXml->addChildElement(maskRect);
-	
-//	sliceXml->setAttribute("l", slice->proportionalX);
-//	sliceXml->setAttribute("t", slice->proportionalY);
-//	sliceXml->setAttribute("r", slice->proportionalX + slice->proportionalW);
-//	sliceXml->setAttribute("b", slice->proportionalY + slice->proportionalH);
 }
 
 void XmlSequence::addPointsToXml(Array<Point<float> > &points, juce::XmlElement *pointDataElement)
@@ -188,13 +67,6 @@ void XmlSequence::addPointsToXml(Array<Point<float> > &points, juce::XmlElement 
 		point->setAttribute("y", points[i].y);
 		pointDataElement->addChildElement(point);
 	}
-}
-
-void XmlSequence::clearSlices()
-{
-	chaserData->deleteAllChildElementsWithTagName("positionData");
-	positionData = new XmlElement ("positionData");
-	chaserData->addChildElement(positionData);
 }
 
 String XmlSequence::getVersion()
@@ -213,7 +85,6 @@ void XmlSequence::setVersion(juce::String version)
 
 void XmlSequence::createFreshXml( String version )
 {
-    
     //master element
     chaserData = new XmlElement ("chaserData");
 	XmlElement* versionData = new XmlElement("version");
@@ -224,70 +95,9 @@ void XmlSequence::createFreshXml( String version )
     //this is where we store which slices are active in each step of each sequence
     sequenceData = new XmlElement ("sequenceData");
     chaserData->addChildElement(sequenceData);
-    
-    //create 16 sequences
-    for ( int i = 0; i < 16; i++ )
-    {
-        XmlElement* sequence = new XmlElement ("sequence");
-        sequence->setAttribute("nr", i);
-		sequence->setAttribute("name", "Sequence " + String(i + 1));
-		sequence->setAttribute( "maxsteps", 16 );
-        sequenceData->addChildElement(sequence);
-        
-        //each with 16 steps
-        for ( int j = 0; j < 16; j++ )
-        {
-            XmlElement* step = new XmlElement ("step");
-            step->setAttribute("nr", j);
-            sequence->addChildElement(step);
-        }
-    }
-	
-	resolution = Point<int>(1920,1080);
-	
-	setXmlFile( getXmlFile() );
-	
-    clearSlices(); 
 }
 
-Array<Slice*> XmlSequence::getSlices()
-{
-    Array<Slice*> sliceArray;
-    if ( positionData != nullptr )
-    {
-		forEachXmlChildElement(*positionData, slice)
-		{
-			Slice* newSlice = new Slice (slice->getStringAttribute("name", "Unnamed Slice"), slice->getIntAttribute("enable", 0) != 0 );
-//			if ( slice->hasAttribute("screenName"))
-//				newSlice->screen = slice->getStringAttribute("screenName");
-//			if ( slice->hasAttribute("screenUniqueId"))
-//				newSlice->uniqueId = slice->getIntAttribute("screenUniqueId");
-			forEachXmlChildElement(*slice, pointData)
-			{
-				forEachXmlChildElement(*pointData, point)
-				{
-					float x = float(point->getDoubleAttribute("x"));
-					float y = float(point->getDoubleAttribute("y"));
-					Point<float> newPoint(x,y);
-					if ( pointData->getTagName() == "inputRect" )
-					{
-						newSlice->inputRectOrientation = pointData->getStringAttribute("orientation", "0.0").getFloatValue();
-						newSlice->inputRectPoints.add(newPoint);
-					}
-					if ( pointData->getTagName() == "mask" )
-						newSlice->maskPoints.add(newPoint);
-					if ( pointData->getTagName() == "maskRect" )
-					{
-						newSlice->maskRectOrientation = pointData->getStringAttribute("orientation", "0.0").getFloatValue();
-						newSlice->maskRectPoints.add(newPoint);
-					}
-				}
-			}
-			sliceArray.add(newSlice);
-		}
-    }
-    return sliceArray;
-}
+
 
 bool XmlSequence::save()
 {

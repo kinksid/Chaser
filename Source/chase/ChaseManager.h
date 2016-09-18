@@ -14,6 +14,9 @@
 #include <map>
 #include "../JuceHeader.h"
 
+
+
+
 typedef Array<int> SliceIndexArray; //the active slices in a step
 typedef std::map<int, SliceIndexArray> StepMap; //the step and its active slices
 typedef std::map<int, StepMap> SequenceMap; //the sequence and its steps
@@ -71,6 +74,7 @@ public:
 	
 	
 	
+	
 private:
 	
 	void fillSequence();
@@ -80,6 +84,11 @@ private:
 	SequenceMap sequenceMap;
 	StepMap stepMap;
 	NameMap nameMap;
+
+	void writeToXml();
+	XmlElement* getSequencesAsXml();
+
+	
 	
 };
 

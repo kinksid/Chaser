@@ -31,6 +31,7 @@ ChaseManager::~ChaseManager()
 void ChaseManager::setStep(int sequence, int step, SliceIndexArray activeSlices)
 {
 	sequenceMap[sequence][step] = activeSlices;
+	writeToXml();
 }
 
 void ChaseManager::setCurrentStep(SliceIndexArray activeSlices)
@@ -51,11 +52,13 @@ SliceIndexArray ChaseManager::getCurrentStepSlices()
 void ChaseManager::clearAll()
 {
 	sequenceMap.clear();
+	writeToXml();
 }
 
 void ChaseManager::setName(juce::String name)
 {
 	chaserName = name;
+	writeToXml();
 }
 
 String ChaseManager::getName()
@@ -158,6 +161,8 @@ int ChaseManager::addStep()
 {
 	int lastStep = getLastStepIndex();
 	sequenceMap[currentSequence][lastStep + 1] = SliceIndexArray{};
+
+	writeToXml();
 	
 	return getLastStepIndex();
 }
@@ -180,9 +185,9 @@ int ChaseManager::removeStep()
 			sequenceMap[currentSequence].erase( it );
 		}
 	}
-	
-	
-	
+
+	writeToXml();
+
 	return getLastStepIndex();
 }
 
@@ -218,4 +223,51 @@ String ChaseManager::getCurrentSequenceName()
 void ChaseManager::setCurrentSequenceName(juce::String newName)
 {
 	nameMap[currentSequence] = newName;
+
+	writeToXml();
+}
+
+XmlElement* ChaseManager::getSequencesAsXml()
+{
+	XmlElement* sequencesXml = new XmlElement( "sequences" );
+	
+	//loop through all the sequences
+	for ( auto sequence : sequenceMap )
+	{
+		//for every sequence, create an xmlelement and store the name
+		XmlElement* sequenceXml = new XmlElement( "sequence" );
+		sequenceXml->setAttribute( "name", nameMap[ sequence.first ] );
+		sequencesXml->addChildElement( sequenceXml );
+
+		//then create an xmlelement to store the steps
+		XmlElement* stepsXml = new XmlElement( "steps" );
+		sequenceXml->addChildElement( stepsXml );
+
+		//loop through this sequence's steps
+		for ( auto step : sequence.second )
+		{
+			//for every step, create an xmlelement and store the step nr
+			XmlElement* stepXml = new XmlElement( "step" );
+			stepXml->setAttribute( "nr", step.first );
+			stepsXml->addChildElement( stepXml );
+
+			//loop through this step's active slices
+			for ( int slice : step.second )
+			{
+				//for every active slice, create an xmlelement and store the slice nr
+				XmlElement* sliceXml = new XmlElement( "slice" );
+				sliceXml->setAttribute( "nr", slice );
+				stepXml->addChildElement( sliceXml );
+			}
+		}
+	}
+
+	return sequencesXml;
+}
+
+void ChaseManager::writeToXml()
+{
+	ScopedPointer<XmlElement> xml = getSequencesAsXml();
+	if ( xml )
+		return;
 }
