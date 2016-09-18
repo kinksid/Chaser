@@ -39,7 +39,7 @@ void Copier::buttonClicked(Button* b)
 	
 	MainContentComponent* parent = findParentComponentOfClass<MainContentComponent>();
 	ChaseManager* chaser = parent->chaseManager;
-	int copiesThatFitInSequence = floor((chaser->getLastStepIndex() + 1) / multiplier);
+	int copiesThatFitInSequence = int (floor((chaser->getLastStepIndex() + 1) / multiplier));
 	for ( int i = 1; i < copiesThatFitInSequence; i++ )
 	{
 		int nextStep = chaser->getCurrentStepIndex() + i  * multiplier;
@@ -50,7 +50,7 @@ void Copier::buttonClicked(Button* b)
 	 }
 }
 
-void Copier::paint (Graphics& g)
+void Copier::paint (Graphics&)
 {
 
 }

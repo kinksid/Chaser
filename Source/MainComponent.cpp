@@ -137,7 +137,7 @@ StringArray MainContentComponent::getMenuBarNames()
 	return StringArray (names);
 }
 
-PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const juce::String &menuName)
+PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const juce::String &)
 {
 	
 	PopupMenu menu;
@@ -354,7 +354,7 @@ void MainContentComponent::reloadSliceData()
 	resized();
 }
 
-bool MainContentComponent::keyPressed(const juce::KeyPress &key, juce::Component *originatingComponent)
+bool MainContentComponent::keyPressed(const juce::KeyPress &key, juce::Component *)
 {
 	
 	if ( key == KeyPress::leftKey )

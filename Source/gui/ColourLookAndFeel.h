@@ -82,15 +82,9 @@ public:
 		g.drawText (name, textX, 0, width - textX - 4, height, Justification::centredLeft, true);
 	}
 	
-	void drawPropertyComponentBackground (Graphics& g, int width, int height, PropertyComponent& component)
+	void drawPropertyComponentBackground (Graphics&, int, int, PropertyComponent& )
 	{
-//		g.setColour (backgroundColour);
-//		g.fillRect (0, 0, width, height);
-//		
-//		g.setColour ( outlineColour );
-//		Path p;
-//		p.addRectangle(0,0, width, height);
-//		g.strokePath( p, PathStrokeType(1.0f));
+		//not drawing any background for the tree view
 	}
 	
 	Rectangle<int> getPropertyComponentContentPosition (PropertyComponent& component)
@@ -98,33 +92,27 @@ public:
 		return Rectangle<int> (component.getLocalBounds());
 	}
 	
-	void drawPropertyComponentLabel (Graphics& g, int, int height, PropertyComponent& component)
+	void drawPropertyComponentLabel (Graphics&, int, int, PropertyComponent& )
 	{
-
+		//not drawing a label for the treeview
 	}
 	
 	void drawToggleButton (Graphics& g, ToggleButton& button,
-										   bool isMouseOverButton, bool isButtonDown)
+										   bool, bool )
 	{
-//		if (button.hasKeyboardFocus (true))
-//		{
-//			g.setColour (button.findColour (TextEditor::focusedOutlineColourId));
-//			g.drawRect (0, 0, button.getWidth(), button.getHeight());
-//		}
-		
 		float fontSize = jmin (15.0f, button.getHeight() * 0.75f);
 		const float tickWidth = fontSize * 1.1f;
 		
 		g.setColour ( textColour );
 		
 		Path p;
-		p.addRoundedRectangle(tickWidth * 0.1, tickWidth * 0.25, tickWidth, tickWidth, 2);
+		p.addRoundedRectangle(tickWidth * 0.1f, tickWidth * 0.25f, tickWidth, tickWidth, 2);
 		g.strokePath ( p, PathStrokeType(1.0f));
 
 		if ( button.getToggleState() )
 		{
 			Path pip;
-			pip.addRoundedRectangle(tickWidth * 0.2, tickWidth * 0.35, tickWidth * 0.8, tickWidth * 0.8, 2);
+			pip.addRoundedRectangle(tickWidth * 0.2f, tickWidth * 0.35f, tickWidth * 0.8f, tickWidth * 0.8f, 2);
 			g.fillPath(pip);
 		}
 		

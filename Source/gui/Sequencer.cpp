@@ -101,7 +101,7 @@ Sequencer::~Sequencer()
 }
 
 
-void Sequencer::paint (Graphics& g)
+void Sequencer::paint (Graphics& )
 {
 
 }
@@ -170,7 +170,7 @@ void Sequencer::labelTextChanged (Label* labelThatHasChanged)
 	}
 }
 
-void Sequencer::buttonStateChanged (Button* b)
+void Sequencer::buttonStateChanged (Button* )
 {
 
 }
@@ -224,12 +224,12 @@ void Sequencer::resized()
 {
 	float sequenceControlButtonWidth = 0.0632526f;
 
-	viewport->setBoundsRelative(0.0, 0.0, 1.0f - sequenceControlButtonWidth * 2.9, 1.0);
+	viewport->setBoundsRelative(0.0f, 0.0f, 1.0f - sequenceControlButtonWidth * 2.9f, 1.0f);
 	
-	stepper->setBounds( 0.0, 0.0, fmaxf(viewport->getWidth(), stepper->getButtonCount() * 40), viewport->getMaximumVisibleHeight());
+	stepper->setBounds( 0, 0, int(fmaxf( float(viewport->getWidth()), float(stepper->getButtonCount() * 40))), viewport->getMaximumVisibleHeight());
 	//using this call twice makes sure the stepper resizes itself again after the viewport has added scrollbars
 	if ( stepper->getHeight() != viewport->getMaximumVisibleHeight() )
-		stepper->setBounds( 0.0, 0.0, fmaxf(viewport->getWidth(), stepper->getButtonCount() * 40), viewport->getMaximumVisibleHeight());
+		stepper->setBounds( 0, 0, int(fmaxf(float(viewport->getWidth()), float( stepper->getButtonCount() * 40))), viewport->getMaximumVisibleHeight());
 
 	
 	previous->setBoundsRelative( 1.0f - sequenceControlButtonWidth * 2.7f, 0.225f, sequenceControlButtonWidth * 0.9f, 0.6f );

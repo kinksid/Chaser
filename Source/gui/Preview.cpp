@@ -27,7 +27,7 @@ Preview::~Preview()
     clearSlices();
 }
 
-void Preview::buttonClicked(Button* b)
+void Preview::buttonClicked(Button*)
 {
 	//create an int array of all the slices that are active
 	Array<int> activeSlices;
