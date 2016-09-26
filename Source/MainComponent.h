@@ -11,10 +11,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "gui/Preview.h"
-#include "slice/Slice.h"
+#include "../../HybridApi/Source/HybridApi.h"
 #include "gui/SliceList.h"
 #include "gui/Sequencer.h"
-//#include "XmlSequence.h"
 #include "gui/Copier.h"
 #include "gui/ColourLookAndFeel.h"
 #include "chase/ChaseManager.h"

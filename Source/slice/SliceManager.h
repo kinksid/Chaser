@@ -11,7 +11,7 @@
 #ifndef SLICEMANAGER_H_INCLUDED
 #define SLICEMANAGER_H_INCLUDED
 
-#include "Slice.h"
+#include "../../HybridApi/Source/HybridApi.h"
 
 //takes care of keeping all the slice data in one place and accesible by other classes
 class SliceManager

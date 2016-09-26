@@ -12,7 +12,7 @@
 #define SLICEBUTTON_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "../slice/Slice.h"
+#include "../../HybridApi/Source/HybridApi.h"
 #include "ColourLookAndFeel.h"
 
 

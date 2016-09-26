@@ -115,7 +115,7 @@ void SliceList::addSlices( OwnedArray<Slice>& slices )
 	
 	for ( int i = 0; i < slices.size(); i++ )
 	{
-		ScreenPair screenPair = slices[i]->screenPair;
+		NamedScreenId screen = slices[i]->screen;
 		
 		//create a new SlicePropertyButton
 		SlicePropertyButton* newComponent = new SlicePropertyButton( *this, *slices[i] );
@@ -123,7 +123,7 @@ void SliceList::addSlices( OwnedArray<Slice>& slices )
 		newComponent->setState( slices[i]->enabled );
 		//sections[j]->sliceToggles.add( newComponent );
 		
-		sections[screenPair].add(newComponent);
+		sections[ screen ].add( newComponent );
 	}
 	
 //		//make a new section for each uniqued id

@@ -27,11 +27,8 @@ public:
 	static File getPreferencesFile();
 	static File getLastUsedChaserFile( File prefFile );
 
-	
 	static void reloadAssFile();
-	
-	
-	
+
 private:
 	static void throwLoadError();
 	static void throwSaveError();

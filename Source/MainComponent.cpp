@@ -7,9 +7,8 @@
 */
 
 #include "MainComponent.h"
-#include "xml/ChaserXmlParser.h"
-#include "xml/ResXmlParser.h"
-#include "file/FileHelper.h"
+#include "../../HybridApi/Source/HybridApi.h"
+
 
 
 //==============================================================================
@@ -108,9 +107,8 @@ void MainContentComponent::timerCallback()
 //		saveXml();
 		//see if there are any ass files
 		//if so, load their slices into the slice mananger
-		File assFile = FileHelper::getAssFileAutomagically();
-		//create an array to pass the slice data into
-		//sliceManager will eventually become owner of this array
+		File assFile = FileHelper::getAssFileAutomagically( true );
+		
 		ResXmlParser::parseAssXml( assFile, sliceManager->getSlices(), sliceManager->getResolution());
 		
 		//now populate the previewwindow with buttons for these slices

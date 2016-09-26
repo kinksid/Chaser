@@ -38,8 +38,8 @@ void XmlSequence::setPositionData(juce::XmlElement *sliceXml, Slice *slice)
 	sliceXml->setAttribute("name", slice->name);
 	sliceXml->setAttribute("enable", (int) slice->enabled );
 	
-	sliceXml->setAttribute("screenName", slice->screenPair.second);
-	sliceXml->setAttribute("screenUniqueId", slice->screenPair.first );
+	sliceXml->setAttribute("screenName", slice->screen.second);
+	sliceXml->setAttribute( "screenUniqueId", slice->screen.first );
 	
 	sliceXml->deleteAllChildElements();
 

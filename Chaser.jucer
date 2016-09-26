@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="ZsFZkw" name="Chaser" projectType="guiapp" version="1.0.7"
               bundleIdentifier="nl.HybridVisuals.www" includeBinaryInAppConfig="1"
-              jucerVersion="4.1.0" companyName="Hybrid Visuals" companyWebsite="www.hybridvisuals.nl"
+              jucerVersion="4.2.4" companyName="Hybrid Visuals" companyWebsite="www.hybridvisuals.nl"
               companyEmail="joris@hybridvisuals.nl">
   <MAINGROUP id="cFMW0p" name="Chaser">
     <GROUP id="{6A6FFF85-7097-63A1-1439-46EFB4CC7C8A}" name="Source">
@@ -17,10 +17,6 @@
         <FILE id="ZpQ9Zf" name="ChaseManager.cpp" compile="1" resource="0"
               file="Source/chase/ChaseManager.cpp"/>
         <FILE id="TuKu3e" name="ChaseManager.h" compile="0" resource="0" file="Source/chase/ChaseManager.h"/>
-      </GROUP>
-      <GROUP id="{B9931B1D-3FF5-02A6-D53E-3ED1AA9FBA62}" name="file">
-        <FILE id="Pm85xs" name="FileHelper.cpp" compile="1" resource="0" file="Source/file/FileHelper.cpp"/>
-        <FILE id="vUmztl" name="FileHelper.h" compile="0" resource="0" file="Source/file/FileHelper.h"/>
       </GROUP>
       <GROUP id="{3DFBAD7C-FAB1-579F-D0DB-236E023842FF}" name="gui">
         <FILE id="tGm7Wb" name="ColourLookAndFeel.h" compile="0" resource="0"
@@ -39,19 +35,15 @@
         <FILE id="X4ON1R" name="Stepper.h" compile="0" resource="0" file="Source/gui/Stepper.h"/>
       </GROUP>
       <GROUP id="{5B7D2C02-D7B0-E697-CAD0-B4A97C629A62}" name="slice">
-        <FILE id="jpckbH" name="Slice.h" compile="0" resource="0" file="Source/slice/Slice.h"/>
         <FILE id="KehXBB" name="SliceManager.cpp" compile="1" resource="0"
               file="Source/slice/SliceManager.cpp"/>
         <FILE id="R3egOX" name="SliceManager.h" compile="0" resource="0" file="Source/slice/SliceManager.h"/>
       </GROUP>
       <GROUP id="{1378AC68-4293-88BD-BFEC-611A8E42B263}" name="xml">
-        <FILE id="AimPU0" name="ChaserXmlParser.cpp" compile="1" resource="0"
-              file="Source/xml/ChaserXmlParser.cpp"/>
-        <FILE id="VsRtpa" name="ChaserXmlParser.h" compile="0" resource="0"
-              file="Source/xml/ChaserXmlParser.h"/>
-        <FILE id="QezdwG" name="ResXmlParser.cpp" compile="1" resource="0"
-              file="Source/xml/ResXmlParser.cpp"/>
-        <FILE id="tw0ja7" name="ResXmlParser.h" compile="0" resource="0" file="Source/xml/ResXmlParser.h"/>
+        <FILE id="jC5IXd" name="ChaserXmlWriter.cpp" compile="1" resource="0"
+              file="Source/xml/ChaserXmlWriter.cpp"/>
+        <FILE id="vELNWa" name="ChaserXmlWriter.h" compile="0" resource="0"
+              file="Source/xml/ChaserXmlWriter.h"/>
         <FILE id="MDCZNm" name="XmlSequence.cpp" compile="1" resource="0" file="Source/xml/XmlSequence.cpp"/>
         <FILE id="hGOzrZ" name="XmlSequence.h" compile="0" resource="0" file="Source/xml/XmlSequence.h"/>
       </GROUP>
@@ -81,10 +73,11 @@
         <MODULEPATH id="juce_gui_extra" path="JuceLibraryCode/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <VS2013 targetFolder="Builds/VisualStudio2013" smallIcon="CaJ0AR" bigIcon="CaJ0AR">
+    <VS2013 targetFolder="Builds/VisualStudio2013" smallIcon="y0Yjpu" bigIcon="y0Yjpu"
+            externalLibraries="HybridApi.lib">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="1" optimisation="1" targetName="Chaser"/>
+                       isDebug="1" optimisation="1" targetName="Chaser" libraryPath="..\..\..\HybridApi\Builds\VisualStudio2013\x64\Debug"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
                        isDebug="0" optimisation="2" targetName="Chaser"/>
       </CONFIGURATIONS>
@@ -102,15 +95,15 @@
     </VS2013>
   </EXPORTFORMATS>
   <MODULES>
-    <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="1"/>
-    <MODULES id="juce_audio_devices" showAllCode="1" useLocalCopy="1"/>
-    <MODULES id="juce_audio_formats" showAllCode="1" useLocalCopy="1"/>
-    <MODULES id="juce_core" showAllCode="1" useLocalCopy="1"/>
-    <MODULES id="juce_data_structures" showAllCode="1" useLocalCopy="1"/>
-    <MODULES id="juce_events" showAllCode="1" useLocalCopy="1"/>
-    <MODULES id="juce_graphics" showAllCode="1" useLocalCopy="1"/>
-    <MODULES id="juce_gui_basics" showAllCode="1" useLocalCopy="1"/>
-    <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULES id="juce_audio_devices" showAllCode="1" useLocalCopy="0"/>
+    <MODULES id="juce_audio_formats" showAllCode="1" useLocalCopy="0"/>
+    <MODULES id="juce_core" showAllCode="1" useLocalCopy="0"/>
+    <MODULES id="juce_data_structures" showAllCode="1" useLocalCopy="0"/>
+    <MODULES id="juce_events" showAllCode="1" useLocalCopy="0"/>
+    <MODULES id="juce_graphics" showAllCode="1" useLocalCopy="0"/>
+    <MODULES id="juce_gui_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="0"/>
   </MODULES>
   <JUCEOPTIONS/>
 </JUCERPROJECT>

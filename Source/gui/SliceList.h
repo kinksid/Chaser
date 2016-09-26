@@ -12,13 +12,13 @@
 #define SLICELIST_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "../slice/Slice.h"
+#include "../../HybridApi/Source/HybridApi.h"
 #include "ColourLookAndFeel.h"
 #include <map>
 
 //==============================================================================
 
-typedef std::map<ScreenPair, Array<PropertyComponent*>> Sections;
+typedef std::map<NamedScreenId, Array<PropertyComponent*>> Sections;
 
 class SliceList;
 

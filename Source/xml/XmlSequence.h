@@ -11,7 +11,7 @@
 #ifndef XMLSEQUENCE_H_INCLUDED
 #define XMLSEQUENCE_H_INCLUDED
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "../slice/Slice.h"
+#include "../../HybridApi/Source/JuceBased/ArenaHelpers/Slice/Slice.h"
 
 //TODO add node with positions for all slices
 
