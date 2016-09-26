@@ -209,17 +209,6 @@ bool XmlSequence::loadXmlFile( File f )
 
 				}
 			}
-			
-			if ( chaserData->getChildByName("width") != nullptr )
-				resolution.x = chaserData->getChildByName("width")->getAllSubText().getIntValue();
-			else
-				resolution.x = 1920;
-			
-			if ( chaserData->getChildByName("height") != nullptr )
-				resolution.y = chaserData->getChildByName("height")->getAllSubText().getIntValue();
-			else
-				resolution.y = 1080;
-
 			setXmlFile(f);
 			return true;
 		
@@ -232,17 +221,6 @@ bool XmlSequence::loadXmlFile( File f )
 	
 	else //create everything from scratch
 		return false;
-}
-
-void XmlSequence::setResolution(Point<int> resolution)
-{
-	addElement(chaserData, "width", String(resolution.x), true);
-	addElement(chaserData, "height", String(resolution.y), true);
-}
-
-Point<int> XmlSequence::getResolution()
-{
-	return resolution;
 }
 
 void XmlSequence::setXmlFile( File f )
