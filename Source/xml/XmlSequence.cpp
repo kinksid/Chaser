@@ -35,11 +35,12 @@ void XmlSequence::addElement(juce::XmlElement *elementToAddTo, juce::String name
 
 void XmlSequence::setPositionData(juce::XmlElement *sliceXml, Slice *slice)
 {
-	sliceXml->setAttribute("name", slice->name);
+	sliceXml->setAttribute("name", slice->sliceId.second);
+	sliceXml->setAttribute( "sliceUniqueId", slice->sliceId.first );
 	sliceXml->setAttribute("enable", (int) slice->enabled );
 	
-	sliceXml->setAttribute("screenName", slice->screen.second);
-	sliceXml->setAttribute( "screenUniqueId", slice->screen.first );
+	sliceXml->setAttribute("screenName", slice->screenId.second);
+	sliceXml->setAttribute( "screenUniqueId", slice->screenId.first );
 	
 	sliceXml->deleteAllChildElements();
 

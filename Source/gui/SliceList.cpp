@@ -32,14 +32,14 @@ void MyPropertyPanel::resized()
 		Array<Slice*> slices = parent.getSlicesFromSection(i);
 		for ( int j = 0; j < slices.size(); j++)
 		{
-			slices[j]->screenIsUncollapsed = isSectionOpen( i );
+			slices[j]->screenIsCollapsed = !isSectionOpen( i );
 		}
 	}
 	
 	parent.sliceVisibilityChanged();
 }
 
-SlicePropertyButton::SlicePropertyButton( SliceList& parent, Slice& slice ) : BooleanPropertyComponent(slice.name, slice.name, slice.name ), parent( parent ), slice(slice)
+SlicePropertyButton::SlicePropertyButton( SliceList& parent, Slice& slice ) : BooleanPropertyComponent( slice.sliceId.second, slice.sliceId.second, slice.sliceId.second ), parent( parent ), slice( slice )
 {
 	state = slice.enabled;
 }
@@ -115,7 +115,7 @@ void SliceList::addSlices( OwnedArray<Slice>& slices )
 	
 	for ( int i = 0; i < slices.size(); i++ )
 	{
-		NamedScreenId screen = slices[i]->screen;
+		NamedUniqueId screen = slices[i]->screenId;
 		
 		//create a new SlicePropertyButton
 		SlicePropertyButton* newComponent = new SlicePropertyButton( *this, *slices[i] );

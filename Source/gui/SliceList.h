@@ -18,7 +18,7 @@
 
 //==============================================================================
 
-typedef std::map<NamedScreenId, Array<PropertyComponent*>> Sections;
+typedef std::map<NamedUniqueId, Array<PropertyComponent*>> Sections;
 
 class SliceList;
 

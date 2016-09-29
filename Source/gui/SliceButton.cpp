@@ -12,13 +12,13 @@
 #include "SliceButton.h"
 
 
-SliceButton::SliceButton(Slice& s, Point<int> scale) : ShapeButton ( s.name, Colours::transparentBlack, Colours::transparentBlack, Colours::transparentBlack ), slice(s)
+SliceButton::SliceButton(Slice& s, Point<int> scale) : ShapeButton ( s.sliceId.second, Colours::transparentBlack, Colours::transparentBlack, Colours::transparentBlack ), slice(s)
 {
-	setButtonText( s.name );
+	setButtonText( s.sliceId.second );
 	//enable loads the state from the ass xml file
 	//it can still be edited via the slicelist
 	setVisible( s.enabled );
-	name = s.name;
+	name = s.sliceId.second;
 	createPath( scale );
 	setClickingTogglesState( true );
 	setToggleState( false, sendNotification );
@@ -31,7 +31,6 @@ SliceButton::~SliceButton()
 
 void SliceButton::createPath( Point<int> scale )
 {
-	
 	//check if the slice has maskpoints,
 	//if so, it's a regular slice with a mask or a polyslice
 	//and the mask points should be used for the path
@@ -48,10 +47,6 @@ void SliceButton::createPath( Point<int> scale )
 
 Path SliceButton::makePath( Array<Point<float>>& points, Point<int> scale )
 {
-	
-
-	
-	
 	Path newPath;
 	for ( int i = 0; i < points.size(); i++ )
 	{
@@ -67,8 +62,6 @@ Path SliceButton::makePath( Array<Point<float>>& points, Point<int> scale )
 			newPath.lineTo( p );
 	}
 	newPath.closeSubPath();
-	
-	
 	
 	return newPath;
 }
@@ -117,7 +110,6 @@ void SliceButton::paintButton(juce::Graphics &g, bool isMouseOverButton, bool is
 		
 		g.strokePath( scaledToPreview, PathStrokeType (1.0), trans);
 	}
-
 }
 
 void SliceButton::resized()
@@ -127,7 +119,7 @@ void SliceButton::resized()
 	setBounds( bounds );
 	
 	//update the visibilty
-	setVisible( slice.enabled && slice.screenIsUncollapsed );
+	setVisible( slice.enabled && !slice.screenIsCollapsed );
 }
 
 
