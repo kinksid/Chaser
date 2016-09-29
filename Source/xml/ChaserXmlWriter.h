@@ -14,9 +14,7 @@
 #include "JuceHeader.h"
 
 /*ChaserXmlWriter takes care of writing
-sequencedata
-slicedata
-setupdata
+xml data
 to an xml file*/
 
 class ChaserXmlWriter
@@ -25,10 +23,17 @@ public:
 	ChaserXmlWriter();
 	~ChaserXmlWriter();
 
-	void saveDataToFile( File fileToSave, XmlElement* dataToSave );
+	void saveXmlElement( XmlElement* dataToSave );
+
+	void setSaveFile( File newSaveFile );
 
 private:
+	bool save( XmlElement* toSave );
+	XmlElement* getMainElement();
 
+	//todo by setting a mainelement name, i can probably make this an api thing
+
+	File saveFile;
 };
 
 

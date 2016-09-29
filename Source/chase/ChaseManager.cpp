@@ -9,10 +9,11 @@
 */
 
 #include "ChaseManager.h"
+#include "../xml/ChaserXmlWriter.h"
 
 ChaseManager::ChaseManager()
 {
-	setName( "Default Chaser" );
+	chaserName = ( "Default Chaser" );
 	
 	currentSequence = 15;
 	fillSequence();
@@ -238,6 +239,7 @@ XmlElement* ChaseManager::getSequencesAsXml()
 	{
 		//for every sequence, create an xmlelement and store the name
 		XmlElement* sequenceXml = new XmlElement( "sequence" );
+		sequenceXml->setAttribute( "nr", sequence.first );
 		sequenceXml->setAttribute( "name", nameMap[ sequence.first ] );
 		sequencesXml->addChildElement( sequenceXml );
 
@@ -269,7 +271,8 @@ XmlElement* ChaseManager::getSequencesAsXml()
 
 void ChaseManager::writeToXml()
 {
-	ScopedPointer<XmlElement> xml = getSequencesAsXml();
-	if ( xml )
-		return;
+	ChaserXmlWriter writer = ChaserXmlWriter();
+	writer.setSaveFile(  File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Chaser/chaserBeta.xml" ) );
+
+	writer.saveXmlElement( getSequencesAsXml() );
 }
