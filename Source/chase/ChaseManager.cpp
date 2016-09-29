@@ -18,6 +18,8 @@ ChaseManager::ChaseManager()
 	fillSequence();
 	currentSequence = 0;
 	fillSequence();
+
+	currentStep = 0;
 	
 //	//set the default max sequence with the default max steps
 //	sequenceMap[15][15] = SliceIndexArray{};
