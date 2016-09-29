@@ -252,11 +252,11 @@ XmlElement* ChaseManager::getSequencesAsXml()
 			stepsXml->addChildElement( stepXml );
 
 			//loop through this step's active slices
-			for ( int slice : step.second )
+			for ( int64 slice : step.second )
 			{
 				//for every active slice, create an xmlelement and store the slice nr
 				XmlElement* sliceXml = new XmlElement( "slice" );
-				sliceXml->setAttribute( "nr", slice );
+				sliceXml->setAttribute( "uniqueId", String(slice) );
 				stepXml->addChildElement( sliceXml );
 			}
 		}

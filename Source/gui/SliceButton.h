@@ -23,12 +23,11 @@
 class SliceButton    : public ShapeButton
 {
 public:
-	//SliceButton ( String n, bool enable, double l, double t, double r, double b );
 	SliceButton ( Slice& s, Point<int> scale );
     ~SliceButton();
 	
-	//bool enabled;
     String name;
+	int64 getUniqueId();
     
     void update();
 	Path getPath();

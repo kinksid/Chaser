@@ -29,19 +29,26 @@ Preview::~Preview()
 
 void Preview::buttonClicked(Button*)
 {
+	//using uid instead of index should make sure that once we change the state again
+	//1. non-existent slices in a step get removed because their id is no longer in the list
+	//2. slices that had their index changed still get chased correctly
+
 	//create an int array of all the slices that are active
-	Array<int> activeSlices;
+	Array<int64> activeSlices;
 	for ( int i = 0; i < sliceButtons.size(); i++ )
 	{
-		if ( sliceButtons[i]->getToggleState() )
-			activeSlices.add(i);
+		if ( sliceButtons[ i ]->getToggleState() )
+		{
+			int64 uid = sliceButtons[ i ]->getUniqueId();
+			activeSlices.add( uid );
+		}
 	}
 	
 	MainContentComponent* parent = findParentComponentOfClass<MainContentComponent>();
 	parent->chaseManager->setCurrentStep( activeSlices );
 }
 
-void Preview::setActiveSlices(Array<int> activeSlices)
+void Preview::setActiveSlices(Array<int64> activeSliceIds)
 {
     //turn all the slices off
     for ( int i = 0; i < sliceButtons.size(); i++ )
@@ -50,17 +57,18 @@ void Preview::setActiveSlices(Array<int> activeSlices)
     }
     
     //turn on the ones that should be on
-    for ( int i = 0; i < activeSlices.size(); i++ )
-    {
-        //it could be that the xml we have loaded has more slices than the current button layout
-        //for instance because it has been changed in Resolume
-        //so here we make sure we aren't trying to change a buttonstate that no longer exists
-        if ( activeSlices[i] < sliceButtons.size() )
-            sliceButtons[activeSlices[i]]->setToggleState(true, dontSendNotification);
-    }
 	
-	//so the slices get drawn again
-	resized();
+	for ( int i = 0; i < activeSliceIds.size(); i++ )
+    {
+		//go through all the slicebuttons and see if their uid matches
+		for ( SliceButton* button : sliceButtons )
+		{
+			if ( activeSliceIds[ i ] == button->getUniqueId() )
+				button->setToggleState( true, dontSendNotification );
+
+			button->repaint();
+		}
+    }
 }
 
 void Preview::createSliceButtons(OwnedArray<Slice> &slices)
@@ -91,8 +99,6 @@ void Preview::clearSlices()
 {
     sliceButtons.clear();
 }
-
-
 
 void Preview::paint (Graphics& g)
 {

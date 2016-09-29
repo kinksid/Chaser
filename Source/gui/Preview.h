@@ -77,7 +77,9 @@ public:
 	void createSliceButtons ( OwnedArray<Slice>& slices );
     void clearSlices();
 	
-    void setActiveSlices ( Array<int> activeSlices );
+	/* this check the list of slicebuttons to see if there are buttons
+	with a matching uniqueid, if so, it toggles them on*/
+	void setActiveSlices( Array<int64> activeSliceIds );
 
 
     

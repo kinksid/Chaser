@@ -122,6 +122,11 @@ void SliceButton::resized()
 	setVisible( slice.enabled && !slice.screenIsCollapsed );
 }
 
+int64 SliceButton::getUniqueId()
+{
+	return slice.sliceId.first;
+}
+
 
 
 

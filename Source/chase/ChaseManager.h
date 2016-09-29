@@ -17,7 +17,7 @@
 
 
 
-typedef Array<int> SliceIndexArray; //the active slices in a step
+typedef Array<int64> SliceIndexArray; //the active slices in a step, slices are identified by their uniqueId
 typedef std::map<int, SliceIndexArray> StepMap; //the step and its active slices
 typedef std::map<int, StepMap> SequenceMap; //the sequence and its steps
 typedef std::map<int, String> NameMap;

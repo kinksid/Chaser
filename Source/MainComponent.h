@@ -75,8 +75,8 @@ private:
 	int currentStep;
 	int currentSequence;
 	int currentSequenceLength;
-	Array<int> activeSlices;
-	Array<int> slicesToCopy;
+	Array<int64> activeSliceIds;
+	Array<int64> slicesToCopy;
 	Array<Array<int>> currentSequenceSlices;
 	String sequenceNameToCopy;
 	

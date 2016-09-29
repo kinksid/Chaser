@@ -377,7 +377,7 @@ bool MainContentComponent::keyPressed(const juce::KeyPress &key, juce::Component
 
 void MainContentComponent::copyStep()
 {
-	slicesToCopy = activeSlices;
+	slicesToCopy = activeSliceIds;
 }
 
 void MainContentComponent::pasteStep()
