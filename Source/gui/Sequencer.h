@@ -49,7 +49,7 @@ public:
 	
 	void nextStep();
 	void previousStep();
-//	void selectStep( int i );
+	void selectStep( int i );
 	
 private:
 	

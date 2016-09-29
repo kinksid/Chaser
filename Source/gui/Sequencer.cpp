@@ -192,10 +192,11 @@ void Sequencer::previousStep()
 	updateSequenceSettings();
 }
 
-//void Sequencer::selectStep(int i)
-//{
-//	parent.chaseManager->skipToStep( i );
-//}
+void Sequencer::selectStep(int i)
+{
+	parent.chaseManager->skipToStep( i );
+	updateSequenceSettings();
+}
 
 void Sequencer::updateSequenceSettings()
 {

@@ -118,7 +118,9 @@ void MainContentComponent::timerCallback()
 		//now populate the slicelist with entries for these slices
 		sliceList->addSlices( sliceManager->getSlices() );
 		sliceList->resized();
-		//loadDefaultAssFile();
+		
+		//make the first step active
+		sequencer->selectStep( 0 );
 	}
 	//set the name
 	//	getTopLevelComponent()->setName( xmlSequence->getXmlFile().getFileNameWithoutExtension());
