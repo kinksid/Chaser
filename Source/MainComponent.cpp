@@ -109,7 +109,7 @@ void MainContentComponent::timerCallback()
 		//if so, load their slices into the slice mananger
 		File assFile = FileHelper::getAssFileAutomagically( true );
 		
-		ResXmlParser::parseAssXml( assFile, sliceManager->getSlices(), sliceManager->getResolution());
+		ResXmlParser::parseAssFile( assFile, sliceManager->getSlices(), sliceManager->getResolution());
 		
 		//now populate the previewwindow with buttons for these slices
 		previewWindow->createSliceButtons( sliceManager->getSlices() );
