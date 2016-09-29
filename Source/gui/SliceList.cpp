@@ -88,7 +88,7 @@ Array<Slice*> SliceList::getSlicesFromSection(int section)
 {
 	Array<Slice*> returnArray;
 	
-	Sections::iterator s = sections.begin();
+	SectionMap::iterator s = sections.begin();
 	for(int i = 0; i < section; i++)
 		s++;
 	for ( int j = 0; j < s->second.size(); j++ )
@@ -121,43 +121,13 @@ void SliceList::addSlices( OwnedArray<Slice>& slices )
 		SlicePropertyButton* newComponent = new SlicePropertyButton( *this, *slices[i] );
 		newComponent->setColour(BooleanPropertyComponent::backgroundColourId, claf.backgroundColour);
 		newComponent->setState( slices[i]->enabled );
-		//sections[j]->sliceToggles.add( newComponent );
 		
 		sections[ screen ].add( newComponent );
 	}
 	
-//		//make a new section for each uniqued id
-//		if ( !uniqueIds.contains( id ))
-//		{
-//			uniqueIds.add(id);
-//			NamedArray* newSection = new NamedArray();
-//			DBG(slices[i]->screenPair.second);
-//			newSection->screenPair = slices[i]->screenPair;
-//			sections.add ( newSection );
-//		}
-//	}
-//	
-//	//now go through the slices again
-//	//if their unique id matches the sections
-//	//add it to the array for that section
-//	for ( int i = 0; i < slices.size(); i++ )
-//	{
-//		int id = slices[i]->screenPair.first;
-//		
-//		for ( int j = 0; j < sections.size(); j++ )
-//		{
-//			if ( id == sections[j]->screenPair.first )
-//			{
-//				
-//			}
-//		}
-//	}
-	
 	//now go through all the arrays again and create sections out of them
-	for ( auto const &s : sections )
+	for ( const auto& s : sections )
 		panel->addSection( s.first.second, s.second );
-	
-	
 }
 
 

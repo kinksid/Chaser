@@ -18,7 +18,7 @@
 
 //==============================================================================
 
-typedef std::map<NamedUniqueId, Array<PropertyComponent*>> Sections;
+typedef std::map<NamedUniqueId, Array<PropertyComponent*>> SectionMap;
 
 class SliceList;
 
@@ -54,7 +54,7 @@ public:
 private:
 	
 	ColourLookAndFeel claf;
-	Sections sections;
+	SectionMap sections;
 	
 	ScopedPointer<MyPropertyPanel> panel;
 	
