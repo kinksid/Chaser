@@ -249,6 +249,7 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 	}
 }
 
+/*
 void MainContentComponent::clearGUI()
 {
 	//clear the previewWindow and sliceList
@@ -257,10 +258,9 @@ void MainContentComponent::clearGUI()
 	
 	sliceList->clear();
 	previewWindow->clearSlices();
-	//xmlSequence->clearSlices();
-	//sequencer->setDefaultSequences();
+	sequencer->selectStep( 0 );
 	resized();
-}
+}*/
 
 
 

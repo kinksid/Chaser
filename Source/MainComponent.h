@@ -57,7 +57,7 @@ public:
 	void loadXml();
     
 	void reloadSliceData();
-	void clearGUI();
+	//void clearGUI();
 	
 	void copyStep();
 	void pasteStep();
