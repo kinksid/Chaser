@@ -12,7 +12,7 @@
 #define CHASEMANAGER_H_INCLUDED
 
 #include <map>
-#include "../JuceHeader.h"
+#include "JuceHeader.h"
 
 
 
