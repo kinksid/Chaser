@@ -340,7 +340,7 @@
     <ClCompile Include="..\..\Source\slice\SliceManager.cpp">
       <Filter>Chaser\Source\slice</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\xml\ChaserXmlWriter.cpp">
+    <ClCompile Include="..\..\Source\xml\ChaserXmlManager.cpp">
       <Filter>Chaser\Source\xml</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\xml\XmlSequence.cpp">
@@ -1908,7 +1908,7 @@
     <ClInclude Include="..\..\Source\slice\SliceManager.h">
       <Filter>Chaser\Source\slice</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\xml\ChaserXmlWriter.h">
+    <ClInclude Include="..\..\Source\xml\ChaserXmlManager.h">
       <Filter>Chaser\Source\xml</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\xml\XmlSequence.h">

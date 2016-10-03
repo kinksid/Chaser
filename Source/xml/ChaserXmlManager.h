@@ -1,15 +1,15 @@
 /*
   ==============================================================================
 
-    ChaserXmlWriter.h
+    ChaserXmlManager.h
     Created: 26 Sep 2016 6:38:51pm
     Author:  Joris
 
   ==============================================================================
 */
 
-#ifndef CHASERXMLWRITER_H_INCLUDED
-#define CHASERXMLWRITER_H_INCLUDED
+#ifndef CHASERXMLMANAGER_H_INCLUDED
+#define CHASERXMLMANAGER_H_INCLUDED
 
 #include "JuceHeader.h"
 
@@ -17,11 +17,11 @@
 xml data
 to an xml file*/
 
-class ChaserXmlWriter
+class ChaserXmlManager
 {
 public:
-	ChaserXmlWriter();
-	~ChaserXmlWriter();
+	ChaserXmlManager();
+	~ChaserXmlManager();
 
 	void saveXmlElement( XmlElement* dataToSave );
 

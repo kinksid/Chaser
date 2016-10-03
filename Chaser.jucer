@@ -40,10 +40,10 @@
         <FILE id="R3egOX" name="SliceManager.h" compile="0" resource="0" file="Source/slice/SliceManager.h"/>
       </GROUP>
       <GROUP id="{1378AC68-4293-88BD-BFEC-611A8E42B263}" name="xml">
-        <FILE id="jC5IXd" name="ChaserXmlWriter.cpp" compile="1" resource="0"
-              file="Source/xml/ChaserXmlWriter.cpp"/>
-        <FILE id="vELNWa" name="ChaserXmlWriter.h" compile="0" resource="0"
-              file="Source/xml/ChaserXmlWriter.h"/>
+        <FILE id="jC5IXd" name="ChaserXmlManager.cpp" compile="1" resource="0"
+              file="Source/xml/ChaserXmlManager.cpp"/>
+        <FILE id="vELNWa" name="ChaserXmlManager.h" compile="0" resource="0"
+              file="Source/xml/ChaserXmlManager.h"/>
         <FILE id="MDCZNm" name="XmlSequence.cpp" compile="1" resource="0" file="Source/xml/XmlSequence.cpp"/>
         <FILE id="hGOzrZ" name="XmlSequence.h" compile="0" resource="0" file="Source/xml/XmlSequence.h"/>
       </GROUP>

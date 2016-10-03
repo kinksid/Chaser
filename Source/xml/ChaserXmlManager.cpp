@@ -1,33 +1,33 @@
 /*
   ==============================================================================
 
-    ChaserXmlWriter.cpp
+    ChaserXmlManager.cpp
     Created: 26 Sep 2016 6:38:51pm
     Author:  Joris
 
   ==============================================================================
 */
 
-#include "ChaserXmlWriter.h"
+#include "ChaserXmlManager.h"
 
 #include "../../HybridApi/Source/JuceBased/ArenaHelpers/File/FileHelper.h"
 
-ChaserXmlWriter::ChaserXmlWriter()
+ChaserXmlManager::ChaserXmlManager()
 {
 	saveFile = File();
 }
 
-ChaserXmlWriter::~ChaserXmlWriter()
+ChaserXmlManager::~ChaserXmlManager()
 {
 
 }
 
-void ChaserXmlWriter::setSaveFile( File newSaveFile )
+void ChaserXmlManager::setSaveFile( File newSaveFile )
 {
 	saveFile = newSaveFile;
 }
 
-XmlElement* ChaserXmlWriter::getMainElement()
+XmlElement* ChaserXmlManager::getMainElement()
 {
 	XmlElement* mainElement = nullptr;
 	
@@ -43,7 +43,7 @@ XmlElement* ChaserXmlWriter::getMainElement()
 }
 
 
-void ChaserXmlWriter::saveXmlElement( juce::XmlElement* data )
+void ChaserXmlManager::saveXmlElement( juce::XmlElement* data )
 {
 	ScopedPointer<XmlElement> mainElement = getMainElement();
 
@@ -56,7 +56,7 @@ void ChaserXmlWriter::saveXmlElement( juce::XmlElement* data )
 	save( mainElement );
 }
 
-bool ChaserXmlWriter::save( XmlElement* toSave )
+bool ChaserXmlManager::save( XmlElement* toSave )
 {
 	if ( saveFile == File() )
 	{
@@ -102,5 +102,4 @@ bool ChaserXmlWriter::save( XmlElement* toSave )
 
 		return false;
 	}
-	
 }
