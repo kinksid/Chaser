@@ -13,6 +13,7 @@
 
 #include <map>
 #include "JuceHeader.h"
+#include "../xml/ChaserXmlManager.h"
 
 
 
@@ -29,7 +30,7 @@ typedef std::map<int, String> NameMap;
 class ChaseManager
 {
 public:
-	ChaseManager();
+	ChaseManager( ChaserXmlManager* xmlManager );
 	~ChaseManager();
 	
 	void setStep ( int sequence, int step, SliceIndexArray activeSlices );
@@ -76,7 +77,6 @@ public:
 	
 	
 private:
-	
 	void fillSequence();
 	int currentStep;
 	int currentSequence;
@@ -87,9 +87,7 @@ private:
 
 	void writeToXml();
 	XmlElement* getSequencesAsXml();
-
-	
-	
+	ChaserXmlManager* xmlManager;
 };
 
 

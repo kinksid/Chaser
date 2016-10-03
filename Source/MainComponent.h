@@ -18,6 +18,7 @@
 #include "gui/ColourLookAndFeel.h"
 #include "chase/ChaseManager.h"
 #include "slice/SliceManager.h"
+#include "xml\ChaserXmlManager.h"
 
 
 
@@ -84,7 +85,7 @@ private:
 	
     ScopedPointer<SliceList> sliceList;
     ScopedPointer<Sequencer> sequencer;
-	// ScopedPointer<XmlSequence> xmlSequence;
+	ScopedPointer<ChaserXmlManager> xmlManager;
 	ScopedPointer<Copier> copier;
 	
 

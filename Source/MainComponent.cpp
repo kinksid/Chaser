@@ -12,13 +12,19 @@
 
 
 //==============================================================================
-MainContentComponent::MainContentComponent() : chaseManager( new ChaseManager()), sliceManager ( new SliceManager())
+MainContentComponent::MainContentComponent() 
 {
 	laf = new ColourLookAndFeel();
 	
     setLookAndFeel(laf);
 	
 	version = ProjectInfo::versionString;
+
+	xmlManager = new ChaserXmlManager();
+	xmlManager->setSaveFile( File::getSpecialLocation( File::userDocumentsDirectory ).getChildFile( "Chaser/chaserBeta.xml" ) );
+
+	chaseManager = new ChaseManager( xmlManager );
+	sliceManager = new SliceManager();
 	
     previewWindow = new Preview();
     addAndMakeVisible( previewWindow );
@@ -31,9 +37,6 @@ MainContentComponent::MainContentComponent() : chaseManager( new ChaseManager())
 	
 	copier = new Copier();
 	addAndMakeVisible(copier);
-	
-	//create a sequence and set the oldest version it will correctly load
-	//	xmlSequence = new XmlSequence( "0.0.1" );
 
 	//add a menu bar
 	menuBar = new MenuBarComponent (this);
@@ -50,8 +53,7 @@ MainContentComponent::MainContentComponent() : chaseManager( new ChaseManager())
 	
 	addKeyListener(this);
 	
-//	chaseManager = new ChaseManager();
-//	sliceManager = new SliceManager();
+	
 	
 	setSize (1280, 720);
 	
@@ -68,7 +70,7 @@ MainContentComponent::~MainContentComponent()
 	// slices.clear();
     previewWindow = nullptr;
     sliceList = nullptr;
-	//    xmlSequence = nullptr;
+	xmlManager = nullptr;
 	#if JUCE_MAC
 	setMacMainMenu(nullptr);
 	#endif

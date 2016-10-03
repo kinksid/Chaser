@@ -1,20 +1,19 @@
 /*
   ==============================================================================
 
-    ChaseManager.cpp
-    Created: 21 Feb 2016 5:04:36pm
-    Author:  Joris de Jong
+  ChaseManager.cpp
+  Created: 21 Feb 2016 5:04:36pm
+  Author:  Joris de Jong
 
   ==============================================================================
-*/
+  */
 
 #include "ChaseManager.h"
-#include "../xml/ChaserXmlWriter.h"
 
-ChaseManager::ChaseManager()
+ChaseManager::ChaseManager( ChaserXmlManager* xmlManager ) : xmlManager( xmlManager )
 {
-	chaserName = ( "Default Chaser" );
-	
+	chaserName = ("Default Chaser");
+
 	currentSequence = 15;
 	fillSequence();
 	currentSequence = 0;
@@ -25,23 +24,23 @@ ChaseManager::ChaseManager()
 
 ChaseManager::~ChaseManager()
 {
-	
+
 }
 
-void ChaseManager::setStep(int sequence, int step, SliceIndexArray activeSlices)
+void ChaseManager::setStep( int sequence, int step, SliceIndexArray activeSlices )
 {
-	sequenceMap[sequence][step] = activeSlices;
+	sequenceMap[ sequence ][ step ] = activeSlices;
 	writeToXml();
 }
 
-void ChaseManager::setCurrentStep(SliceIndexArray activeSlices)
+void ChaseManager::setCurrentStep( SliceIndexArray activeSlices )
 {
-	setStep ( currentSequence, getCurrentStepIndex(), activeSlices );
+	setStep( currentSequence, getCurrentStepIndex(), activeSlices );
 }
 
-SliceIndexArray ChaseManager::getStepSlices(int sequence, int step)
+SliceIndexArray ChaseManager::getStepSlices( int sequence, int step )
 {
-	return sequenceMap[sequence][step];
+	return sequenceMap[ sequence ][ step ];
 }
 
 SliceIndexArray ChaseManager::getCurrentStepSlices()
@@ -55,7 +54,7 @@ void ChaseManager::clearAll()
 	writeToXml();
 }
 
-void ChaseManager::setName(juce::String name)
+void ChaseManager::setName( juce::String name )
 {
 	chaserName = name;
 	writeToXml();
@@ -70,23 +69,23 @@ void ChaseManager::fillSequence()
 {
 	//first make sure the sequence is empty
 	//otherwise we can just leave it
-	if ( sequenceMap[currentSequence].size() == 0)
+	if ( sequenceMap[ currentSequence ].size() == 0 )
 	{
-		sequenceMap[currentSequence][15] = SliceIndexArray{};
-		nameMap[currentSequence] = "Sequence " + String (currentSequence + 1);
+		sequenceMap[ currentSequence ][ 15 ] = SliceIndexArray{};
+		nameMap[ currentSequence ] = "Sequence " + String( currentSequence + 1 );
 	}
 }
 
-void ChaseManager::skipToSequence(int i)
+void ChaseManager::skipToSequence( int i )
 {
 	currentSequence = i;
-	
+
 	if ( currentSequence > getLastSequenceIndex() )
 		currentSequence = getLastSequenceIndex();
-	
+
 	//make sure the sequence is filled
 	fillSequence();
-	
+
 	//when skipping sequences, the current step always resets
 	skipToStep( 0 );
 }
@@ -94,16 +93,16 @@ void ChaseManager::skipToSequence(int i)
 int ChaseManager::skipToNextSequence()
 {
 	currentSequence++;
-	
+
 	if ( currentSequence > getLastSequenceIndex() )
 		currentSequence = 0;
-	
+
 	//make sure the sequence is filled
 	fillSequence();
-	
+
 	//when skipping sequences, the current step always resets
 	skipToStep( 0 );
-	
+
 	return currentSequence;
 }
 
@@ -112,17 +111,17 @@ int ChaseManager::skipToPreviousSequence()
 	currentSequence--;
 	if ( currentSequence < 0 )
 		currentSequence = getLastSequenceIndex();
-	
+
 	//make sure the sequence is filled
 	fillSequence();
-	
+
 	//when skipping sequences, the current step always resets
 	skipToStep( 0 );
 
 	return currentSequence;
 }
 
-void ChaseManager::skipToStep(int i)
+void ChaseManager::skipToStep( int i )
 {
 	currentStep = i;
 }
@@ -130,40 +129,40 @@ void ChaseManager::skipToStep(int i)
 int ChaseManager::skipToNextStep()
 {
 	currentStep++;
-	
+
 	if ( currentStep > getLastStepIndex() )
 		currentStep = 0;
-	
+
 	return currentStep;
 }
 
 int ChaseManager::skipToPreviousStep()
 {
 	currentStep--;
-	
-	if ( currentStep < 0  )
+
+	if ( currentStep < 0 )
 		currentStep = getLastStepIndex();
-	
+
 	return currentStep;
 }
 
-int ChaseManager::setStepCount(int i)
+int ChaseManager::setStepCount( int i )
 {
 	while ( i > getLastStepIndex() + 1 )
 		addStep();
 	while ( i < getLastStepIndex() + 1 )
 		removeStep();
-	
+
 	return getLastStepIndex();
 }
 
 int ChaseManager::addStep()
 {
 	int lastStep = getLastStepIndex();
-	sequenceMap[currentSequence][lastStep + 1] = SliceIndexArray{};
+	sequenceMap[ currentSequence ][ lastStep + 1 ] = SliceIndexArray{};
 
 	writeToXml();
-	
+
 	return getLastStepIndex();
 }
 
@@ -173,16 +172,16 @@ int ChaseManager::removeStep()
 	if ( getLastStepIndex() > 0 )
 	{
 		//make sure the second to last step exists
-		if(sequenceMap[currentSequence][getLastStepIndex()-1].size() == 0)
-			sequenceMap[currentSequence][getLastStepIndex()-1] = SliceIndexArray{};
-		
+		if ( sequenceMap[ currentSequence ][ getLastStepIndex() - 1 ].size() == 0 )
+			sequenceMap[ currentSequence ][ getLastStepIndex() - 1 ] = SliceIndexArray{};
+
 		//delete the last one
 		//can't use std::prev because 10.7 can't use c++11
-		StepMap::iterator it = sequenceMap[currentSequence].end();
-		if ( it != sequenceMap[currentSequence].begin() )
+		StepMap::iterator it = sequenceMap[ currentSequence ].end();
+		if ( it != sequenceMap[ currentSequence ].begin() )
 		{
 			it--;
-			sequenceMap[currentSequence].erase( it );
+			sequenceMap[ currentSequence ].erase( it );
 		}
 	}
 
@@ -193,7 +192,7 @@ int ChaseManager::removeStep()
 
 int ChaseManager::getLastStepIndex()
 {
-	return sequenceMap[currentSequence].rbegin()->first;
+	return sequenceMap[ currentSequence ].rbegin()->first;
 }
 
 int ChaseManager::getLastSequenceIndex()
@@ -206,7 +205,7 @@ int ChaseManager::getCurrentStepIndex()
 	//check if we're still in bounds
 	if ( currentStep > getLastStepIndex() )
 		currentStep = getLastStepIndex();
-	
+
 	return currentStep;
 }
 
@@ -217,12 +216,12 @@ int ChaseManager::getCurrentSequenceIndex()
 
 String ChaseManager::getCurrentSequenceName()
 {
-	return nameMap[currentSequence];
+	return nameMap[ currentSequence ];
 }
 
-void ChaseManager::setCurrentSequenceName(juce::String newName)
+void ChaseManager::setCurrentSequenceName( juce::String newName )
 {
-	nameMap[currentSequence] = newName;
+	nameMap[ currentSequence ] = newName;
 
 	writeToXml();
 }
@@ -230,7 +229,7 @@ void ChaseManager::setCurrentSequenceName(juce::String newName)
 XmlElement* ChaseManager::getSequencesAsXml()
 {
 	XmlElement* sequencesXml = new XmlElement( "sequences" );
-	
+
 	//loop through all the sequences
 	for ( auto sequence : sequenceMap )
 	{
@@ -257,7 +256,7 @@ XmlElement* ChaseManager::getSequencesAsXml()
 			{
 				//for every active slice, create an xmlelement and store the slice nr
 				XmlElement* sliceXml = new XmlElement( "slice" );
-				sliceXml->setAttribute( "uniqueId", String(slice) );
+				sliceXml->setAttribute( "uniqueId", String( slice ) );
 				stepXml->addChildElement( sliceXml );
 			}
 		}
@@ -268,8 +267,6 @@ XmlElement* ChaseManager::getSequencesAsXml()
 
 void ChaseManager::writeToXml()
 {
-	ChaserXmlWriter writer = ChaserXmlWriter();
-	writer.setSaveFile(  File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Chaser/chaserBeta.xml" ) );
-
-	writer.saveXmlElement( getSequencesAsXml() );
+	if ( xmlManager )
+		xmlManager->saveXmlElement( getSequencesAsXml() );
 }
