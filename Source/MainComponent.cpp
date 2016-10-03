@@ -24,7 +24,7 @@ MainContentComponent::MainContentComponent()
 	xmlManager->setSaveFile( File::getSpecialLocation( File::userDocumentsDirectory ).getChildFile( "Chaser/chaserBeta.xml" ) );
 
 	chaseManager = new ChaseManager( xmlManager );
-	sliceManager = new SliceManager();
+	sliceManager = new SliceManager( xmlManager );
 	
     previewWindow = new Preview();
     addAndMakeVisible( previewWindow );
@@ -112,7 +112,7 @@ void MainContentComponent::timerCallback()
 		File assFile = FileHelper::getAssFileAutomagically( true );
 		
 		ResXmlParser::parseAssFile( assFile, sliceManager->getSlices(), sliceManager->getResolution());
-		
+
 		//now populate the previewwindow with buttons for these slices
 		previewWindow->createSliceButtons( sliceManager->getSlices() );
 		previewWindow->resized();
@@ -120,6 +120,10 @@ void MainContentComponent::timerCallback()
 		//now populate the slicelist with entries for these slices
 		sliceList->addSlices( sliceManager->getSlices() );
 		sliceList->resized();
+
+		//at this point, all the slices have their position and screens assigned
+		//so we can save this to xml
+		sliceManager->writeToXml();
 		
 		//make the first step active
 		sequencer->selectStep( 0 );

@@ -56,6 +56,13 @@ void ChaserXmlManager::saveXmlElement( juce::XmlElement* data )
 	save( mainElement );
 }
 
+XmlElement* ChaserXmlManager::getXmlElement( String tagName )
+{
+	ScopedPointer<XmlElement> mainElement = getMainElement();
+
+	return mainElement->getChildByName( tagName );
+}
+
 bool ChaserXmlManager::save( XmlElement* toSave )
 {
 	if ( saveFile == File() )

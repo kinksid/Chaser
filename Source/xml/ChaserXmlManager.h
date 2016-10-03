@@ -24,6 +24,7 @@ public:
 	~ChaserXmlManager();
 
 	void saveXmlElement( XmlElement* dataToSave );
+	XmlElement* getXmlElement( String tagName );
 
 	void setSaveFile( File newSaveFile );
 
