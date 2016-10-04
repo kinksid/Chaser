@@ -39,10 +39,11 @@ XmlElement* SliceManager::getSlicesAsXml()
 	{
 		//for every slice, create an xmlelement and its id, and which screen it belongs to
 		XmlElement* sliceXml = new XmlElement( "slice" );
-		sliceXml->setAttribute( "uId", String( slice->sliceId.first ) );
 		sliceXml->setAttribute( "name", slice->sliceId.second );
-		sliceXml->setAttribute( "screenId", String( slice->screenId.first ) );
+		sliceXml->setAttribute( "uniqueId", String( slice->sliceId.first ) );
+		sliceXml->setAttribute( "enable", slice->enabled );
 		sliceXml->setAttribute( "screenName", slice->screenId.second );
+		sliceXml->setAttribute( "screenId", String( slice->screenId.first ) );
 		slicesXml->addChildElement( sliceXml );
 
 		//then create an xmlelement to store its rects and points
