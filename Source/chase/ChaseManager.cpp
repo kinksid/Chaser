@@ -12,14 +12,19 @@
 
 ChaseManager::ChaseManager( ChaserXmlManager* xmlManager ) : xmlManager( xmlManager )
 {
-	chaserName = ("Default Chaser");
+	//create 16 sequences with 16 empty steps
+	sequences.resize( 16 );
+	for ( int i = 0; i < sequences.size(); i++  )
+	{
+		Sequence sequence;
+		sequence.steps.resize( 16 );
+		sequence.name = "Sequence " + String( i + 1 );
 
-	currentSequence = 15;
-	fillSequence();
-	currentSequence = 0;
-	fillSequence();
+		sequences.set( i, sequence );		
+	}
 
 	currentStep = 0;
+	currentSequence = 0;
 }
 
 ChaseManager::~ChaseManager()
@@ -27,52 +32,65 @@ ChaseManager::~ChaseManager()
 
 }
 
-void ChaseManager::setStep( int sequence, int step, SliceIndexArray activeSlices )
+void ChaseManager::setStep( int sequenceIndex, int stepIndex, Step activeSlices )
 {
-	sequenceMap[ sequence ][ step ] = activeSlices;
+	if ( sequences.size() <= sequenceIndex )
+	{
+		DBG( "Trying to set a sequence which doesn't exist!" );
+		return;
+	}
+	if ( sequences[ sequenceIndex ].steps.size() <= stepIndex )
+	{
+		DBG( "Trying to set a step which doesn't exist!" );
+		return;
+	}
+	
+	Sequence sequence = sequences[ sequenceIndex ];
+	sequence.steps.set( stepIndex, activeSlices );
+	sequences.set( sequenceIndex, sequence );
 	writeToXml();
 }
 
-void ChaseManager::setCurrentStep( SliceIndexArray activeSlices )
+void ChaseManager::setCurrentStep( Step activeSlices )
 {
-	setStep( currentSequence, getCurrentStepIndex(), activeSlices );
+	setStep( getCurrentSequenceIndex(), getCurrentStepIndex(), activeSlices );
 }
 
-SliceIndexArray ChaseManager::getStepSlices( int sequence, int step )
+Step ChaseManager::getStep( int sequence, int step )
 {
-	return sequenceMap[ sequence ][ step ];
+	if ( sequences.size() > sequence )
+		if ( sequences[ sequence ].steps.size() > step )
+			return sequences[ sequence ].steps[ step ];
+
+	return Array < int64 > {};
 }
 
-SliceIndexArray ChaseManager::getCurrentStepSlices()
+Step ChaseManager::getCurrentStep()
 {
-	return getStepSlices( currentSequence, getCurrentStepIndex() );
+	return getStep( getCurrentSequenceIndex(), getCurrentStepIndex() );
 }
 
 void ChaseManager::clearAll()
 {
-	sequenceMap.clear();
+	sequences.clear();
 	writeToXml();
-}
-
-void ChaseManager::setName( juce::String name )
-{
-	chaserName = name;
-	writeToXml();
-}
-
-String ChaseManager::getName()
-{
-	return chaserName;
 }
 
 void ChaseManager::fillSequence()
 {
-	//first make sure the sequence is empty
+	//first make sure we have enough sequences
+	if ( sequences.size() <= currentSequence )
+		sequences.resize( currentSequence + 1 );
+
+	//then make sure the sequence is empty
 	//otherwise we can just leave it
-	if ( sequenceMap[ currentSequence ].size() == 0 )
+	if ( sequences[ currentSequence ].steps.size() == 0 )
 	{
-		sequenceMap[ currentSequence ][ 15 ] = SliceIndexArray{};
-		nameMap[ currentSequence ] = "Sequence " + String( currentSequence + 1 );
+		//create 16 steps for this sequence and name it
+		Sequence sequence;
+		sequence.steps.resize( 16 );
+		sequence.name = "Sequence " + String( currentSequence + 1 );
+		sequences.set( currentSequence, sequence );
 	}
 }
 
@@ -123,6 +141,9 @@ int ChaseManager::skipToPreviousSequence()
 
 void ChaseManager::skipToStep( int i )
 {
+	if ( i > getLastStepIndex() )
+		i = getLastStepIndex();
+	
 	currentStep = i;
 }
 
@@ -158,9 +179,10 @@ int ChaseManager::setStepCount( int i )
 
 int ChaseManager::addStep()
 {
-	int lastStep = getLastStepIndex();
-	sequenceMap[ currentSequence ][ lastStep + 1 ] = SliceIndexArray{};
+	Sequence sequence = sequences[ getCurrentSequenceIndex() ];
+	sequence.steps.resize( sequence.steps.size() + 1 );
 
+	sequences.set( getCurrentSequenceIndex(), sequence );
 	writeToXml();
 
 	return getLastStepIndex();
@@ -171,33 +193,24 @@ int ChaseManager::removeStep()
 	//only remove as long as we still have more than 1 step
 	if ( getLastStepIndex() > 0 )
 	{
-		//make sure the second to last step exists
-		if ( sequenceMap[ currentSequence ][ getLastStepIndex() - 1 ].size() == 0 )
-			sequenceMap[ currentSequence ][ getLastStepIndex() - 1 ] = SliceIndexArray{};
+		Sequence sequence = sequences[ getCurrentSequenceIndex() ];
+		sequence.steps.resize( sequence.steps.size() - 1 );
 
-		//delete the last one
-		//can't use std::prev because 10.7 can't use c++11
-		StepMap::iterator it = sequenceMap[ currentSequence ].end();
-		if ( it != sequenceMap[ currentSequence ].begin() )
-		{
-			it--;
-			sequenceMap[ currentSequence ].erase( it );
-		}
+		sequences.set( getCurrentSequenceIndex(), sequence );
+		writeToXml();
 	}
-
-	writeToXml();
 
 	return getLastStepIndex();
 }
 
 int ChaseManager::getLastStepIndex()
 {
-	return sequenceMap[ currentSequence ].rbegin()->first;
+	return sequences[ getCurrentSequenceIndex() ].steps.size() - 1;
 }
 
 int ChaseManager::getLastSequenceIndex()
 {
-	return sequenceMap.rbegin()->first;
+	return sequences.size() - 1;
 }
 
 int ChaseManager::getCurrentStepIndex()
@@ -211,17 +224,23 @@ int ChaseManager::getCurrentStepIndex()
 
 int ChaseManager::getCurrentSequenceIndex()
 {
+	if ( currentSequence > getLastSequenceIndex() )
+		currentSequence = getLastSequenceIndex();
+	
 	return currentSequence;
 }
 
 String ChaseManager::getCurrentSequenceName()
 {
-	return nameMap[ currentSequence ];
+	return sequences[ getCurrentSequenceIndex() ].name;
 }
 
 void ChaseManager::setCurrentSequenceName( juce::String newName )
 {
-	nameMap[ currentSequence ] = newName;
+	Sequence sequence = sequences[ getCurrentSequenceIndex() ];
+	sequence.name = newName;
+	
+	sequences.set( getCurrentSequenceIndex(), sequence );
 
 	writeToXml();
 }
@@ -229,35 +248,46 @@ void ChaseManager::setCurrentSequenceName( juce::String newName )
 XmlElement* ChaseManager::getSequencesAsXml()
 {
 	XmlElement* sequencesXml = new XmlElement( "sequences" );
+	sequencesXml->setAttribute( "count", sequences.size() );
 
 	//loop through all the sequences
-	for ( auto sequence : sequenceMap )
+	for ( int i = 0; i < sequences.size(); i++ )
 	{
-		//for every sequence, create an xmlelement and store the name
-		XmlElement* sequenceXml = new XmlElement( "sequence" );
-		sequenceXml->setAttribute( "nr", sequence.first );
-		sequenceXml->setAttribute( "name", nameMap[ sequence.first ] );
-		sequencesXml->addChildElement( sequenceXml );
-
-		//then create an xmlelement to store the steps
-		XmlElement* stepsXml = new XmlElement( "steps" );
-		sequenceXml->addChildElement( stepsXml );
-
-		//loop through this sequence's steps
-		for ( auto step : sequence.second )
+		Sequence sequence = sequences[ i ];
+		//check if the sequence has anything to save
+		if ( !sequence.isEmpty() || sequence.steps.size() != 16 )
 		{
-			//for every step, create an xmlelement and store the step nr
-			XmlElement* stepXml = new XmlElement( "step" );
-			stepXml->setAttribute( "nr", step.first );
-			stepsXml->addChildElement( stepXml );
+			//for every sequence, create an xmlelement and store the name
+			XmlElement* sequenceXml = new XmlElement( "sequence" );
+			sequenceXml->setAttribute( "nr", i );
+			sequenceXml->setAttribute( "name", sequences[ i ].name );
+			sequencesXml->addChildElement( sequenceXml );
 
-			//loop through this step's active slices
-			for ( int64 slice : step.second )
+			//then create an xmlelement to store the steps
+			XmlElement* stepsXml = new XmlElement( "steps" );
+			stepsXml->setAttribute( "count", sequence.steps.size() );
+			sequenceXml->addChildElement( stepsXml );
+
+			//loop through this sequence's steps
+			for ( auto step : sequence.steps )
 			{
-				//for every active slice, create an xmlelement and store the slice nr
-				XmlElement* sliceXml = new XmlElement( "slice" );
-				sliceXml->setAttribute( "uniqueId", String( slice ) );
-				stepXml->addChildElement( sliceXml );
+				//only store filled steps
+				if ( step.size() > 0 )
+				{
+					//for every step, create an xmlelement and store the step nr
+					XmlElement* stepXml = new XmlElement( "step" );
+					stepXml->setAttribute( "nr", sequence.steps.indexOf( step ) );
+					stepsXml->addChildElement( stepXml );
+
+					//loop through this step's active slices
+					for ( int64 sliceUid : step )
+					{
+						//for every active slice, create an xmlelement and store the slice nr
+						XmlElement* sliceXml = new XmlElement( "slice" );
+						sliceXml->setAttribute( "uniqueId", String( sliceUid ) );
+						stepXml->addChildElement( sliceXml );
+					}
+				}
 			}
 		}
 	}
@@ -270,3 +300,10 @@ void ChaseManager::writeToXml()
 	if ( xmlManager )
 		xmlManager->saveXmlElement( getSequencesAsXml() );
 }
+
+void ChaseManager::setSequences( Array<Sequence> newChaser )
+{
+	sequences = newChaser;
+}
+
+

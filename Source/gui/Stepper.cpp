@@ -30,7 +30,7 @@ void Stepper::buttonClicked(juce::Button *b)
 	if( b->getToggleState() )
 	{
 		chaser.skipToStep(stepper.indexOf( b ));
-		findParentComponentOfClass<MainContentComponent>()->previewWindow->setActiveSlices( findParentComponentOfClass<MainContentComponent>()->chaseManager->getCurrentStepSlices() );
+		findParentComponentOfClass<MainContentComponent>()->previewWindow->setActiveSlices( findParentComponentOfClass<MainContentComponent>()->chaseManager->getCurrentStep() );
 	}
 }
 

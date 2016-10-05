@@ -153,7 +153,7 @@ void Sequencer::labelTextChanged (Label* labelThatHasChanged)
 	
 	else if ( labelThatHasChanged == sequenceNumber )
 	{
-		int sequenceToJumpTo = sequenceNumber->getText().getIntValue();
+		int sequenceToJumpTo = sequenceNumber->getText().getIntValue() - 1;
 		if ( sequenceToJumpTo > 0  )
 			parent.chaseManager->skipToSequence( sequenceToJumpTo );
 		

@@ -25,6 +25,15 @@ ChaserXmlManager::~ChaserXmlManager()
 void ChaserXmlManager::setSaveFile( File newSaveFile )
 {
 	saveFile = newSaveFile;
+	File prefFile = FileHelper::getChaserPreferencesFile();
+
+	ScopedPointer<XmlElement> lastUsedFileData = new XmlElement( "preferences" );
+
+	XmlElement* lastUsedFile = new XmlElement( "lastusedfile" );
+	lastUsedFile->setAttribute( "fullpathname", newSaveFile.getFullPathName() );
+	lastUsedFileData->addChildElement( lastUsedFile );
+
+	lastUsedFileData->writeToFile( prefFile, "" );
 }
 
 XmlElement* ChaserXmlManager::getMainElement()
