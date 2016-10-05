@@ -14,13 +14,13 @@ ChaseManager::ChaseManager( ChaserXmlManager* xmlManager ) : xmlManager( xmlMana
 {
 	//create 16 sequences with 16 empty steps
 	sequences.resize( 16 );
-	for ( int i = 0; i < sequences.size(); i++  )
+	for ( int i = 0; i < sequences.size(); i++ )
 	{
 		Sequence sequence;
 		sequence.steps.resize( 16 );
 		sequence.name = "Sequence " + String( i + 1 );
 
-		sequences.set( i, sequence );		
+		sequences.set( i, sequence );
 	}
 
 	currentStep = 0;
@@ -44,7 +44,7 @@ void ChaseManager::setStep( int sequenceIndex, int stepIndex, Step activeSlices 
 		DBG( "Trying to set a step which doesn't exist!" );
 		return;
 	}
-	
+
 	Sequence sequence = sequences[ sequenceIndex ];
 	sequence.steps.set( stepIndex, activeSlices );
 	sequences.set( sequenceIndex, sequence );
@@ -99,7 +99,8 @@ void ChaseManager::skipToSequence( int i )
 	currentSequence = i;
 
 	if ( currentSequence > getLastSequenceIndex() )
-		currentSequence = getLastSequenceIndex();
+		sequences.resize( i );
+	//currentSequence = getLastSequenceIndex();
 
 	//make sure the sequence is filled
 	fillSequence();
@@ -143,7 +144,7 @@ void ChaseManager::skipToStep( int i )
 {
 	if ( i > getLastStepIndex() )
 		i = getLastStepIndex();
-	
+
 	currentStep = i;
 }
 
@@ -226,7 +227,7 @@ int ChaseManager::getCurrentSequenceIndex()
 {
 	if ( currentSequence > getLastSequenceIndex() )
 		currentSequence = getLastSequenceIndex();
-	
+
 	return currentSequence;
 }
 
@@ -239,7 +240,7 @@ void ChaseManager::setCurrentSequenceName( juce::String newName )
 {
 	Sequence sequence = sequences[ getCurrentSequenceIndex() ];
 	sequence.name = newName;
-	
+
 	sequences.set( getCurrentSequenceIndex(), sequence );
 
 	writeToXml();
@@ -255,7 +256,9 @@ XmlElement* ChaseManager::getSequencesAsXml()
 	{
 		Sequence sequence = sequences[ i ];
 		//check if the sequence has anything to save
-		if ( !sequence.isEmpty() || sequence.steps.size() != 16 || sequence.name != "Sequence " + String( i + 1 ) )
+		if ( !sequence.isEmpty() || //only save if there are any steps to save
+			(sequence.steps.size() != 16 && sequence.steps.size() != 0) || // or if the stepcount is unusual, but more than 0
+			(sequence.name != "Sequence " + String( i + 1 ) && sequence.name != "") ) //of if the name is unusual, but not empty
 		{
 			//for every sequence, create an xmlelement and store the name
 			XmlElement* sequenceXml = new XmlElement( "sequence" );

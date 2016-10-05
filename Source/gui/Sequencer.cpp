@@ -154,7 +154,7 @@ void Sequencer::labelTextChanged (Label* labelThatHasChanged)
 	else if ( labelThatHasChanged == sequenceNumber )
 	{
 		int sequenceToJumpTo = sequenceNumber->getText().getIntValue() - 1;
-		if ( sequenceToJumpTo > 0  )
+		if ( sequenceToJumpTo > -1  )
 			parent.chaseManager->skipToSequence( sequenceToJumpTo );
 		
 		//calling update here will make sure the values in the labels will update correctly, even if an unaccepted value was entered
