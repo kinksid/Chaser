@@ -80,11 +80,11 @@ public:
 	String getCurrentSequenceName();
 	void setCurrentSequenceName( String newName );
 
-	//we need access to these so we can update their values
-	//when loading in a chaser file
-	void setSequences( Array<Sequence> newSequence );
+	////we need access to these so we can update their values
+	////when loading in a chaser file
+	//void setSequences( Array<Sequence> newSequence );
 
-
+	void createSequencesFromXml( XmlElement sequenceElement );
 
 private:
 	void fillSequence();
@@ -95,7 +95,9 @@ private:
 
 	void writeToXml();
 	XmlElement* getSequencesAsXml();
+	
 	ChaserXmlManager* xmlManager;
+
 };
 
 

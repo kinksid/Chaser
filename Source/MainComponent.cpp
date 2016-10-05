@@ -46,14 +46,7 @@ MainContentComponent::MainContentComponent()
 	setMacMainMenu(this);
 #endif
 
-	//init the model vars
-	currentSequence = 0;
-	currentStep = 0;
-	currentSequenceLength = 16;
-
 	addKeyListener( this );
-
-
 
 	setSize( 1280, 720 );
 
@@ -93,16 +86,32 @@ void MainContentComponent::timerCallback()
 
 	if ( FileHelper::isFileValid( lastUsedChaser ) )
 	{
-		ChaserXmlParser::parseResolution( lastUsedChaser, sliceManager->getResolution() );
 		//this will return 1920x1080 if no resolution was saved
-		
-		reloadSliceData();
-		//if something goes wrong here, fuck it
+		ChaserXmlParser::parseResolution( lastUsedChaser, sliceManager->getResolution() );
+
+		ChaserXmlParser::parseSlices( lastUsedChaser, sliceManager->getSlices() );
+
+		//now populate the previewwindow with buttons for these slices
+		previewWindow->createSliceButtons( sliceManager->getSlices() );
+		previewWindow->resized();
+
+		//now populate the slicelist with entries for these slices
+		sliceList->addSlices( sliceManager->getSlices() );
+		sliceList->resized();
+
+		//this will try its best to get useful info from the chaserfile
+		chaseManager->createSequencesFromXml( ChaserXmlParser::parseSequences( lastUsedChaser ) );
+
+		previewWindow->setActiveSlices( chaseManager->getCurrentStep() );
+
+		//make the first step active
+		sequencer->selectStep( 0 );
+
 	}
 
 
 	else
-		
+
 	{
 		//		xmlSequence->createFreshXml( version );
 		//		resolution = xmlSequence->getResolution();

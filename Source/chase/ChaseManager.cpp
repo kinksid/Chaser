@@ -255,7 +255,7 @@ XmlElement* ChaseManager::getSequencesAsXml()
 	{
 		Sequence sequence = sequences[ i ];
 		//check if the sequence has anything to save
-		if ( !sequence.isEmpty() || sequence.steps.size() != 16 )
+		if ( !sequence.isEmpty() || sequence.steps.size() != 16 || sequence.name != "Sequence " + String( i + 1 ) )
 		{
 			//for every sequence, create an xmlelement and store the name
 			XmlElement* sequenceXml = new XmlElement( "sequence" );
@@ -295,15 +295,96 @@ XmlElement* ChaseManager::getSequencesAsXml()
 	return sequencesXml;
 }
 
+void ChaseManager::createSequencesFromXml( XmlElement sequencesXml )
+{
+	//clear the current sequences
+	sequences.clear();
+
+	//keep track of how many sequences we've processed
+	//we use this to give names and numbers when we
+	//can't retrieve them from xml
+	int sequenceCount = 0;
+
+	//see how many sequences there should be in total
+	int totalSequenceCount = sequencesXml.getIntAttribute( "count", 16 );
+	sequences.resize( totalSequenceCount );
+
+	//read out the data for each sequence
+	forEachXmlChildElement( sequencesXml, sequenceXml )
+	{
+		int sequenceNr = sequenceXml->getIntAttribute( "nr", sequenceCount );
+		String sequenceName = sequenceXml->getStringAttribute( "name", "Sequence " + String( sequenceNr + 1 ) );
+
+		Sequence sequence = sequences[ sequenceNr ];
+		sequence.name = sequenceName;
+
+		//if we're out of bounds, resize the sequence array to fit
+		if ( sequenceNr >= sequences.size() )
+			sequences.resize( sequenceNr + 1 );
+
+		forEachXmlChildElement( *sequenceXml, stepsXml )
+		{
+			int totalStepCount = stepsXml->getIntAttribute( "count", 16 );
+			sequence.steps.resize( totalStepCount );
+
+			//keep track of how many steps we've processed
+			//we use this to give numbers when we
+			//can't retrieve them from xml
+			int stepCount = 0;
+
+			//read out the data for each step
+			forEachXmlChildElement( *stepsXml, stepXml )
+			{
+				int stepNr = stepXml->getIntAttribute( "nr", stepCount );
+
+				//if we're out of bounds, resize the step array to fit
+				if ( stepNr >= sequence.steps.size() )
+					sequence.steps.resize( stepNr + 1 );
+
+				//keep track of how many slices we've processed
+				//we use this to give numbers when we
+				//can't retrieve them from xml
+				int sliceCount = 0;
+
+				//read out the data for each slice
+				Step step;
+				forEachXmlChildElement( *stepXml, sliceXml )
+				{
+					int64 sliceUid = sliceXml->getStringAttribute( "uniqueId", String( sliceCount ) ).getLargeIntValue();
+					step.add( sliceUid );
+
+					sliceCount++;
+				}
+				sequence.steps.set( stepNr, step );
+
+				stepCount++;
+			}
+
+		}
+
+		//set default values if any values are empty
+		if ( sequence.name == "" )
+			sequence.name = "Sequence " + String( sequenceNr + 1 );
+		if ( sequence.steps.size() == 0 )
+			sequence.steps.resize( 16 );
+
+		sequences.set( sequenceNr, sequence );
+		sequenceCount++;
+	}
+	DBG( "While parsing the xml, the sequenceMap has " + String( sequences.size() ) + " sequences" );
+}
+
+
+
 void ChaseManager::writeToXml()
 {
 	if ( xmlManager )
 		xmlManager->saveXmlElement( getSequencesAsXml() );
 }
 
-void ChaseManager::setSequences( Array<Sequence> newChaser )
-{
-	sequences = newChaser;
-}
+//void ChaseManager::setSequences( Array<Sequence> newChaser )
+//{
+//	sequences = newChaser;
+//}
 
 
